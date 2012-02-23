@@ -82,6 +82,34 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal({ :author => { :_data => @user, :name => :name } }, t.source)
   end
 
+  test "glue is compiled as a child but with anonymous name" do
+    t = @compiler.compile_source(%{ glue @user do attribute :name end })
+    assert_equal({ :_glue0 => { :_data => @user, :name => :name } }, t.source)
+  end
+
+  test "multiple glue don't come with name collisions" do
+    t = @compiler.compile_source(%{
+      glue @user do attribute :name end
+      glue @user do attribute :foo end
+    })
+
+    assert_equal({
+      :_glue0 => { :_data => @user, :name => :name},
+      :_glue1 => { :_data => @user, :foo => :foo}
+    }, t.source)
+  end
+
+  test "object set data for the template" do
+    t = @compiler.compile_source(%{ object @user })
+    assert_equal @user, t.data
+  end
+
+  test "object property can define root name" do
+    t = @compiler.compile_source(%{ object @user => :author })
+    assert_equal @user, t.data
+    assert_equal :author, t.root_name
+  end
+
   test "node are compiled without evaluating the block" do
     t = @compiler.compile_source(%{ node(:foo) { bar } })
     assert_not_nil t.source[:foo]

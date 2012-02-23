@@ -1,7 +1,7 @@
 module RablFastJson
   class CompiledTemplate
 
-    attr_accessor :source
+    attr_accessor :source, :data, :root_name
 
     delegate :[], :[]=, :to => :source
 
