@@ -19,6 +19,7 @@ class CompilerTest < ActiveSupport::TestCase
   end
 
   class User
+    attr_accessor :name
   end
 
   setup do
@@ -34,6 +35,12 @@ class CompilerTest < ActiveSupport::TestCase
 
   test "virtual path is correctly imported from context" do
     assert_equal '/users', @compiler.instance_variable_get(:@virtual_path)
+  end
+
+  test "assigns are not imported if already passed to the compiler" do
+    compiler = RablFastJson::Compiler.new(@context, { 'other' => 'foo' })
+    assert_nil compiler.instance_variable_get(:@user)
+    assert_equal 'foo', compiler.instance_variable_get(:@other)
   end
 
   test "compiler return a compiled template" do
@@ -58,5 +65,26 @@ class CompilerTest < ActiveSupport::TestCase
   test "multiple attributes can be aliased" do
     t = @compiler.compile_source(%{ attributes :foo => :bar, :id => :uid })
     assert_equal({ :bar => :foo, :uid => :id }, t.source)
+  end
+
+  test "child with association use association name as data" do
+    t = @compiler.compile_source(%{ child :address do attributes :foo end})
+    assert_equal({ :address => { :_data => :address, :foo => :foo } }, t.source)
+  end
+
+  test "child with association can be aliased" do
+    t = @compiler.compile_source(%{ child :address => :bar do attributes :foo end})
+    assert_equal({ :bar => { :_data => :address, :foo => :foo } }, t.source)
+  end
+
+  test "child with arbitrary source store the data with the template" do
+    t = @compiler.compile_source(%{ child @user => :author do attribute :name end })
+    assert_equal({ :author => { :_data => @user, :name => :name } }, t.source)
+  end
+
+  test "node are compiled without evaluating the block" do
+    t = @compiler.compile_source(%{ node(:foo) { bar } })
+    assert_not_nil t.source[:foo]
+    assert_instance_of Proc, t.source[:foo]
   end
 end
