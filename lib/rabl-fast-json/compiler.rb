@@ -1,13 +1,9 @@
-require 'singleton'
-
 module RablFastJson
   class Compiler
 
-    def initialize(context, assigns = nil)
+    def initialize(context = nil, assigns = nil)
       @context = context
       @glue_count = 0
-      _get_assigns_from_context(assigns)
-      _get_virtual_path_from_context
     end
 
     def compile_source(source)
@@ -41,6 +37,7 @@ module RablFastJson
       return unless block_given?
       name = :"_glue#{@glue_count}"
       @glue_count += 1
+      Rails.logger.warn "[RABL] glue called with data = #{data.inspect}"
       _compile_sub_template(name, data, &block)
     end
 
@@ -50,12 +47,21 @@ module RablFastJson
     alias_method :code, :node
 
     def collection(data, options = {})
-      @data = data.to_a if data
+      object(data)
+    end
+
+    def extends(path)
+      t = Library.instance.get(path)
+      @template.merge!(t.source)
     end
 
     def object(data)
       data, name = extract_data_and_name(data)
       @template.data, @template.root_name = data, name
+    end
+
+    def method_missing(name, *args, &block)
+      @context.respond_to?(name) ? @context.send(name, *args, &block) : super
     end
 
     protected
@@ -75,17 +81,6 @@ module RablFastJson
       compiler = Compiler.new(@context, @assigns)
       template = compiler.compile_block(&block)
       @template[name] = template.merge!(:_data => data)
-    end
-
-    def _get_assigns_from_context(assigns)
-      source = assigns || @context.instance_variable_get(:@_assigns)
-      source.each_pair { |k, v|
-        instance_variable_set("@#{k}", v) unless k.start_with?('_')
-      }
-    end
-
-    def _get_virtual_path_from_context
-      @virtual_path = @context.instance_variable_get(:@virtual_path)
     end
   end
 end

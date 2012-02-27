@@ -1,46 +1,12 @@
 require 'test_helper'
 
 class CompilerTest < ActiveSupport::TestCase
-  class Context
-    attr_accessor :virtual_path
-
-    def initialize
-      @_assigns = {}
-      @virtual_path = '/users'
-    end
-
-    def set_assign(key, value)
-      @_assigns[key] = value
-    end
-
-    def get_assign(key)
-      @_assigns[key]
-    end
-  end
-
-  class User
-    attr_accessor :name
-  end
 
   setup do
     @context = Context.new
     @user = User.new
     @context.set_assign('user', @user)
     @compiler = RablFastJson::Compiler.new(@context)
-  end
-
-  test "assigns are correctly imported from context" do
-    assert_equal @user, @compiler.instance_variable_get(:@user)
-  end
-
-  test "virtual path is correctly imported from context" do
-    assert_equal '/users', @compiler.instance_variable_get(:@virtual_path)
-  end
-
-  test "assigns are not imported if already passed to the compiler" do
-    compiler = RablFastJson::Compiler.new(@context, { 'other' => 'foo' })
-    assert_nil compiler.instance_variable_get(:@user)
-    assert_equal 'foo', compiler.instance_variable_get(:@other)
   end
 
   test "compiler return a compiled template" do
@@ -78,36 +44,54 @@ class CompilerTest < ActiveSupport::TestCase
   end
 
   test "child with arbitrary source store the data with the template" do
-    t = @compiler.compile_source(%{ child @user => :author do attribute :name end })
-    assert_equal({ :author => { :_data => @user, :name => :name } }, t.source)
+    t = @compiler.compile_source(%{ child :@user => :author do attribute :name end })
+    assert_equal({ :author => { :_data => :@user, :name => :name } }, t.source)
   end
 
   test "glue is compiled as a child but with anonymous name" do
-    t = @compiler.compile_source(%{ glue @user do attribute :name end })
-    assert_equal({ :_glue0 => { :_data => @user, :name => :name } }, t.source)
+    t = @compiler.compile_source(%{ glue :@user do attribute :name end })
+    assert_equal({ :_glue0 => { :_data => :@user, :name => :name } }, t.source)
   end
 
   test "multiple glue don't come with name collisions" do
     t = @compiler.compile_source(%{
-      glue @user do attribute :name end
-      glue @user do attribute :foo end
+      glue :@user do attribute :name end
+      glue :@user do attribute :foo end
     })
 
     assert_equal({
-      :_glue0 => { :_data => @user, :name => :name},
-      :_glue1 => { :_data => @user, :foo => :foo}
+      :_glue0 => { :_data => :@user, :name => :name},
+      :_glue1 => { :_data => :@user, :foo => :foo}
     }, t.source)
   end
 
   test "object set data for the template" do
-    t = @compiler.compile_source(%{ object @user })
-    assert_equal @user, t.data
+    t = @compiler.compile_source(%{ object :@user })
+    assert_equal :@user, t.data
   end
 
   test "object property can define root name" do
-    t = @compiler.compile_source(%{ object @user => :author })
-    assert_equal @user, t.data
+    t = @compiler.compile_source(%{ object :@user => :author })
+    assert_equal :@user, t.data
     assert_equal :author, t.root_name
+  end
+
+  test "collection set the data for the template" do
+    t = @compiler.compile_source(%{ collection :@user })
+    assert_equal :@user, t.data
+  end
+
+  test "collection property can define root name" do
+    t = @compiler.compile_source(%{ collection :@user => :users })
+    assert_equal :@user, t.data
+    assert_equal :users, t.root_name
+  end
+
+  test "extends use other template one's active" do
+    template = mock('template', :source => { :id => :id })
+    RablFastJson::Library.stub_chain(:instance, :get).with('users/base').and_return(template)
+    t = @compiler.compile_source(%{ extends 'users/base' })
+    assert_equal({ :id => :id }, t.source)
   end
 
   test "node are compiled without evaluating the block" do

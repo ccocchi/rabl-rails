@@ -6,7 +6,8 @@ module RablFastJson
 
       def self.call(template)
         %{
-          RablFastJson::Compiler.instance.compile_source(#{template.source.inspect}, self)
+          RablFastJson::Library.instance.
+            get_rendered_template(#{template.source.inspect}, self)
         }
       end
     end
