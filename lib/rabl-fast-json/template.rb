@@ -19,12 +19,11 @@ module RablFastJson
     end
 
     def render_resource(data = nil, source = nil)
-      output = {}
-
       data ||= @object
       source ||= @source
 
-      source.each_pair { |key, value|
+      source.inject({}) { |output, current|
+        key, value = current
         out = case value
         when Symbol
           data.send(value) # attributes
@@ -37,22 +36,19 @@ module RablFastJson
             value.each_pair { |k, v|
               output[k] = object.send(v)
             }
-
-            next
+            next output
           else # child
             object.respond_to?(:each) ? render_collection(object, value) : render_resource(object, value)
           end
         end
         output[key] = out
+        output
       }
-      output
     end
 
     def render_collection(collection = nil, source = nil)
-      output = []
       collection ||= @object
-      collection.each { |o| output << render_resource(o, source) }
-      output
+      collection.inject([]) { |output, o| output << render_resource(o, source) }
     end
   end
 end

@@ -31,6 +31,4 @@ class Context
   end
 end
 
-class User
-  attr_accessor :name
-end
+User = Struct.new(:id, :name, :sex)

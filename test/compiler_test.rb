@@ -49,7 +49,7 @@ class CompilerTest < ActiveSupport::TestCase
   end
 
   test "glue is compiled as a child but with anonymous name" do
-    t = @compiler.compile_source(%{ glue :@user do attribute :name end })
+    t = @compiler.compile_source(%{ glue(:@user) do attribute :name end })
     assert_equal({ :_glue0 => { :_data => :@user, :name => :name } }, t.source)
   end
 

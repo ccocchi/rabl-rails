@@ -37,7 +37,6 @@ module RablFastJson
       return unless block_given?
       name = :"_glue#{@glue_count}"
       @glue_count += 1
-      Rails.logger.warn "[RABL] glue called with data = #{data.inspect}"
       _compile_sub_template(name, data, &block)
     end
 
