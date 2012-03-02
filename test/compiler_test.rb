@@ -87,9 +87,9 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal :users, t.root_name
   end
 
-  test "extends use other template one's active" do
+  test "extends use other template source as itself" do
     template = mock('template', :source => { :id => :id })
-    RablFastJson::Library.stub_chain(:instance, :get).with('users/base').and_return(template)
+    RablFastJson::Library.instance.stub(:get).with('users/base', @context).and_return(template)
     t = @compiler.compile_source(%{ extends 'users/base' })
     assert_equal({ :id => :id }, t.source)
   end

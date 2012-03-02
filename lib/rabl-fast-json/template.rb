@@ -24,21 +24,24 @@ module RablFastJson
 
       source.inject({}) { |output, current|
         key, value = current
+
         out = case value
         when Symbol
           data.send(value) # attributes
         when Proc
           value.call(data) # node
         when Hash
-          data_symbol = value.delete(:_data)
-          object = data_symbol.to_s.start_with?('@') ? @context.instance_variable_get(data_symbol) : @object.send(data_symbol)
+          current_value = value.dup
+          data_symbol = current_value.delete(:_data)
+          object = data_symbol.nil? ? data : data_symbol.to_s.start_with?('@') ? @context.instance_variable_get(data_symbol) : data.send(data_symbol)
+
           if key.to_s.start_with?('_') # glue
-            value.each_pair { |k, v|
+            current_value.each_pair { |k, v|
               output[k] = object.send(v)
             }
             next output
           else # child
-            object.respond_to?(:each) ? render_collection(object, value) : render_resource(object, value)
+            object.respond_to?(:each) ? render_collection(object, current_value) : render_resource(object, current_value)
           end
         end
         output[key] = out

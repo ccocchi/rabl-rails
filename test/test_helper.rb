@@ -5,6 +5,21 @@ $:.unshift File.expand_path('../../lib', __FILE__)
 require 'rspec/mocks'
 require 'minitest/autorun'
 require 'active_support/test_case'
+
+require 'singleton'
+class <<Singleton
+  def included_with_reset(klass)
+    included_without_reset(klass)
+    class <<klass
+      def reset_instance
+        Singleton.send :__init__, self
+        self
+      end
+    end
+  end
+  alias_method_chain :included, :reset
+end
+
 require 'rabl-fast-json'
 
 module ActiveSupport

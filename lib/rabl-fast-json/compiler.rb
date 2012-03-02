@@ -1,7 +1,7 @@
 module RablFastJson
   class Compiler
 
-    def initialize(context = nil, assigns = nil)
+    def initialize(context = nil)
       @context = context
       @glue_count = 0
     end
@@ -50,7 +50,7 @@ module RablFastJson
     end
 
     def extends(path)
-      t = Library.instance.get(path)
+      t = Library.instance.get(path, @context)
       @template.merge!(t.source)
     end
 
@@ -77,7 +77,7 @@ module RablFastJson
     end
 
     def _compile_sub_template(name, data, &block)
-      compiler = Compiler.new(@context, @assigns)
+      compiler = Compiler.new(@context)
       template = compiler.compile_block(&block)
       @template[name] = template.merge!(:_data => data)
     end
