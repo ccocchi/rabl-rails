@@ -1,5 +1,6 @@
 module RablFastJson
   class Compiler
+    include Helpers
 
     def initialize(context = nil)
       @context = context
@@ -28,9 +29,14 @@ module RablFastJson
     alias_method :attributes, :attribute
 
     def child(name_or_data, options = {}, &block)
-      return unless block_given?
       data, name = extract_data_and_name(name_or_data)
-      _compile_sub_template(name, data, &block)
+      name = options[:root] if root_given?(options)
+      if partial_given?(options)
+        template = Library.instance.get(options[:partial], @context)
+        @template[name] = template.merge!(:_data => data)
+      else
+        _compile_sub_template(name, data, &block)
+      end
     end
 
     def glue(data, &block)
@@ -46,6 +52,7 @@ module RablFastJson
     alias_method :code, :node
 
     def collection(data, options = {})
+      @template.root_name = options[:root] if root_given?(options)
       object(data)
     end
 

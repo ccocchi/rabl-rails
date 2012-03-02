@@ -4,6 +4,8 @@ module RablFastJson
   class Library
     include Singleton
 
+    attr_accessor :view_renderer
+
     def initialize
       @cached_templates = {}
     end

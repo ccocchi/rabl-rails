@@ -43,9 +43,25 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal({ :bar => { :_data => :address, :foo => :foo } }, t.source)
   end
 
+  test "child with root name defined as option" do
+    t = @compiler.compile_source(%{ child(:user, :root => :author) do attributes :foo end })
+    assert_equal({ :author => { :_data => :user, :foo => :foo } }, t.source)
+  end
+
   test "child with arbitrary source store the data with the template" do
     t = @compiler.compile_source(%{ child :@user => :author do attribute :name end })
     assert_equal({ :author => { :_data => :@user, :name => :name } }, t.source)
+  end
+
+  test "child with succint partial notation" do
+    @view_renderer = mock()
+    @view_renderer.stub_chain(:lookup_context, :find_template).with('users/base', [], false).and_return(
+      mock(:source => %{ attribute :id }))
+    RablFastJson::Library.reset_instance
+    RablFastJson::Library.instance.view_renderer = @view_renderer
+
+    t = @compiler.compile_source(%{child(:user, :partial => 'users/base') })
+    assert_equal( {:user => { :_data => :user, :id => :id } }, t.source)
   end
 
   test "glue is compiled as a child but with anonymous name" do
@@ -89,6 +105,7 @@ class CompilerTest < ActiveSupport::TestCase
 
   test "extends use other template source as itself" do
     template = mock('template', :source => { :id => :id })
+    RablFastJson::Library.reset_instance
     RablFastJson::Library.instance.stub(:get).with('users/base', @context).and_return(template)
     t = @compiler.compile_source(%{ extends 'users/base' })
     assert_equal({ :id => :id }, t.source)
