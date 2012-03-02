@@ -52,8 +52,8 @@ module RablFastJson
     alias_method :code, :node
 
     def collection(data, options = {})
-      @template.root_name = options[:root] if root_given?(options)
       object(data)
+      @template.root_name = options[:root] if root_given?(options)
     end
 
     def extends(path)

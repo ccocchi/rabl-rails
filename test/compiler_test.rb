@@ -103,6 +103,12 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal :users, t.root_name
   end
 
+  test "collection property can define root name via options" do
+    t = @compiler.compile_source(%{ collection :@user, :root => :users })
+    assert_equal :@user, t.data
+    assert_equal :users, t.root_name
+  end
+
   test "extends use other template source as itself" do
     template = mock('template', :source => { :id => :id })
     RablFastJson::Library.reset_instance
