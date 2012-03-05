@@ -122,4 +122,11 @@ class CompilerTest < ActiveSupport::TestCase
     assert_not_nil t.source[:foo]
     assert_instance_of Proc, t.source[:foo]
   end
+
+  test "node with condition are compiled as an array of procs" do
+    t = @compiler.compile_source(%{ node(:foo, :if => lambda { |m| m.foo.present? }) do |m| m.foo end })
+    assert_not_nil t.source[:foo]
+    assert_instance_of Array, t.source[:foo]
+    assert_equal 2, t.source[:foo].size
+  end
 end

@@ -30,6 +30,9 @@ module RablFastJson
           data.send(value) # attributes
         when Proc
           value.call(data) # node
+        when Array # node with condition
+          next output if !value.first.call(data)
+          value.last.call(data)
         when Hash
           current_value = value.dup
           data_symbol = current_value.delete(:_data)

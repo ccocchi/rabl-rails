@@ -47,7 +47,17 @@ module RablFastJson
     end
 
     def node(name, options = {}, &block)
-      @template[name] = block
+      condition = options[:if]
+
+      if condition.present?
+        if condition.is_a?(Proc)
+          @template[name] = [condition, block]
+        else
+          @template[name] = block if condition
+        end
+      else
+        @template[name] = block
+      end
     end
     alias_method :code, :node
 

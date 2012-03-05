@@ -36,4 +36,24 @@ class TestCompiledTemplate < ActiveSupport::TestCase
       { :uid => 2, :name => 'bar', :gender => 'female'}
     ], @template.render)
   end
+
+  test "render object with node property" do
+    proc = lambda { |object| object.sex }
+    @template.source = { :sex => proc }
+    assert_equal({ :sex => 'male' }, @template.render)
+  end
+
+  test "render obejct with conditionnal node property" do
+    condition = lambda { |u| u.name.present? }
+    proc = lambda { |object| object.name }
+    @template.source = { :name => [condition, proc] }
+    assert_equal({ :name => 'foobar' }, @template.render)
+  end
+
+  test "render node property with false condition" do
+    condition = lambda { |u| false }
+    proc = lambda { |object| object.name }
+    @template.source = { :name => [condition, proc] }
+    assert_equal({}, @template.render)
+  end
 end
