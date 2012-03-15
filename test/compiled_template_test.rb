@@ -7,6 +7,7 @@ class TestCompiledTemplate < ActiveSupport::TestCase
     @data = User.new(1, 'foobar', 'male')
     @data.stub(:respond_to?).with(:each).and_return(false)
     @context.stub(:instance_variable_get).with(:@data).and_return(@data)
+    @context.stub(:instance_variable_get).with(:@_assigns).and_return({})
     @template = RablFastJson::CompiledTemplate.new
     @template.context = @context
     @template.data = :@data

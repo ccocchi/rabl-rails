@@ -29,6 +29,7 @@ class DeepNestingTest < ActiveSupport::TestCase
     @context.stub(:instance_variable_get).with(:@user).and_return(@user)
     @context.stub(:instance_variable_get).with(:@view_renderer).and_return(@view_renderer)
     @context.stub(:instance_variable_get).with(:@virtual_path).and_return('users/show')
+    @context.stub(:instance_variable_get).with(:@_assigns).and_return({})
   end
 
   test "compile and render deep nesting template" do

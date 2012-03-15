@@ -129,4 +129,16 @@ class CompilerTest < ActiveSupport::TestCase
     assert_instance_of Array, t.source[:foo]
     assert_equal 2, t.source[:foo].size
   end
+  
+  test "compile with no object" do
+    t = @compiler.compile_source(%{
+     object false
+     child(:@user => :user) do
+       attribute :id
+     end
+    }) 
+    
+    assert_equal({ :user => { :_data => :@user, :id => :id } }, t.source)
+    assert_nil t.data
+  end
 end

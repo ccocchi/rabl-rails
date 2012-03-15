@@ -9,12 +9,19 @@ module RablFastJson
       @source = {}
     end
 
-    def get_object_from_assigns
-      @object = @context.instance_variable_get(@data)
+    def get_object_from_context
+      @object = @context.instance_variable_get(@data) if @data
+    end
+    
+    def get_assigns_from_context
+      @context.instance_variable_get(:@_assigns).each_pair { |k, v|
+        instance_variable_set("@#{k}", v) unless k.start_with?('_') || k == @data
+      }
     end
 
     def render
-      get_object_from_assigns
+      get_object_from_context
+      get_assigns_from_context
       @object.respond_to?(:each) ? render_collection : render_resource
     end
 
@@ -29,10 +36,10 @@ module RablFastJson
         when Symbol
           data.send(value) # attributes
         when Proc
-          value.call(data) # node
+          instance_exec data, &value # node
         when Array # node with condition
           next output if !value.first.call(data)
-          value.last.call(data)
+          instance_exec data, &(value.last)
         when Hash
           current_value = value.dup
           data_symbol = current_value.delete(:_data)

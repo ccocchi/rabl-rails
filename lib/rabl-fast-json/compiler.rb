@@ -6,7 +6,7 @@ module RablFastJson
       @context = context
       @glue_count = 0
     end
-
+    
     def compile_source(source)
       @template = CompiledTemplate.new
       instance_eval(source)
@@ -72,6 +72,7 @@ module RablFastJson
     end
 
     def object(data)
+      return if data === false
       data, name = extract_data_and_name(data)
       @template.data, @template.root_name = data, name
     end
