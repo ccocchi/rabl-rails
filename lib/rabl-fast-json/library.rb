@@ -16,12 +16,13 @@ module RablFastJson
 
       compiled_template = get_compiled_template(path, source, context)
       compiled_template.context = context
-
-      ActiveSupport::JSON.encode(compiled_template.render)
+      body = compiled_template.render
+      ActiveSupport::JSON.encode(compiled_template.has_root_name? ? { compiled_template.root_name => body } : body)
     end
 
     def get_compiled_template(path, source, context)
-      @cached_templates[path] ||= Compiler.new(context).compile_source(source)
+      # @cached_templates[path] ||= 
+      Compiler.new(context).compile_source(source)
     end
 
     def get(path, context)

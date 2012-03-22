@@ -77,16 +77,16 @@ module RablFastJson
       @template.data, @template.root_name = data, name
     end
 
-    def method_missing(name, *args, &block)
-      @context.respond_to?(name) ? @context.send(name, *args, &block) : super
-    end
-
     protected
 
     def extract_data_and_name(name_or_data)
       case name_or_data
       when Symbol
-        [name_or_data, name_or_data]
+        if name_or_data.to_s.start_with?('@')
+          [name_or_data, nil]
+        else
+          [name_or_data, name_or_data]
+        end
       when Hash
         name_or_data.first
       else

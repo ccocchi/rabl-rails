@@ -18,6 +18,20 @@ module RablFastJson
         instance_variable_set("@#{k}", v) unless k.start_with?('_') || k == @data
       }
     end
+    
+    def has_root_name?
+      !@root_name.nil?
+    end
+    
+    def method_missing(name, *args, &block)
+      @context.respond_to?(name) ? @context.send(name, *args, &block) : super
+    end
+    
+    def partial(template_path, options = {})
+      raise "No object was given to partial" if options[:object].blank?
+      template = Library.instance.get(template_path, @context) 
+      template.render_resource(options[:object])
+    end
 
     def render
       get_object_from_context
