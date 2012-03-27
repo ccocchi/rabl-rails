@@ -64,7 +64,7 @@ module RablFastJson
     def partial(template_path, options = {})
       raise "No object was given to partial" if options[:object].blank?
       object = options[:object]
-      template = Library.instance.get(template_path, @context)
+      template = Library.instance.get(template_path)
       object.respond_to?(:each) ? template.render_collection(object) : template.render_resource(object)
     end
     
