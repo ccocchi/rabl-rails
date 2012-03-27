@@ -9,6 +9,13 @@ module RablFastJson
       @source = {}
     end
 
+    #
+    # def data=(symbol)
+    #   raise "Data passed directly to template should be a symbol" if !symbol.is_a?(Symbol)
+    #   @data = symbol
+    # end
+    #
+
     def get_object_from_context
       @object = @context.instance_variable_get(@data) if @data
     end
@@ -29,8 +36,9 @@ module RablFastJson
     
     def partial(template_path, options = {})
       raise "No object was given to partial" if options[:object].blank?
-      template = Library.instance.get(template_path, @context) 
-      template.render_resource(options[:object])
+      object = options[:object]
+      template = Library.instance.get(template_path, @context)
+      object.respond_to?(:each) ? template.render_collection(object) : template.render_resource(object)
     end
 
     def render
@@ -38,7 +46,7 @@ module RablFastJson
       get_assigns_from_context
       @object.respond_to?(:each) ? render_collection : render_resource
     end
-
+  
     def render_resource(data = nil, source = nil)
       data ||= @object
       source ||= @source
@@ -52,7 +60,7 @@ module RablFastJson
         when Proc
           instance_exec data, &value # node
         when Array # node with condition
-          next output if !value.first.call(data)
+          next output if !instance_exec data, &(value.first) #value.first.call(data)
           instance_exec data, &(value.last)
         when Hash
           current_value = value.dup
@@ -77,5 +85,6 @@ module RablFastJson
       collection ||= @object
       collection.inject([]) { |output, o| output << render_resource(o, source) }
     end
+        
   end
 end

@@ -71,10 +71,10 @@ module RablFastJson
       @template.merge!(t.source)
     end
 
-    def object(data)
-      return if data === false
+    def object(data, options = {})
       data, name = extract_data_and_name(data)
-      @template.data, @template.root_name = data, name
+      @template.data = data
+      @template.root_name = options[:root] || name
     end
 
     protected

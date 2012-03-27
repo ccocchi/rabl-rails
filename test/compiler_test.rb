@@ -139,6 +139,6 @@ class CompilerTest < ActiveSupport::TestCase
     }) 
     
     assert_equal({ :user => { :_data => :@user, :id => :id } }, t.source)
-    assert_nil t.data
+    assert_equal false, t.data
   end
 end
