@@ -1,24 +1,63 @@
 module RablFastJson
+  #
+  # Class that will compile RABL source code into a hash
+  # representing data structure
+  #
   class Compiler
     include Helpers
 
-    def initialize(context = nil)
-      @context = context
+    def initialize
       @glue_count = 0
     end
     
+    #
+    # Compile from source code and return the CompiledTemplate
+    # created.
+    #
     def compile_source(source)
       @template = CompiledTemplate.new
       instance_eval(source)
       @template
     end
 
+    #
+    # Same as compile_source but from a block
+    #
     def compile_block(&block)
       @template = {}
       instance_eval(&block)
       @template
     end
 
+    #
+    # Sets the object to be used as the data for the template
+    # Example: 
+    #   object :@user
+    #   object :@user, :root => :author
+    #
+    def object(data, options = {})
+      data, name = extract_data_and_name(data)
+      @template.data = data
+      @template.root_name = options[:root] || name
+    end
+
+    #
+    # Sets a collection to be used as data for the template
+    # Example:
+    #   collection :@users
+    #   collection :@users, :root => :morons
+    #
+    def collection(data, options = {})
+      object(data)
+      @template.root_name = options[:root] if root_given?(options)
+    end
+    
+    #
+    # Includes the attribute or method in the output
+    # Example:
+    #   attributes :id, :name
+    #   attribute :email => :super_secret
+    #
     def attribute(*args)
       if args.first.is_a?(Hash)
         args.first.each_pair { |k, v| @template[v] = k }
@@ -28,17 +67,31 @@ module RablFastJson
     end
     alias_method :attributes, :attribute
 
+    #
+    # Creates a child node to be included in the output.
+    # name_or data can be an object or collection or a method to call on the data. It
+    # accepts :root and :partial options.
+    # Notes that partial and blocks are not compatible
+    # Example:
+    #   child(:@posts, :root => :posts) { attribute :id }
+    #   child(:posts, :partial => 'posts/base')
+    #
     def child(name_or_data, options = {}, &block)
       data, name = extract_data_and_name(name_or_data)
       name = options[:root] if root_given?(options)
       if partial_given?(options)
-        template = Library.instance.get(options[:partial], @context)
+        template = Library.instance.get(options[:partial])
         @template[name] = template.merge!(:_data => data)
       else
         _compile_sub_template(name, data, &block)
       end
     end
 
+    #
+    # Glues data from a child node to the output
+    # Example:
+    #   glue(:@user) { attribute :name }
+    #
     def glue(data, &block)
       return unless block_given?
       name = :"_glue#{@glue_count}"
@@ -46,6 +99,14 @@ module RablFastJson
       _compile_sub_template(name, data, &block)
     end
 
+    #
+    # Creates an arbitrary node in the json output. 
+    # It accepts :if option to create conditionnal nodes. The current data will
+    # be passed to the block so it is advised to use it instead of ivars.
+    # Example:
+    #   node(:name) { |user| user.first_name + user.last_name }
+    #   node(:role, if: ->(u) { !u.admin? }) { |u| u.role }
+    #
     def node(name, options = {}, &block)
       condition = options[:if]
 
@@ -61,24 +122,24 @@ module RablFastJson
     end
     alias_method :code, :node
 
-    def collection(data, options = {})
-      object(data)
-      @template.root_name = options[:root] if root_given?(options)
-    end
-
+    #
+    # Extends an existing rabl template
+    # Example:
+    #   extends 'users/base'
+    #
     def extends(path)
-      t = Library.instance.get(path, @context)
+      t = Library.instance.get(path)
       @template.merge!(t.source)
-    end
-
-    def object(data, options = {})
-      data, name = extract_data_and_name(data)
-      @template.data = data
-      @template.root_name = options[:root] || name
     end
 
     protected
 
+    # 
+    # Extract data root_name and root name
+    # Example:
+    #   :@users -> [:@users, nil]
+    #   :@users => :authors -> [:@users, :authors]
+    #
     def extract_data_and_name(name_or_data)
       case name_or_data
       when Symbol
@@ -94,8 +155,8 @@ module RablFastJson
       end
     end
 
-    def _compile_sub_template(name, data, &block)
-      compiler = Compiler.new(@context)
+    def _compile_sub_template(name, data, &block) #:nodoc:
+      compiler = Compiler.new
       template = compiler.compile_block(&block)
       @template[name] = template.merge!(:_data => data)
     end

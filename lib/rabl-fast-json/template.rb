@@ -1,6 +1,5 @@
 module RablFastJson
   class CompiledTemplate
-
     attr_accessor :source, :data, :root_name, :context
 
     delegate :[], :[]=, :merge!, :to => :source
@@ -8,37 +7,9 @@ module RablFastJson
     def initialize
       @source = {}
     end
-
-    #
-    # def data=(symbol)
-    #   raise "Data passed directly to template should be a symbol" if !symbol.is_a?(Symbol)
-    #   @data = symbol
-    # end
-    #
-
-    def get_object_from_context
-      @object = @context.instance_variable_get(@data) if @data
-    end
-    
-    def get_assigns_from_context
-      @context.instance_variable_get(:@_assigns).each_pair { |k, v|
-        instance_variable_set("@#{k}", v) unless k.start_with?('_') || k == @data
-      }
-    end
     
     def has_root_name?
       !@root_name.nil?
-    end
-    
-    def method_missing(name, *args, &block)
-      @context.respond_to?(name) ? @context.send(name, *args, &block) : super
-    end
-    
-    def partial(template_path, options = {})
-      raise "No object was given to partial" if options[:object].blank?
-      object = options[:object]
-      template = Library.instance.get(template_path, @context)
-      object.respond_to?(:each) ? template.render_collection(object) : template.render_resource(object)
     end
 
     def render
@@ -85,6 +56,28 @@ module RablFastJson
       collection ||= @object
       collection.inject([]) { |output, o| output << render_resource(o, source) }
     end
-        
+    
+    def method_missing(name, *args, &block)
+      @context.respond_to?(name) ? @context.send(name, *args, &block) : super
+    end
+    
+    def partial(template_path, options = {})
+      raise "No object was given to partial" if options[:object].blank?
+      object = options[:object]
+      template = Library.instance.get(template_path, @context)
+      object.respond_to?(:each) ? template.render_collection(object) : template.render_resource(object)
+    end
+    
+    protected
+    
+    def get_object_from_context
+      @object = @context.instance_variable_get(@data) if @data
+    end
+    
+    def get_assigns_from_context
+      @context.instance_variable_get(:@_assigns).each_pair { |k, v|
+        instance_variable_set("@#{k}", v) unless k.start_with?('_') || k == @data
+      }
+    end  
   end
 end

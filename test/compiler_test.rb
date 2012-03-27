@@ -3,10 +3,8 @@ require 'test_helper'
 class CompilerTest < ActiveSupport::TestCase
 
   setup do
-    @context = Context.new
     @user = User.new
-    @context.set_assign('user', @user)
-    @compiler = RablFastJson::Compiler.new(@context)
+    @compiler = RablFastJson::Compiler.new
   end
 
   test "compiler return a compiled template" do
@@ -112,7 +110,7 @@ class CompilerTest < ActiveSupport::TestCase
   test "extends use other template source as itself" do
     template = mock('template', :source => { :id => :id })
     RablFastJson::Library.reset_instance
-    RablFastJson::Library.instance.stub(:get).with('users/base', @context).and_return(template)
+    RablFastJson::Library.instance.stub(:get).with('users/base').and_return(template)
     t = @compiler.compile_source(%{ extends 'users/base' })
     assert_equal({ :id => :id }, t.source)
   end
