@@ -21,7 +21,7 @@ module RablFastJson
     def render_resource(data = nil, source = nil)
       data ||= @object
       source ||= @source
-
+      
       source.inject({}) { |output, current|
         key, value = current
 
@@ -61,9 +61,12 @@ module RablFastJson
       @context.respond_to?(name) ? @context.send(name, *args, &block) : super
     end
     
-    def partial(template_path, options = {})
-      raise "No object was given to partial" if options[:object].blank?
+    def partial(template_path, options = {})      
+      raise "No object was given to partial" if options[:object].nil?
       object = options[:object]
+
+      return [] if object.respond_to?(:empty?) && object.empty?
+      
       template = Library.instance.get(template_path)
       object.respond_to?(:each) ? template.render_collection(object) : template.render_resource(object)
     end

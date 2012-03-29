@@ -57,4 +57,35 @@ class TestCompiledTemplate < ActiveSupport::TestCase
     @template.source = { :name => [condition, proc] }
     assert_equal({}, @template.render)
   end
+  
+  test "partial should be evaluated at rendering time" do
+    # Set assigns
+    @context.stub(:instance_variable_get).with(:@_assigns).and_return({'user' => @data})
+    @data.stub(:respond_to?).with(:empty?).and_return(false)
+    
+    # Stub Library#get
+    t = RablFastJson::CompiledTemplate.new
+    t.source, t.context = { :name => :name }, @context
+    RablFastJson::Library.reset_instance
+    RablFastJson::Library.instance.should_receive(:get).with('users/base').and_return(t)
+
+    @template.data = false
+    @template.source = { :user => ->(s) { partial('users/base', :object => @user) } }
+    
+    assert_equal({ :user => { :name => 'foobar' } }, @template.render)
+  end
+  
+  test "partial with nil values should raise an error" do
+    @template.data = false
+    @template.source = { :user => ->(s) { partial('users/base') } }
+    
+    assert_raises(RuntimeError) { @template.render }
+  end
+  
+  test "partial with empty values should not raise an error" do
+    @template.data = false
+    @template.source = { :users => ->(s) { partial('users/base', :object => []) } }
+    
+    assert_equal({ :users => [] }, @template.render)
+  end
 end
