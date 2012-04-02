@@ -5,6 +5,8 @@ require 'rspec/mocks'
 require 'minitest/autorun'
 require 'active_support/test_case'
 
+require 'action_controller'
+
 require 'singleton'
 class <<Singleton
   def included_with_reset(klass)
@@ -44,5 +46,5 @@ class Context
     @_assigns[key]
   end
 end
-
+  
 User = Struct.new(:id, :name, :sex)

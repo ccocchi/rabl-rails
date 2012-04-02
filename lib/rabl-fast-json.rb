@@ -13,4 +13,14 @@ require 'rabl-fast-json/handler'
 require 'rabl-fast-json/railtie'
 
 module RablFastJson
+  mattr_accessor :cache_templates
+  @@cache_templates = true
+
+  def self.configure
+    yield self
+  end
+  
+  def self.cache_templates?
+    ActionController::Base.perform_caching && @@cache_templates
+  end
 end

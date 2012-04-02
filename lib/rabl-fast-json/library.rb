@@ -21,13 +21,16 @@ module RablFastJson
     end
 
     def get_compiled_template(path, source)
-      # @cached_templates[path] ||= 
-      Compiler.new.compile_source(source)
+      if path && RablFastJson.cache_templates?
+        @cached_templates[path] ||= Compiler.new.compile_source(source)
+      else
+        Compiler.new.compile_source(source)
+      end
     end
 
     def get(path)
       template = @cached_templates[path]
-      return template if !template.nil?
+      return template unless template.nil?
       t = @view_renderer.lookup_context.find_template(path, [], false)
       get_compiled_template(path, t.source)
     end
