@@ -23,6 +23,7 @@ module RablFastJson
     def get_compiled_template(path, source)
       if path && RablFastJson.cache_templates?
         @cached_templates[path] ||= Compiler.new.compile_source(source)
+        @cached_templates[path].dup
       else
         Compiler.new.compile_source(source)
       end
