@@ -17,7 +17,7 @@ module RablFastJson
       compiled_template = get_compiled_template(path, source)
       compiled_template.context = context
       body = compiled_template.render
-      ActiveSupport::JSON.encode(compiled_template.has_root_name? ? { compiled_template.root_name => body } : body)
+      ActiveSupport::JSON.encode(compiled_template.root_name ? { compiled_template.root_name => body } : body)
     end
 
     def get_compiled_template(path, source)

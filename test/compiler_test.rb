@@ -21,7 +21,12 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal({ :id => :id }, t.source)
   end
 
-  test "attribute can be aliased" do
+  test "attribute can be aliased through :as option" do
+    t = @compiler.compile_source(%{ attribute :foo, :as => :bar })
+    assert_equal({ :bar => :foo}, t.source)
+  end
+
+  test "attribute can be aliased through hash" do
     t = @compiler.compile_source(%{ attribute :foo => :bar })
     assert_equal({ :bar => :foo }, t.source)
   end
@@ -82,23 +87,27 @@ class CompilerTest < ActiveSupport::TestCase
   test "object set data for the template" do
     t = @compiler.compile_source(%{ object :@user })
     assert_equal :@user, t.data
+    assert_equal({}, t.source)
   end
 
   test "object property can define root name" do
     t = @compiler.compile_source(%{ object :@user => :author })
     assert_equal :@user, t.data
     assert_equal :author, t.root_name
+    assert_equal({}, t.source)
   end
 
   test "collection set the data for the template" do
     t = @compiler.compile_source(%{ collection :@user })
     assert_equal :@user, t.data
+    assert_equal({}, t.source)
   end
 
   test "collection property can define root name" do
     t = @compiler.compile_source(%{ collection :@user => :users })
     assert_equal :@user, t.data
     assert_equal :users, t.root_name
+    assert_equal({}, t.source)
   end
 
   test "collection property can define root name via options" do
@@ -127,15 +136,15 @@ class CompilerTest < ActiveSupport::TestCase
     assert_instance_of Array, t.source[:foo]
     assert_equal 2, t.source[:foo].size
   end
-  
+
   test "compile with no object" do
     t = @compiler.compile_source(%{
      object false
      child(:@user => :user) do
        attribute :id
      end
-    }) 
-    
+    })
+
     assert_equal({ :user => { :_data => :@user, :id => :id } }, t.source)
     assert_equal false, t.data
   end

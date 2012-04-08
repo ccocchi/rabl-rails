@@ -9,7 +9,7 @@ module RablFastJson
     def initialize
       @glue_count = 0
     end
-    
+
     #
     # Compile from source code and return the CompiledTemplate
     # created.
@@ -31,7 +31,7 @@ module RablFastJson
 
     #
     # Sets the object to be used as the data for the template
-    # Example: 
+    # Example:
     #   object :@user
     #   object :@user, :root => :author
     #
@@ -51,7 +51,7 @@ module RablFastJson
       object(data)
       @template.root_name = options[:root] if root_given?(options)
     end
-    
+
     #
     # Includes the attribute or method in the output
     # Example:
@@ -62,7 +62,11 @@ module RablFastJson
       if args.first.is_a?(Hash)
         args.first.each_pair { |k, v| @template[v] = k }
       else
-        args.each { |name| @template[name] = name }
+        options = args.extract_options!
+        args.each { |name|
+          key = options[:as] || name
+          @template[key] = name
+        }
       end
     end
     alias_method :attributes, :attribute
@@ -100,7 +104,7 @@ module RablFastJson
     end
 
     #
-    # Creates an arbitrary node in the json output. 
+    # Creates an arbitrary node in the json output.
     # It accepts :if option to create conditionnal nodes. The current data will
     # be passed to the block so it is advised to use it instead of ivars.
     # Example:
@@ -134,7 +138,7 @@ module RablFastJson
 
     protected
 
-    # 
+    #
     # Extract data root_name and root name
     # Example:
     #   :@users -> [:@users, nil]

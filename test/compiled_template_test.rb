@@ -13,6 +13,17 @@ class TestCompiledTemplate < ActiveSupport::TestCase
     @template.data = :@data
   end
 
+  test "render object wth empty template" do
+    @template.source = {}
+    assert_equal({}, @template.render)
+  end
+
+  test "render collection with empty template" do
+    @context.stub(:instance_variable_get).with(:@data).and_return([@data])
+    @template.source = {}
+    assert_equal([{}], @template.render)
+  end
+
   test "render single object attributes" do
     @template.source = { :id => :id, :name => :name }
     assert_equal({ :id => 1, :name => 'foobar'}, @template.render)
@@ -38,14 +49,14 @@ class TestCompiledTemplate < ActiveSupport::TestCase
     ], @template.render)
   end
 
-  test "render object with node property" do
+  test "render node property" do
     proc = lambda { |object| object.sex }
     @template.source = { :sex => proc }
     assert_equal({ :sex => 'male' }, @template.render)
   end
 
-  test "render obejct with conditionnal node property" do
-    condition = lambda { |u| u.name.present? }
+  test "render node property with true condition" do
+    condition = lambda { |u| true }
     proc = lambda { |object| object.name }
     @template.source = { :name => [condition, proc] }
     assert_equal({ :name => 'foobar' }, @template.render)
@@ -57,12 +68,12 @@ class TestCompiledTemplate < ActiveSupport::TestCase
     @template.source = { :name => [condition, proc] }
     assert_equal({}, @template.render)
   end
-  
+
   test "partial should be evaluated at rendering time" do
     # Set assigns
     @context.stub(:instance_variable_get).with(:@_assigns).and_return({'user' => @data})
     @data.stub(:respond_to?).with(:empty?).and_return(false)
-    
+
     # Stub Library#get
     t = RablFastJson::CompiledTemplate.new
     t.source, t.context = { :name => :name }, @context
@@ -71,21 +82,21 @@ class TestCompiledTemplate < ActiveSupport::TestCase
 
     @template.data = false
     @template.source = { :user => ->(s) { partial('users/base', :object => @user) } }
-    
+
     assert_equal({ :user => { :name => 'foobar' } }, @template.render)
   end
-  
+
   test "partial with nil values should raise an error" do
     @template.data = false
     @template.source = { :user => ->(s) { partial('users/base') } }
-    
+
     assert_raises(RuntimeError) { @template.render }
   end
-  
+
   test "partial with empty values should not raise an error" do
     @template.data = false
     @template.source = { :users => ->(s) { partial('users/base', :object => []) } }
-    
+
     assert_equal({ :users => [] }, @template.render)
   end
 end
