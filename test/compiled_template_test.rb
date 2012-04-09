@@ -13,6 +13,10 @@ class TestCompiledTemplate < ActiveSupport::TestCase
     @template.data = :@data
   end
 
+  def render_json_output
+    RablFastJson::Renderers::JSON.new(@context).render(@template)
+  end
+
   test "render object wth empty template" do
     @template.source = {}
     assert_equal({}, @template.render)

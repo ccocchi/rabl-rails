@@ -12,12 +12,12 @@ module RablFastJson
 
     def get_rendered_template(source, context)
       path = context.instance_variable_get(:@virtual_path)
-      @view_renderer = context.instance_variable_get(:@view_renderer)
+      @lookup_context = context.lookup_context
 
       compiled_template = get_compiled_template(path, source)
-      compiled_template.context = context
-      body = compiled_template.render
-      ActiveSupport::JSON.encode(compiled_template.root_name ? { compiled_template.root_name => body } : body)
+
+      format = context.params[:format] || 'json'
+      Renderers.const_get(format.upcase!).new(context).render(compiled_template)
     end
 
     def get_compiled_template(path, source)
@@ -32,7 +32,7 @@ module RablFastJson
     def get(path)
       template = @cached_templates[path]
       return template unless template.nil?
-      t = @view_renderer.lookup_context.find_template(path, [], false)
+      t = @lookup_context.find_template(path, [], false)
       get_compiled_template(path, t.source)
     end
   end
