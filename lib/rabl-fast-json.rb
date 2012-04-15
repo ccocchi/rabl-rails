@@ -5,7 +5,6 @@ require 'active_support/json'
 require 'active_support/core_ext/class/attribute_accessors'
 
 require 'rabl-fast-json/version'
-require 'rabl-fast-json/helpers'
 require 'rabl-fast-json/template'
 require 'rabl-fast-json/compiler'
 

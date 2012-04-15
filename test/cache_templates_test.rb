@@ -18,10 +18,10 @@ class CacheTemplatesTest < ActiveSupport::TestCase
 
   test "cached templates should not be modifiable in place" do
     ActionController::Base.stub(:perform_caching).and_return(true)
-    t = @library.get_compiled_template('some/path', "")
-    assert_nil t.context
-    t.context = "foobar"
-    assert_nil @library.get_compiled_template('some/path', "").context
+    @library.get_compiled_template('some/path', "")
+    t = @library.get_compiled_template('some/path', "attribute :id")
+
+    assert_equal({}, t.source)
   end
 
   test "don't cache templates cache_templates is enabled but perform_caching is not active" do

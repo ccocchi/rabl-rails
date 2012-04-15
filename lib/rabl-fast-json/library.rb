@@ -4,8 +4,6 @@ module RablFastJson
   class Library
     include Singleton
 
-    attr_accessor :view_renderer
-
     def initialize
       @cached_templates = {}
     end
@@ -31,7 +29,7 @@ module RablFastJson
 
     def get(path)
       template = @cached_templates[path]
-      return template unless template.nil?
+      return template if template
       t = @lookup_context.find_template(path, [], false)
       get_compiled_template(path, t.source)
     end

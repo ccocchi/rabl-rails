@@ -74,6 +74,10 @@ module RablFastJson
         collection.map { |o| render_resource(o, source) }
       end
 
+      #
+      # Allow to use partial inside of node blocks (they are evaluated at)
+      # rendering time.
+      #
       def partial(template_path, options = {})
         raise "No object was given to partial" unless options[:object]
         object = options[:object]
