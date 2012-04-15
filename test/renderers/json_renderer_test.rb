@@ -98,7 +98,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @template.data = false
     @template.source = { :user => ->(s) { partial('users/base') } }
 
-    assert_raises(RuntimeError) { render_json_output }
+    assert_raises(RablFastJson::Renderers::PartialError) { render_json_output }
   end
 
   test "partial with empty values should not raise an error" do
