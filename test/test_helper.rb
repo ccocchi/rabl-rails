@@ -35,16 +35,11 @@ class Context
 
   def initialize
     @_assigns = {}
-    @virtual_path = '/users'
   end
 
-  def set_assign(key, value)
-    @_assigns[key] = value
-  end
-
-  def get_assign(key)
-    @_assigns[key]
+  def params
+    {}
   end
 end
-  
+
 User = Struct.new(:id, :name, :sex)
