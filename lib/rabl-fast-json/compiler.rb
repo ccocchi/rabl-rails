@@ -4,8 +4,6 @@ module RablFastJson
   # representing data structure
   #
   class Compiler
-    include Helpers
-
     def initialize
       @glue_count = 0
     end
@@ -49,7 +47,7 @@ module RablFastJson
     #
     def collection(data, options = {})
       object(data)
-      @template.root_name = options[:root] if root_given?(options)
+      @template.root_name = options[:root] if options[:root]
     end
 
     #
@@ -82,8 +80,8 @@ module RablFastJson
     #
     def child(name_or_data, options = {}, &block)
       data, name = extract_data_and_name(name_or_data)
-      name = options[:root] if root_given?(options)
-      if partial_given?(options)
+      name = options[:root] if options[:root]
+      if options[:partial]
         template = Library.instance.get(options[:partial])
         @template[name] = template.merge!(:_data => data)
       else

@@ -11,6 +11,40 @@ class CompilerTest < ActiveSupport::TestCase
     assert_instance_of RablFastJson::CompiledTemplate, @compiler.compile_source("")
   end
 
+  test "object set data for the template" do
+    t = @compiler.compile_source(%{ object :@user })
+    assert_equal :@user, t.data
+    assert_equal({}, t.source)
+  end
+
+  test "object property can define root name" do
+    t = @compiler.compile_source(%{ object :@user => :author })
+    assert_equal :@user, t.data
+    assert_equal :author, t.root_name
+    assert_equal({}, t.source)
+  end
+
+  test "collection set the data for the template" do
+    t = @compiler.compile_source(%{ collection :@user })
+    assert_equal :@user, t.data
+    assert_equal({}, t.source)
+  end
+
+  test "collection property can define root name" do
+    t = @compiler.compile_source(%{ collection :@user => :users })
+    assert_equal :@user, t.data
+    assert_equal :users, t.root_name
+    assert_equal({}, t.source)
+  end
+
+  test "collection property can define root name via options" do
+    t = @compiler.compile_source(%{ collection :@user, :root => :users })
+    assert_equal :@user, t.data
+    assert_equal :users, t.root_name
+  end
+
+  # Compilation
+
   test "simple attributes are compiled to hash" do
     t = @compiler.compile_source(%{ attributes :id, :name })
     assert_equal({ :id => :id, :name => :name}, t.source)
@@ -57,11 +91,10 @@ class CompilerTest < ActiveSupport::TestCase
   end
 
   test "child with succint partial notation" do
-    @view_renderer = mock()
-    @view_renderer.stub_chain(:lookup_context, :find_template).with('users/base', [], false).and_return(
-      mock(:source => %{ attribute :id }))
+    mock_template = RablFastJson::CompiledTemplate.new
+    mock_template.source = { :id => :id }
     RablFastJson::Library.reset_instance
-    RablFastJson::Library.instance.view_renderer = @view_renderer
+    RablFastJson::Library.instance.stub(:get).with('users/base').and_return(mock_template)
 
     t = @compiler.compile_source(%{child(:user, :partial => 'users/base') })
     assert_equal( {:user => { :_data => :user, :id => :id } }, t.source)
@@ -82,38 +115,6 @@ class CompilerTest < ActiveSupport::TestCase
       :_glue0 => { :_data => :@user, :name => :name},
       :_glue1 => { :_data => :@user, :foo => :foo}
     }, t.source)
-  end
-
-  test "object set data for the template" do
-    t = @compiler.compile_source(%{ object :@user })
-    assert_equal :@user, t.data
-    assert_equal({}, t.source)
-  end
-
-  test "object property can define root name" do
-    t = @compiler.compile_source(%{ object :@user => :author })
-    assert_equal :@user, t.data
-    assert_equal :author, t.root_name
-    assert_equal({}, t.source)
-  end
-
-  test "collection set the data for the template" do
-    t = @compiler.compile_source(%{ collection :@user })
-    assert_equal :@user, t.data
-    assert_equal({}, t.source)
-  end
-
-  test "collection property can define root name" do
-    t = @compiler.compile_source(%{ collection :@user => :users })
-    assert_equal :@user, t.data
-    assert_equal :users, t.root_name
-    assert_equal({}, t.source)
-  end
-
-  test "collection property can define root name via options" do
-    t = @compiler.compile_source(%{ collection :@user, :root => :users })
-    assert_equal :@user, t.data
-    assert_equal :users, t.root_name
   end
 
   test "extends use other template source as itself" do

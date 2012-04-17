@@ -21,15 +21,11 @@ class DeepNestingTest < ActiveSupport::TestCase
     @user.stub(:posts).and_return([@post])
     @user.stub(:respond_to?).with(:each).and_return(false)
 
-    @view_renderer = mock()
-    @view_renderer.stub_chain(:lookup_context, :find_template).with('comments/show', [], false).and_return(
-      mock(:source => %{ object :@comment\n attribute :content }))
-
     @context = Context.new
     @context.stub(:instance_variable_get).with(:@user).and_return(@user)
-    @context.stub(:instance_variable_get).with(:@view_renderer).and_return(@view_renderer)
     @context.stub(:instance_variable_get).with(:@virtual_path).and_return('users/show')
     @context.stub(:instance_variable_get).with(:@_assigns).and_return({})
+    @context.stub(:lookup_context).and_return(mock(:find_template => mock(:source => %{ object :@comment\n attribute :content })))
   end
 
   test "compile and render deep nesting template" do
