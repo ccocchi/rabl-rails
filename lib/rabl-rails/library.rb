@@ -1,6 +1,6 @@
 require 'singleton'
 
-module RablFastJson
+module RablRails
   class Library
     include Singleton
 
@@ -19,7 +19,7 @@ module RablFastJson
     end
 
     def get_compiled_template(path, source)
-      if path && RablFastJson.cache_templates?
+      if path && RablRails.cache_templates?
         @cached_templates[path] ||= Compiler.new.compile_source(source)
         @cached_templates[path].dup
       else

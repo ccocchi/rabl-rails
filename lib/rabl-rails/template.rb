@@ -1,4 +1,4 @@
-module RablFastJson
+module RablRails
   class CompiledTemplate
     attr_accessor :source, :data, :root_name
 

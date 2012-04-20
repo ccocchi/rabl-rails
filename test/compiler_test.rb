@@ -4,11 +4,11 @@ class CompilerTest < ActiveSupport::TestCase
 
   setup do
     @user = User.new
-    @compiler = RablFastJson::Compiler.new
+    @compiler = RablRails::Compiler.new
   end
 
   test "compiler return a compiled template" do
-    assert_instance_of RablFastJson::CompiledTemplate, @compiler.compile_source("")
+    assert_instance_of RablRails::CompiledTemplate, @compiler.compile_source("")
   end
 
   test "object set data for the template" do
@@ -91,10 +91,10 @@ class CompilerTest < ActiveSupport::TestCase
   end
 
   test "child with succint partial notation" do
-    mock_template = RablFastJson::CompiledTemplate.new
+    mock_template = RablRails::CompiledTemplate.new
     mock_template.source = { :id => :id }
-    RablFastJson::Library.reset_instance
-    RablFastJson::Library.instance.stub(:get).with('users/base').and_return(mock_template)
+    RablRails::Library.reset_instance
+    RablRails::Library.instance.stub(:get).with('users/base').and_return(mock_template)
 
     t = @compiler.compile_source(%{child(:user, :partial => 'users/base') })
     assert_equal( {:user => { :_data => :user, :id => :id } }, t.source)
@@ -119,8 +119,8 @@ class CompilerTest < ActiveSupport::TestCase
 
   test "extends use other template source as itself" do
     template = mock('template', :source => { :id => :id })
-    RablFastJson::Library.reset_instance
-    RablFastJson::Library.instance.stub(:get).with('users/base').and_return(template)
+    RablRails::Library.reset_instance
+    RablRails::Library.instance.stub(:get).with('users/base').and_return(template)
     t = @compiler.compile_source(%{ extends 'users/base' })
     assert_equal({ :id => :id }, t.source)
   end

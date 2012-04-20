@@ -1,17 +1,17 @@
 $:.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
-require "rabl-fast-json/version"
+require "rabl-rails/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "rabl-fast-json"
-  s.version     = RablFastJson::VERSION
+  s.name        = "rabl-rails"
+  s.version     = RablRails::VERSION
   s.authors     = ["TODO: Your name"]
   s.email       = ["TODO: Your email"]
   s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of RablFastJson."
-  s.description = "TODO: Description of RablFastJson."
+  s.summary     = "TODO: Summary of RablRails."
+  s.description = "TODO: Description of RablRails."
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]

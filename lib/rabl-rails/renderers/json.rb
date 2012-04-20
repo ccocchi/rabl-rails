@@ -1,4 +1,4 @@
-module RablFastJson
+module RablRails
   module Renderers
     class JSON < Base
       def format_output(hash)

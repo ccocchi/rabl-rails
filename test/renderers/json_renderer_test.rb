@@ -10,12 +10,12 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @context.stub(:instance_variable_get).with(:@data).and_return(@data)
     @context.stub(:instance_variable_get).with(:@_assigns).and_return({})
 
-    @template = RablFastJson::CompiledTemplate.new
+    @template = RablRails::CompiledTemplate.new
     @template.data = :@data
   end
 
   def render_json_output
-    RablFastJson::Renderers::JSON.new(@context).render(@template).to_s
+    RablRails::Renderers::JSON.new(@context).render(@template).to_s
   end
 
   test "render object wth empty template" do
@@ -83,10 +83,10 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @data.stub(:respond_to?).with(:empty?).and_return(false)
 
     # Stub Library#get
-    t = RablFastJson::CompiledTemplate.new
+    t = RablRails::CompiledTemplate.new
     t.source = { :name => :name }
-    RablFastJson::Library.reset_instance
-    RablFastJson::Library.instance.should_receive(:get).with('users/base').and_return(t)
+    RablRails::Library.reset_instance
+    RablRails::Library.instance.should_receive(:get).with('users/base').and_return(t)
 
     @template.data = false
     @template.source = { :user => ->(s) { partial('users/base', :object => @user) } }
@@ -98,7 +98,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @template.data = false
     @template.source = { :user => ->(s) { partial('users/base') } }
 
-    assert_raises(RablFastJson::Renderers::PartialError) { render_json_output }
+    assert_raises(RablRails::Renderers::PartialError) { render_json_output }
   end
 
   test "partial with empty values should not raise an error" do

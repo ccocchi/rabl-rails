@@ -21,7 +21,7 @@ class <<Singleton
   alias_method_chain :included, :reset
 end
 
-require 'rabl-fast-json'
+require 'rabl-rails'
 
 module ActiveSupport
   class TestCase

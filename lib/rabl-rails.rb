@@ -4,19 +4,19 @@ require 'active_support'
 require 'active_support/json'
 require 'active_support/core_ext/class/attribute_accessors'
 
-require 'rabl-fast-json/version'
-require 'rabl-fast-json/template'
-require 'rabl-fast-json/compiler'
+require 'rabl-rails/version'
+require 'rabl-rails/template'
+require 'rabl-rails/compiler'
 
-require 'rabl-fast-json/renderer'
+require 'rabl-rails/renderer'
 
-require 'rabl-fast-json/library'
-require 'rabl-fast-json/handler'
-require 'rabl-fast-json/railtie'
+require 'rabl-rails/library'
+require 'rabl-rails/handler'
+require 'rabl-rails/railtie'
 
 
 
-module RablFastJson
+module RablRails
   extend self
 
   mattr_accessor :cache_templates

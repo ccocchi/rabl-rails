@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rabl-fast-json (0.1.0)
+    rabl-rails (0.1.0)
       activesupport (~> 3.2.1)
 
 GEM
@@ -61,7 +61,7 @@ PLATFORMS
 
 DEPENDENCIES
   actionpack (~> 3.2.1)
-  rabl-fast-json!
+  rabl-rails!
   railties (~> 3.2.1)
   rspec-mocks
   sqlite3

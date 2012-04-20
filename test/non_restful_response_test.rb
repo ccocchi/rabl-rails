@@ -2,7 +2,7 @@ require 'test_helper'
 
 class NonRestfulResponseTest < ActiveSupport::TestCase
   setup do
-    RablFastJson::Library.reset_instance
+    RablRails::Library.reset_instance
 
     @user = User.new(1, 'foo', 'male')
     @user.stub_chain(:posts, :count).and_return(10)
@@ -30,6 +30,6 @@ class NonRestfulResponseTest < ActiveSupport::TestCase
         :id => 1,
         :name => 'foo'
       }
-    }), RablFastJson::Library.instance.get_rendered_template(source, @context))
+    }), RablRails::Library.instance.get_rendered_template(source, @context))
   end
 end

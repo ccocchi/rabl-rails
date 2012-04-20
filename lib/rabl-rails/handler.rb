@@ -1,4 +1,4 @@
-module RablFastJson
+module RablRails
   module Handlers
     class Rabl
       cattr_accessor :default_format
@@ -6,7 +6,7 @@ module RablFastJson
 
       def self.call(template)
         %{
-          RablFastJson::Library.instance.
+          RablRails::Library.instance.
             get_rendered_template(#{template.source.inspect}, self)
         }
       end

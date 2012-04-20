@@ -1,4 +1,4 @@
 # desc "Explaining what the task does"
-# task :rabl-fast-json do
+# task :rabl-rails do
 #   # Task goes here
 # end

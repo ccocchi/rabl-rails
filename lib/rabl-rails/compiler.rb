@@ -1,4 +1,4 @@
-module RablFastJson
+module RablRails
   #
   # Class that will compile RABL source code into a hash
   # representing data structure

@@ -15,7 +15,7 @@ class DeepNestingTest < ActiveSupport::TestCase
   end
 
   setup do
-    RablFastJson::Library.reset_instance
+    RablRails::Library.reset_instance
     @post = Post.new(42, 'I rock !')
     @user = User.new(1, 'foobar', 'male')
     @user.stub(:posts).and_return([@post])
@@ -50,7 +50,7 @@ class DeepNestingTest < ActiveSupport::TestCase
           { :content => 'second' }
         ]
       }]
-    }), RablFastJson::Library.instance.get_rendered_template(source, @context))
+    }), RablRails::Library.instance.get_rendered_template(source, @context))
   end
 end
 

@@ -3,9 +3,9 @@ require 'test_helper'
 class CacheTemplatesTest < ActiveSupport::TestCase
 
   setup do
-    RablFastJson::Library.reset_instance
-    @library = RablFastJson::Library.instance
-    RablFastJson.cache_templates = true
+    RablRails::Library.reset_instance
+    @library = RablRails::Library.instance
+    RablRails.cache_templates = true
   end
 
   test "cache templates if perform_caching is active and cache_templates is enabled" do
