@@ -96,7 +96,7 @@ module RablRails
       # missing method.
       #
       def method_missing(name, *args, &block)
-        @context.respond_to?(name) ? @context.send(name, *args, &block) : super
+        @_context.respond_to?(name) ? @_context.send(name, *args, &block) : super
       end
 
       #

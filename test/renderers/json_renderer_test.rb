@@ -76,6 +76,14 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @template.source = { :name => [condition, proc] }
     assert_equal %q({}), render_json_output
   end
+  
+  test "node with context method call" do
+    @context.stub(:respond_to?).with(:context_method).and_return(true)
+    @context.stub(:context_method).and_return('marty')
+    proc = lambda { |object| context_method }
+    @template.source = { :name => proc }
+    assert_equal %q({"name":"marty"}), render_json_output
+  end
 
   test "partial should be evaluated at rendering time" do
     # Set assigns
