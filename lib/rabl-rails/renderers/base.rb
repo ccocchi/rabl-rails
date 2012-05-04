@@ -81,7 +81,7 @@ module RablRails
       # rendering time.
       #
       def partial(template_path, options = {})
-        raise PartialError.new("No object was given to partial") unless options[:object]
+        raise PartialError.new("No object was given to partial #{template_path}") unless options[:object]
         object = options[:object]
 
         return [] if object.respond_to?(:empty?) && object.empty?
