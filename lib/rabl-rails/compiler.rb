@@ -103,7 +103,7 @@ module RablRails
     def node(name, options = {}, &block)
       condition = options[:if]
 
-      if condition.present?
+      if condition
         if condition.is_a?(Proc)
           @template[name] = [condition, block]
         else
