@@ -14,19 +14,25 @@ require 'rabl-rails/library'
 require 'rabl-rails/handler'
 require 'rabl-rails/railtie'
 
-
-
 module RablRails
-  extend self
+  autoload :Responder, 'rabl-rails/responder'
 
   mattr_accessor :cache_templates
   @@cache_templates = true
 
-  def configure
+  mattr_accessor :use_custom_responder
+  @@use_custom_responder = false
+  
+  mattr_accessor :responder_default_template
+  @@responder_default_template = 'show'
+
+  def self.configure
     yield self
+    
+    ActionController::Base.responder = Responder if self.use_custom_responder
   end
 
-  def cache_templates?
+  def self.cache_templates?
     ActionController::Base.perform_caching && @@cache_templates
   end
 end
