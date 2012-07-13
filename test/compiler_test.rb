@@ -149,4 +149,10 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal({ :user => { :_data => :@user, :id => :id } }, t.source)
     assert_equal false, t.data
   end
+  
+  test "name extraction from argument" do
+    assert_equal [:@users, 'users'], @compiler.send(:extract_data_and_name, :@users)
+    assert_equal [:users, :users], @compiler.send(:extract_data_and_name, :users)
+    assert_equal [:@users, :authors], @compiler.send(:extract_data_and_name, :@users => :authors)
+  end
 end

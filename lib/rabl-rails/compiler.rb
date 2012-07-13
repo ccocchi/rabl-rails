@@ -25,21 +25,10 @@ module RablRails
     #   object :@user, :root => :author
     #
     def object(data, options = {})
-      data, name = extract_data_and_name(data)
-      @template.data = data
-      @template.root_name = options[:root] || name
-    end
-
-    #
-    # Sets a collection to be used as data for the template
-    # Example:
-    #   collection :@users
-    #   collection :@users, :root => :morons
-    #
-    def collection(data, options = {})
-      object(data)
+      @template.data, @template.root_name = extract_data_and_name(data)
       @template.root_name = options[:root] if options[:root]
     end
+    alias_method :collection, :object
 
     #
     # Includes the attribute or method in the output
@@ -136,11 +125,8 @@ module RablRails
     def extract_data_and_name(name_or_data)
       case name_or_data
       when Symbol
-        if name_or_data.to_s.start_with?('@')
-          [name_or_data, nil]
-        else
-          [name_or_data, name_or_data]
-        end
+        str = name_or_data.to_s
+        str.start_with?('@') ? [name_or_data, str[1..-1]] : [name_or_data, name_or_data]
       when Hash
         name_or_data.first
       else

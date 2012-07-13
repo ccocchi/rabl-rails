@@ -21,6 +21,9 @@ module RablRails
 
   mattr_accessor :cache_templates
   @@cache_templates = true
+  
+  mattr_accessor :include_json_root
+  @@include_json_root = true
 
   def configure
     yield self
