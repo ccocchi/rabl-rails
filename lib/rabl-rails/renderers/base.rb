@@ -88,7 +88,7 @@ module RablRails
 
         return [] if object.respond_to?(:empty?) && object.empty?
 
-        template = Library.instance.get(template_path)
+        template = Library.instance.compile_template_from_path(template_path)
         object.respond_to?(:each) ? render_collection(object, template.source) : render_resource(object, template.source)
       end
 

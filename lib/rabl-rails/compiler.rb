@@ -62,7 +62,7 @@ module RablRails
       data, name = extract_data_and_name(name_or_data)
       name = options[:root] if options[:root]
       if options[:partial]
-        template = Library.instance.get(options[:partial])
+        template = Library.instance.compile_template_from_path(options[:partial])
         @template[name] = template.merge!(:_data => data)
       elsif block_given?
         @template[name] = sub_compile(data) { yield }
@@ -110,7 +110,7 @@ module RablRails
     #   extends 'users/base'
     #
     def extends(path)
-      t = Library.instance.get(path)
+      t = Library.instance.compile_template_from_path(path)
       @template.merge!(t.source)
     end
 

@@ -94,7 +94,7 @@ class CompilerTest < ActiveSupport::TestCase
     mock_template = RablRails::CompiledTemplate.new
     mock_template.source = { :id => :id }
     RablRails::Library.reset_instance
-    RablRails::Library.instance.stub(:get).with('users/base').and_return(mock_template)
+    RablRails::Library.instance.stub(:compile_template_from_path).with('users/base').and_return(mock_template)
 
     t = @compiler.compile_source(%{child(:user, :partial => 'users/base') })
     assert_equal( {:user => { :_data => :user, :id => :id } }, t.source)
@@ -120,7 +120,7 @@ class CompilerTest < ActiveSupport::TestCase
   test "extends use other template source as itself" do
     template = mock('template', :source => { :id => :id })
     RablRails::Library.reset_instance
-    RablRails::Library.instance.stub(:get).with('users/base').and_return(template)
+    RablRails::Library.instance.stub(:compile_template_from_path).with('users/base').and_return(template)
     t = @compiler.compile_source(%{ extends 'users/base' })
     assert_equal({ :id => :id }, t.source)
   end

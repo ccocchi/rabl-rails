@@ -94,7 +94,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
     t = RablRails::CompiledTemplate.new
     t.source = { :name => :name }
     RablRails::Library.reset_instance
-    RablRails::Library.instance.should_receive(:get).with('users/base').and_return(t)
+    RablRails::Library.instance.should_receive(:compile_template_from_path).with('users/base').and_return(t)
 
     @template.data = false
     @template.source = { :user => ->(s) { partial('users/base', :object => @user) } }
