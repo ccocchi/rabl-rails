@@ -33,7 +33,7 @@ class PostController < ApplicationController
 
 	def index
 	@posts = Post.order('created_at DESC')
-		respond_with(@posts)
+	respond_with(@posts)
 	end
 end
 ```
@@ -69,12 +69,12 @@ The fact of compiling the template outside of any rendering context prevent us t
 The only places where you can actually used instance variables  are into Proc (or lambda) or into custom node (because they are treated as Proc).
 
 ```ruby
-	# We reference the @posts varibles that will be used at rendering time
-	collection :@posts
+# We reference the @posts varibles that will be used at rendering time
+collection :@posts
 	
-	# Here you can use directly the instance variable because it
-	# will be evaluated when rendering the object 
-	node(:read) { |post| post.read_by?(@user) }
+# Here you can use directly the instance variable because it
+# will be evaluated when rendering the object 
+node(:read) { |post| post.read_by?(@user) }
 ```
 
 The same rule applies for view helpers such as `current_user`
@@ -98,19 +98,19 @@ collection :@users
 You can specify root label for the collection using hash or `:root` option
 
 ```ruby
-	collection :@posts, root: :articles
-	#is equivalent to
-	collection :@posts => :articles
+collection :@posts, root: :articles
+#is equivalent to
+collection :@posts => :articles
 
-	# => { "articles" : [{...}, {...}] }
+# => { "articles" : [{...}, {...}] }
 ```
 
 There are rares cases when the template doesn't map directly to any object. In these cases, you can set data to false or skip data declaration altogether.
 
 ```ruby
-	object false
-	node(:some_count) { |_| @user.posts.count }
-	child(:@user) { attribute :name }
+object false
+node(:some_count) { |_| @user.posts.count }
+child(:@user) { attribute :name }
 ```
 
 ### Attributes / Methods
@@ -118,14 +118,14 @@ There are rares cases when the template doesn't map directly to any object. In t
 Basic usage is to declared attributes to include in the response. These can be database attributes or any instance method.
 
 ```ruby
-	attributes :id, :title, :to_s
+attributes :id, :title, :to_s
 ```
 
 You can aliases these attributes in your response
 
 ```ruby
-	attributes title: :foo, to_s: :bar
-	# => { "foo" : <title value>, "bar" : <to_s value> } 
+attributes title: :foo, to_s: :bar
+# => { "foo" : <title value>, "bar" : <to_s value> } 
 ```
 
 ### Child nodes
@@ -134,18 +134,18 @@ You can include nested information from data associated with the parent model. Y
 For example if you have a `Post` model that belongs to a `User`
 
 ```ruby
-	object :@post
-	child(user: :author) do
-		attributes :name
-	end
-	# => { "post" : { "author" : { "name" : "John D." } } }
+object :@post
+child(user: :author) do
+	attributes :name
+end
+# => { "post" : { "author" : { "name" : "John D." } } }
 ```
 
 You can also use arbitrary data source with child nodes
 ```ruby
-	child(:@users) do
-		attributes :id, :name
-	end
+child(:@users) do
+	attributes :id, :name
+end
 ```
 
 ### Custom nodes
@@ -153,23 +153,23 @@ You can also use arbitrary data source with child nodes
 You can create custom node in your response, based on the result of the given block
 
 ```ruby
-	object :@user
-	node(:full_name) { |u| u.first_name + " " + u.last_name }
-	# => { "user" : { "full_name" : "John Doe" } }
+object :@user
+node(:full_name) { |u| u.first_name + " " + u.last_name }
+# => { "user" : { "full_name" : "John Doe" } }
 ```
 
 You can add the node only if a condition is true
 
 ```ruby
-	node(:email, if: -> { |u| u.valid_email? }) do |u| 
-		u.email
-	end
+node(:email, if: -> { |u| u.valid_email? }) do |u| 
+	u.email
+end
 ```
 
 Nodes are evaluated at the rendering time, so you can use any instance variables or view helpers inside them
 
 ```ruby
-	node(:url) { |post| post_url(post) }
+node(:url) { |post| post_url(post) }
 ```
 
 Custom nodes are really usefull to create flexible representations of your resources.
@@ -208,14 +208,14 @@ end
 Rabl allow you to define easily your templates, even with hierarchy of 2 or 3 levels. Let's suppose your have a `thread` model that has many `posts` and that each post has many `comments`. We can display a full thread in a few lines
 
 ```ruby
-	object :@thread
-	attribute :caption
-	child :posts do
-		attribute :title
-		child :comments do
-			extends 'comments/base'
-		end
+object :@thread
+attribute :caption
+child :posts do
+	attribute :title
+	child :comments do
+		extends 'comments/base'
 	end
+end
 ```
 
 ## Performance
