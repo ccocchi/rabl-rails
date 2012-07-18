@@ -14,22 +14,29 @@ require 'rabl-rails/library'
 require 'rabl-rails/handler'
 require 'rabl-rails/railtie'
 
-
+require 'multi_json'
 
 module RablRails
-  extend self
-
   mattr_accessor :cache_templates
   @@cache_templates = true
   
   mattr_accessor :include_json_root
   @@include_json_root = true
 
-  def configure
+  mattr_accessor :json_engine
+  @@json_engine = :yajl
+
+  def self.configure
     yield self
+    post_configure
   end
 
-  def cache_templates?
+  def self.cache_templates?
     ActionController::Base.perform_caching && @@cache_templates
+  end
+
+  private
+  def self.post_configure
+    MultiJson.engine = self.json_engine 
   end
 end

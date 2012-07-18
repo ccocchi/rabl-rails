@@ -2,5 +2,8 @@ source "http://rubygems.org"
 
 gemspec
 
-# Mocking library
-gem 'rspec-mocks'
+gem 'yajl-ruby'
+
+group :test do
+  gem 'rspec-mocks'
+end
