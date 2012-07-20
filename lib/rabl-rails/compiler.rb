@@ -26,7 +26,7 @@ module RablRails
     #
     def object(data, options = {})
       @template.data, @template.root_name = extract_data_and_name(data)
-      @template.root_name = options[:root] if options[:root]
+      @template.root_name = options[:root] if options.has_key? :root
     end
     alias_method :collection, :object
 
@@ -60,7 +60,7 @@ module RablRails
     #
     def child(name_or_data, options = {})
       data, name = extract_data_and_name(name_or_data)
-      name = options[:root] if options[:root]
+      name = options[:root] if options.has_key? :root
       if options[:partial]
         template = Library.instance.compile_template_from_path(options[:partial])
         @template[name] = template.merge!(:_data => data)

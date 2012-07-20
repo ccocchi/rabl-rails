@@ -42,6 +42,11 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal :@user, t.data
     assert_equal :users, t.root_name
   end
+  
+  test "root can be set to false via options" do
+    t = @compiler.compile_source(%( object :@user, root: false))
+    assert_equal false, t.root_name
+  end
 
   # Compilation
 
