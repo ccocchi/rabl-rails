@@ -29,12 +29,12 @@ assuming you have a `Post` model filled with blog posts, and a `PostController` 
 
 ```ruby
 class PostController < ApplicationController
-	respond_to :html, :json, :xml
+  respond_to :html, :json, :xml
 
-	def index
-	@posts = Post.order('created_at DESC')
-	respond_with(@posts)
-	end
+  def index
+	  @posts = Post.order('created_at DESC')
+	  respond_with(@posts)
+  end
 end
 ```
 
@@ -211,7 +211,7 @@ Rabl allow you to define easily your templates, even with hierarchy of 2 or 3 le
 object :@thread
 attribute :caption
 child :posts do
-	attribute :title
+  attribute :title
 	child :comments do
 		extends 'comments/base'
 	end
@@ -237,7 +237,6 @@ And caching each object in a collection can be really not effective with big col
 * [Christopher Cocchi-Perrier](http://github.com/ccocchi) - Creator of the project
 
 Want to add another format to Rabl-rails ? Checkout [JSON renderer](http://github.com/ccocchi/rabl-rails/blob/master/lib/rabl-rails/renderers/json.rb) for reference
-
 Want to make another change ? Just fork and contribute, any help is very much appreciated
 
 ## Original idea
@@ -245,3 +244,5 @@ Want to make another change ? Just fork and contribute, any help is very much ap
 * [RABL](http://github.com/nesquena/rabl) Standart RABL gem. I used it a lot before deciding I wanted faster views
 
 ## Copyright
+
+Copyright © 2011-2012 Christopher Cocchi-Perrier. See [LICENSE](http://github.com/ccocchi/rabl-rails/blob/master/LICENSE) for details.
