@@ -220,19 +220,17 @@ end
 
 ## Performance
 
-Performance tests have been made using this [application](http://github.com/ccocchi/rabl-benchmark), with Rabl 0.9 and Rabl-rails 0.2.0
+Benchmarks have been made using this [application](http://github.com/ccocchi/rabl-benchmark), with rabl 0.6.14 and rabl-rails 0.1.0
 
-Overall, Rabl-rails is **20% faster and use 15% less memory**.
+Overall, Rabl-rails is **20% faster and use 10% less memory**.
 
-You can see full tests and graphic on the benchmark application repository.
+You can see full tests on test application repository.
 
 ## Caching
 
 Caching is not a part of Rabl-rails. It is already in Rails itself, because caching all view output is the same as action caching (Rails caching is even better because it will also not run your queries).
 
 And caching each object in a collection can be really not effective with big collections or simple objects. This is also a nightmare with cache expiration.
-
-## Resources
 
 ## Authors and contributors
 
@@ -244,6 +242,6 @@ Want to make another change ? Just fork and contribute, any help is very much ap
 
 ## Original idea
 
-* [RABL](http://github.com/nesquena/rabl) Standart RABL gem is used a lot before deciding I wanted faster views
+* [RABL](http://github.com/nesquena/rabl) Standart RABL gem. I used it a lot before deciding I wanted faster views
 
 ## Copyright
