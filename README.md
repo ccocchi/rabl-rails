@@ -245,4 +245,4 @@ Want to make another change ? Just fork and contribute, any help is very much ap
 
 ## Copyright
 
-Copyright © 2011-2012 Christopher Cocchi-Perrier. See [LICENSE](http://github.com/ccocchi/rabl-rails/blob/master/LICENSE) for details.
+Copyright © 2011-2012 Christopher Cocchi-Perrier. See [MIT-LICENSE](http://github.com/ccocchi/rabl-rails/blob/master/MIT-LICENSE) for details.
