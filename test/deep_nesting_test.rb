@@ -40,7 +40,7 @@ class DeepNestingTest < ActiveSupport::TestCase
       end
     }
 
-    assert_equal(ActiveSupport::JSON.encode(:user => {
+    assert_equal(MultiJson.encode(:user => {
       :id => 1,
       :name => 'foobar',
       :posts => [{
