@@ -108,7 +108,7 @@ module RablRails
       #
       def setup_render_context
         @_context.instance_variable_get(:@_assigns).each_pair { |k, v|
-          instance_variable_set("@#{k}", v) unless k.start_with?('_') || k == @data
+          instance_variable_set("@#{k}", v) unless k.start_with?('_')
         }
       end
     end
