@@ -22,9 +22,8 @@ class DeepNestingTest < ActiveSupport::TestCase
     @user.stub(:respond_to?).with(:each).and_return(false)
 
     @context = Context.new
-    @context.stub(:instance_variable_get).with(:@user).and_return(@user)
-    @context.stub(:instance_variable_get).with(:@virtual_path).and_return('users/show')
-    @context.stub(:instance_variable_get).with(:@_assigns).and_return({})
+    @context.assigns['user'] = @user
+    @context.virtual_path = 'users/show'
     @context.stub(:lookup_context).and_return(mock(:find_template => mock(:source => %{ object :@comment\n attribute :content })))
   end
 

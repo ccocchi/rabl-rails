@@ -31,10 +31,15 @@ module ActiveSupport
 end
 
 class Context
-  attr_accessor :virtual_path
-
+  attr_writer :virtual_path
+  
   def initialize
     @_assigns = {}
+    @virtual_path = nil
+  end
+  
+  def assigns
+    @_assigns
   end
 
   def params
