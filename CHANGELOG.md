@@ -6,3 +6,4 @@
   * Remove unnused test in loop
   * Speed up rendering by not double copying variable from context
   * Rename private variable to avoid name conflict
+  * Remove sqlite3 development dependency

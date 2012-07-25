@@ -18,6 +18,5 @@ Gem::Specification.new do |s|
   s.add_dependency "activesupport", "~> 3.0"
   s.add_dependency "railties", "~> 3.0"
 
-  s.add_development_dependency "sqlite3"
   s.add_development_dependency "actionpack", "~> 3.0"
 end
