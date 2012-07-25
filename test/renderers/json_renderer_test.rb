@@ -7,8 +7,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @data.stub(:respond_to?).with(:each).and_return(false)
 
     @context = Context.new
-    @context.stub(:instance_variable_get).with(:@data).and_return(@data)
-    @context.stub(:instance_variable_get).with(:@_assigns).and_return({})
+    @context.assigns['data'] = @data
 
     @template = RablRails::CompiledTemplate.new
     @template.data = :@data
@@ -24,7 +23,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
   end
 
   test "render collection with empty template" do
-    @context.stub(:instance_variable_get).with(:@data).and_return([@data])
+    @context.assigns['data'] = [@data]
     @template.source = {}
     assert_equal %q([{}]), render_json_output
   end
@@ -52,7 +51,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
 
   test "render collection with attributes" do
     @data = [User.new(1, 'foo', 'male'), User.new(2, 'bar', 'female')]
-    @context.stub(:instance_variable_get).with(:@data).and_return(@data)
+    @context.assigns['data'] = @data
     @template.source = { :uid => :id, :name => :name, :gender => :sex }
     assert_equal %q([{"uid":1,"name":"foo","gender":"male"},{"uid":2,"name":"bar","gender":"female"}]), render_json_output
   end
@@ -87,8 +86,8 @@ class TestJsonRenderer < ActiveSupport::TestCase
 
   test "partial should be evaluated at rendering time" do
     # Set assigns
-    @context.stub(:instance_variable_get).with(:@_assigns).and_return({'user' => @data})
     @data.stub(:respond_to?).with(:empty?).and_return(false)
+    @context.assigns['user'] = @data
 
     # Stub Library#get
     t = RablRails::CompiledTemplate.new

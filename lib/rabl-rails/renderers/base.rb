@@ -18,7 +18,7 @@ module RablRails
       # method defined by the renderer.
       #
       def render(template)
-        collection_or_resource = @_context.instance_variable_get(template.data) if template.data
+        collection_or_resource = instance_variable_get(template.data) if template.data
         output_hash = collection_or_resource.respond_to?(:each) ? render_collection(collection_or_resource, template.source) :
           render_resource(collection_or_resource, template.source)
         options[:root_name] = template.root_name
@@ -54,7 +54,7 @@ module RablRails
           when Hash
             current_value = value.dup
             data_symbol = current_value.delete(:_data)
-            object = data_symbol.nil? ? data : data_symbol.to_s.start_with?('@') ? @_context.instance_variable_get(data_symbol) : data.send(data_symbol)
+            object = data_symbol.nil? ? data : data_symbol.to_s.start_with?('@') ? instance_variable_get(data_symbol) : data.send(data_symbol)
 
             if key.to_s.start_with?('_') # glue
               current_value.each_pair { |k, v|
