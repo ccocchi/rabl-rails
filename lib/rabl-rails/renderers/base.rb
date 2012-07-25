@@ -3,11 +3,11 @@ module RablRails
     class PartialError < StandardError; end
 
     class Base
-      attr_accessor :options
+      attr_accessor :_options
 
       def initialize(context) # :nodoc:
         @_context = context
-        @options = {}
+        @_options = {}
         setup_render_context
       end
 
@@ -21,7 +21,7 @@ module RablRails
         collection_or_resource = instance_variable_get(template.data) if template.data
         output_hash = collection_or_resource.respond_to?(:each) ? render_collection(collection_or_resource, template.source) :
           render_resource(collection_or_resource, template.source)
-        options[:root_name] = template.root_name
+        _options[:root_name] = template.root_name
         format_output(output_hash)
       end
 
