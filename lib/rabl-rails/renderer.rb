@@ -28,7 +28,7 @@ module RablRails
     end
 
     #
-    # Context class to emulate normal rendering view
+    # Context class to emulate normal Rails view
     # context
     #
     class Context
@@ -65,6 +65,16 @@ module RablRails
     #
     # Default render format is JSON, but can be changed via
     # an option: { format: 'xml' }
+    #
+    # If template includes uses of instance variables (usually 
+    # defined in the controller), you can passed them as locals
+    # options.
+    # For example, if you have this template:
+    #   object :@user
+    #   node(:read) { |u| u.has_read?(@post) }
+    #
+    # Your method call should look like this:
+    #   RablRails.render(user, 'users/show', locals: { post: Post.new })
     #
     def render(object, template, options = {})
       object = options[:locals].delete(:object) if !object && options[:locals]
