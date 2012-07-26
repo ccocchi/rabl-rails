@@ -19,6 +19,7 @@ module RablRails
       #
       def render(template)
         collection_or_resource = instance_variable_get(template.data) if template.data
+        collection_or_resource = @_context.target_object unless collection_or_resource || template.data == false || !@_context.respond_to?(:target_object)
         output_hash = collection_or_resource.respond_to?(:each) ? render_collection(collection_or_resource, template.source) :
           render_resource(collection_or_resource, template.source)
         options[:root_name] = template.root_name
