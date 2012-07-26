@@ -16,6 +16,8 @@ require 'rabl-rails/railtie'
 require 'multi_json'
 
 module RablRails
+  extend Renderer
+  
   mattr_accessor :cache_templates
   @@cache_templates = true
   
