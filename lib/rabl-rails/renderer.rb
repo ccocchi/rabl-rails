@@ -3,6 +3,8 @@ require 'rabl-rails/renderers/json'
 
 module RablRails
   module Renderer
+    class TemplateNotFound < StandardError; end
+    
     mattr_reader :view_path
     @@view_path = 'app/views'
 
@@ -71,6 +73,7 @@ module RablRails
       c.target_object = object
 
       t = c.lookup_context.find_template(template, [], false)
+      raise TemplateNotFound unless t
 
       Library.instance.get_rendered_template(t.source, c)
     end

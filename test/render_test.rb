@@ -31,6 +31,10 @@ class RenderTest < ActiveSupport::TestCase
 
     assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path)
   end
+  
+  test "raise error if template is not found" do
+    assert_raises(RablRails::Renderer::TemplateNotFound) { RablRails.render(@user, 'show') }
+  end
 
   test "handle path for extends" do
     File.open(@tmp_path + "extend.json.rabl", "w") do |f|
