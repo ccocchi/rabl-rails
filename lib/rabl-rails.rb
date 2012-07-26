@@ -29,15 +29,13 @@ module RablRails
 
   def self.configure
     yield self
-    post_configure
   end
 
   def self.cache_templates?
     ActionController::Base.perform_caching && @@cache_templates
   end
-
-  private
-  def self.post_configure
-    MultiJson.engine = self.json_engine 
+  
+  def self.set_conversion_engines!
+    MultiJson.use(self.json_engine) rescue nil
   end
 end
