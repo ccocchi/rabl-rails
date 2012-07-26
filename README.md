@@ -81,6 +81,20 @@ The same rule applies for view helpers such as `current_user`
 
 After the template is compiled into a hash, Rabl-rails will use a renderer to do the actual output. Actually, only JSON and XML formats are supported.
 
+## Configuration
+
+RablRails works out of the box, with default options and fastest engine available (yajl, libxml). But depending on your needs, you might want to change that or how your output looks like. You can set global configuration in your application:
+
+```ruby
+  # config/initializers/rabl_rails.rb
+  RablRails.configure do |config|
+    # These are the default
+    # config.cache_templates = true
+    # config.include_json_root = true
+    # config.json_engine = :yajl
+  end
+```
+
 ## Usage
 
 ### Data declaration
@@ -218,6 +232,22 @@ child :posts do
 end
 ```
 
+### Caching
+
+Caching is not a part of Rabl-rails. It is already in Rails itself, because caching all view output is the same as action caching (Rails caching is even better because it will also not run your queries).
+
+Moreover caching each object in a collection can be really not effective with big collections or simple objects. This is also a nightmare with cache expiration.
+
+### Render object directly
+
+There are cases when you want to render object outside Rails view context. For instance to render objects in the console or to create message queue payloads. For these situations, you can use `RablRails.render` as show below:
+
+```ruby
+Rabl.render(object, template, :view_path => 'app/views', :format => :json) #=> "{...}"
+```
+
+You can find more informations about how to use this method in the [wiki](http://github.com/ccocchi/rabl-rails/wiki/Render-object-directly) 
+
 ## Performance
 
 Benchmarks have been made using this [application](http://github.com/ccocchi/rabl-benchmark), with rabl 0.6.14 and rabl-rails 0.1.0
@@ -225,12 +255,6 @@ Benchmarks have been made using this [application](http://github.com/ccocchi/rab
 Overall, Rabl-rails is **20% faster and use 10% less memory**.
 
 You can see full tests on test application repository.
-
-## Caching
-
-Caching is not a part of Rabl-rails. It is already in Rails itself, because caching all view output is the same as action caching (Rails caching is even better because it will also not run your queries).
-
-And caching each object in a collection can be really not effective with big collections or simple objects. This is also a nightmare with cache expiration.
 
 ## Authors and contributors
 
