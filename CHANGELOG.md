@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.1.2 (unreleased)
+  * Add RablRails#render method (see README or source code)
+
 ## 0.1.1
 
   * Add CHANGELOG
