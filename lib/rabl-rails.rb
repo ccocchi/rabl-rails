@@ -24,18 +24,25 @@ module RablRails
   mattr_accessor :include_json_root
   @@include_json_root = true
 
-  mattr_accessor :json_engine
+  mattr_reader :json_engine
   @@json_engine = :yajl
 
   def self.configure
     yield self
   end
-
+  
+  def self.json_engine=(name)
+    MultiJson.engine = name
+    @@json_engine = name
+  rescue LoadError
+    Rails.logger.warn %Q(WARNING: rabl-rails could not load "#{self.json_engine}" as JSON engine, fallback to default)
+  end
+  
   def self.cache_templates?
     ActionController::Base.perform_caching && @@cache_templates
   end
   
-  def self.set_conversion_engines!
-    MultiJson.use(self.json_engine) rescue nil
+  def self.load_default_engines!
+    self.json_engine = :yajl
   end
 end
