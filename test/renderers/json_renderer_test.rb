@@ -75,7 +75,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @template.source = { :name => [condition, proc] }
     assert_equal %q({}), render_json_output
   end
-  
+
   test "node with context method call" do
     @context.stub(:respond_to?).with(:context_method).and_return(true)
     @context.stub(:context_method).and_return('marty')
@@ -114,17 +114,29 @@ class TestJsonRenderer < ActiveSupport::TestCase
 
     assert_equal %q({"users":[]}), render_json_output
   end
-  
+
+  test "condition blocks are transparent if the condition passed" do
+    c = RablRails::Condition.new(->(u) { true }, { :name => :name })
+    @template.source = { :_if0 => c }
+    assert_equal %q({"name":"foobar"}), render_json_output
+  end
+
+  test "condition blocks are ignored if the condition is not met" do
+    c = RablRails::Condition.new(->(u) { false }, { :name => :name })
+    @template.source = { :_if0 => c }
+    assert_equal %q({}), render_json_output
+  end
+
   test "render object with root node" do
     @template.root_name = :author
     @template.source = { :id => :id, :name => :name }
-    assert_equal %q({"author":{"id":1,"name":"foobar"}}), render_json_output    
+    assert_equal %q({"author":{"id":1,"name":"foobar"}}), render_json_output
   end
-  
+
   test "render object with root options set to false" do
     RablRails.include_json_root = false
     @template.root_name = :author
     @template.source = { :id => :id, :name => :name }
-    assert_equal %q({"id":1,"name":"foobar"}), render_json_output    
+    assert_equal %q({"id":1,"name":"foobar"}), render_json_output
   end
 end

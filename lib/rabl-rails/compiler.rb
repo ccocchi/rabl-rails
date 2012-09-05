@@ -5,7 +5,7 @@ module RablRails
   #
   class Compiler
     def initialize
-      @glue_count = 0
+      @i = 0
     end
 
     #
@@ -76,8 +76,8 @@ module RablRails
     #
     def glue(data)
       return unless block_given?
-      name = :"_glue#{@glue_count}"
-      @glue_count += 1
+      name = :"_glue#{@i}"
+      @i += 1
       @template[name] = sub_compile(data) { yield }
     end
 
@@ -114,6 +114,20 @@ module RablRails
       @template.merge!(t.source)
     end
 
+    #
+    # Provide a conditionnal block
+    #
+    # condition(->(u) { u.is_a?(Admin) }) do
+    #   attributes :secret
+    # end
+    #
+    def condition(proc)
+      return unless block_given?
+      name = :"_if#{@i}"
+      @i += 1
+      @template[name] = Condition.new(proc, sub_compile(nil) { yield })
+    end
+
     protected
 
     #
@@ -133,12 +147,12 @@ module RablRails
         name_or_data
       end
     end
-    
+
     def sub_compile(data)
       return {} unless block_given?
       old_template, @template = @template, {}
       yield
-      @template.merge!(:_data => data)
+      data ? @template.merge!(:_data => data) : @template
     ensure
       @template = old_template
     end

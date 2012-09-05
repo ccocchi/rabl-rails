@@ -42,7 +42,7 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal :@user, t.data
     assert_equal :users, t.root_name
   end
-  
+
   test "root can be set to false via options" do
     t = @compiler.compile_source(%( object :@user, root: false))
     assert_equal false, t.root_name
@@ -143,6 +143,12 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal 2, t.source[:foo].size
   end
 
+  test "conditionnal block compile nicely" do
+    t = @compiler.compile_source(%{ condition(->(u) {}) do attributes :secret end })
+    assert_instance_of RablRails::Condition, t.source[:_if0]
+    assert_equal({ :secret => :secret }, t.source[:_if0].source)
+  end
+
   test "compile with no object" do
     t = @compiler.compile_source(%{
      object false
@@ -154,7 +160,7 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal({ :user => { :_data => :@user, :id => :id } }, t.source)
     assert_equal false, t.data
   end
-  
+
   test "name extraction from argument" do
     assert_equal [:@users, 'users'], @compiler.send(:extract_data_and_name, :@users)
     assert_equal [:users, :users], @compiler.send(:extract_data_and_name, :users)
