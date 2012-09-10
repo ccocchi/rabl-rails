@@ -12,6 +12,8 @@ class NonRestfulResponseTest < ActiveSupport::TestCase
     @context.stub(:instance_variable_get).with(:@user).and_return(@user)
     @context.stub(:instance_variable_get).with(:@virtual_path).and_return('user/show')
     @context.stub(:instance_variable_get).with(:@_assigns).and_return({'user' => @user})
+    @context.stub(:send).with(:user).and_return(@user)
+    @context.stub(:respond_to?).with(:user).and_return(true)
     @context.stub(:lookup_context)
   end
 
@@ -22,6 +24,9 @@ class NonRestfulResponseTest < ActiveSupport::TestCase
       child(:@user => :user) do
         attributes :id, :name
       end
+      child(:user => :data) do
+        attributes :id, :name
+      end
     }
 
     assert_equal(MultiJson.encode({
@@ -29,6 +34,10 @@ class NonRestfulResponseTest < ActiveSupport::TestCase
       :user => {
         :id => 1,
         :name => 'foo'
+      },
+      :data => {
+          :id => 1,
+          :name => 'foo'
       }
     }), RablRails::Library.instance.get_rendered_template(source, @context))
   end
