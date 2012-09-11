@@ -42,6 +42,11 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal :@user, t.data
     assert_equal :users, t.root_name
   end
+  
+  test "root can be set to false via options" do
+    t = @compiler.compile_source(%( object :@user, root: false))
+    assert_equal false, t.root_name
+  end
 
   # Compilation
 
@@ -94,7 +99,7 @@ class CompilerTest < ActiveSupport::TestCase
     mock_template = RablRails::CompiledTemplate.new
     mock_template.source = { :id => :id }
     RablRails::Library.reset_instance
-    RablRails::Library.instance.stub(:get).with('users/base').and_return(mock_template)
+    RablRails::Library.instance.stub(:compile_template_from_path).with('users/base').and_return(mock_template)
 
     t = @compiler.compile_source(%{child(:user, :partial => 'users/base') })
     assert_equal( {:user => { :_data => :user, :id => :id } }, t.source)
@@ -120,7 +125,7 @@ class CompilerTest < ActiveSupport::TestCase
   test "extends use other template source as itself" do
     template = mock('template', :source => { :id => :id })
     RablRails::Library.reset_instance
-    RablRails::Library.instance.stub(:get).with('users/base').and_return(template)
+    RablRails::Library.instance.stub(:compile_template_from_path).with('users/base').and_return(template)
     t = @compiler.compile_source(%{ extends 'users/base' })
     assert_equal({ :id => :id }, t.source)
   end
@@ -148,5 +153,11 @@ class CompilerTest < ActiveSupport::TestCase
 
     assert_equal({ :user => { :_data => :@user, :id => :id } }, t.source)
     assert_equal false, t.data
+  end
+  
+  test "name extraction from argument" do
+    assert_equal [:@users, 'users'], @compiler.send(:extract_data_and_name, :@users)
+    assert_equal [:users, :users], @compiler.send(:extract_data_and_name, :users)
+    assert_equal [:@users, :authors], @compiler.send(:extract_data_and_name, :@users => :authors)
   end
 end

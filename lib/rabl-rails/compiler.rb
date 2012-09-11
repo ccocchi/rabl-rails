@@ -25,21 +25,10 @@ module RablRails
     #   object :@user, :root => :author
     #
     def object(data, options = {})
-      data, name = extract_data_and_name(data)
-      @template.data = data
-      @template.root_name = options[:root] || name
+      @template.data, @template.root_name = extract_data_and_name(data)
+      @template.root_name = options[:root] if options.has_key? :root
     end
-
-    #
-    # Sets a collection to be used as data for the template
-    # Example:
-    #   collection :@users
-    #   collection :@users, :root => :morons
-    #
-    def collection(data, options = {})
-      object(data)
-      @template.root_name = options[:root] if options[:root]
-    end
+    alias_method :collection, :object
 
     #
     # Includes the attribute or method in the output
@@ -71,9 +60,9 @@ module RablRails
     #
     def child(name_or_data, options = {})
       data, name = extract_data_and_name(name_or_data)
-      name = options[:root] if options[:root]
+      name = options[:root] if options.has_key? :root
       if options[:partial]
-        template = Library.instance.get(options[:partial])
+        template = Library.instance.compile_template_from_path(options[:partial])
         @template[name] = template.merge!(:_data => data)
       elsif block_given?
         @template[name] = sub_compile(data) { yield }
@@ -121,7 +110,7 @@ module RablRails
     #   extends 'users/base'
     #
     def extends(path)
-      t = Library.instance.get(path)
+      t = Library.instance.compile_template_from_path(path)
       @template.merge!(t.source)
     end
 
@@ -136,11 +125,8 @@ module RablRails
     def extract_data_and_name(name_or_data)
       case name_or_data
       when Symbol
-        if name_or_data.to_s.start_with?('@')
-          [name_or_data, nil]
-        else
-          [name_or_data, name_or_data]
-        end
+        str = name_or_data.to_s
+        str.start_with?('@') ? [name_or_data, str[1..-1]] : [name_or_data, name_or_data]
       when Hash
         name_or_data.first
       else

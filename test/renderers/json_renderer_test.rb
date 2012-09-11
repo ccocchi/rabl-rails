@@ -7,8 +7,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @data.stub(:respond_to?).with(:each).and_return(false)
 
     @context = Context.new
-    @context.stub(:instance_variable_get).with(:@data).and_return(@data)
-    @context.stub(:instance_variable_get).with(:@_assigns).and_return({})
+    @context.assigns['data'] = @data
 
     @template = RablRails::CompiledTemplate.new
     @template.data = :@data
@@ -24,7 +23,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
   end
 
   test "render collection with empty template" do
-    @context.stub(:instance_variable_get).with(:@data).and_return([@data])
+    @context.assigns['data'] = [@data]
     @template.source = {}
     assert_equal %q([{}]), render_json_output
   end
@@ -52,7 +51,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
 
   test "render collection with attributes" do
     @data = [User.new(1, 'foo', 'male'), User.new(2, 'bar', 'female')]
-    @context.stub(:instance_variable_get).with(:@data).and_return(@data)
+    @context.assigns['data'] = @data
     @template.source = { :uid => :id, :name => :name, :gender => :sex }
     assert_equal %q([{"uid":1,"name":"foo","gender":"male"},{"uid":2,"name":"bar","gender":"female"}]), render_json_output
   end
@@ -87,14 +86,14 @@ class TestJsonRenderer < ActiveSupport::TestCase
 
   test "partial should be evaluated at rendering time" do
     # Set assigns
-    @context.stub(:instance_variable_get).with(:@_assigns).and_return({'user' => @data})
     @data.stub(:respond_to?).with(:empty?).and_return(false)
+    @context.assigns['user'] = @data
 
     # Stub Library#get
     t = RablRails::CompiledTemplate.new
     t.source = { :name => :name }
     RablRails::Library.reset_instance
-    RablRails::Library.instance.should_receive(:get).with('users/base').and_return(t)
+    RablRails::Library.instance.should_receive(:compile_template_from_path).with('users/base').and_return(t)
 
     @template.data = false
     @template.source = { :user => ->(s) { partial('users/base', :object => @user) } }
@@ -114,5 +113,18 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @template.source = { :users => ->(s) { partial('users/base', :object => []) } }
 
     assert_equal %q({"users":[]}), render_json_output
+  end
+  
+  test "render object with root node" do
+    @template.root_name = :author
+    @template.source = { :id => :id, :name => :name }
+    assert_equal %q({"author":{"id":1,"name":"foobar"}}), render_json_output    
+  end
+  
+  test "render object with root options set to false" do
+    RablRails.include_json_root = false
+    @template.root_name = :author
+    @template.source = { :id => :id, :name => :name }
+    assert_equal %q({"id":1,"name":"foobar"}), render_json_output    
   end
 end

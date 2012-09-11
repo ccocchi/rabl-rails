@@ -12,13 +12,13 @@ module RablRails
       path = context.instance_variable_get(:@virtual_path)
       @lookup_context = context.lookup_context
 
-      compiled_template = get_compiled_template(path, source)
+      compiled_template = compile_template_from_source(source, path)
 
       format = context.params[:format] || 'json'
       Renderers.const_get(format.upcase!).new(context).render(compiled_template)
     end
 
-    def get_compiled_template(path, source)
+    def compile_template_from_source(source, path = nil)
       if path && RablRails.cache_templates?
         @cached_templates[path] ||= Compiler.new.compile_source(source)
         @cached_templates[path].dup
@@ -27,11 +27,11 @@ module RablRails
       end
     end
 
-    def get(path)
+    def compile_template_from_path(path)
       template = @cached_templates[path]
       return template if template
       t = @lookup_context.find_template(path, [], false)
-      get_compiled_template(path, t.source)
+      compile_template_from_source(t.source, path)
     end
   end
 end

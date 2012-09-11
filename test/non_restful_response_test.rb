@@ -24,7 +24,7 @@ class NonRestfulResponseTest < ActiveSupport::TestCase
       end
     }
 
-    assert_equal(ActiveSupport::JSON.encode({
+    assert_equal(MultiJson.encode({
       :post_count => 10,
       :user => {
         :id => 1,
