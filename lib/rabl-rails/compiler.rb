@@ -133,7 +133,7 @@ module RablRails
         name_or_data
       end
     end
-    
+
     def sub_compile(data)
       return {} unless block_given?
       old_template, @template = @template, {}
