@@ -58,7 +58,7 @@ module RablRails
             object = data_symbol.nil? ? data
                                       : data_symbol.to_s.start_with?('@') ? instance_variable_get(data_symbol)
                                                                           : data.respond_to?(data_symbol) ? data.send(data_symbol)
-                                                                                      : send(data_symbol)
+                                                                                                          : send(data_symbol)
 
             if key.to_s.start_with?('_') # glue
               current_value.each_pair { |k, v|
