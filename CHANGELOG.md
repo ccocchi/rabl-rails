@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## 0.1.3 (unreleased)
+  * Render correcly when variables are not passed via the assigns ivar but as helper methods
+    (decent_exposure, focused_controller)
   * Add custom Responder
 
 ## 0.1.2
