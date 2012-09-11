@@ -5,6 +5,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
   setup do
     @data = User.new(1, 'foobar', 'male')
     @data.stub(:respond_to?).with(:each).and_return(false)
+    @data.stub(:respond_to?).with(:address).and_return(true)
 
     @context = Context.new
     @context.assigns['data'] = @data
