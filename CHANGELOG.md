@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.1.3 (unreleased)
+  * Add custom Responder
+
 ## 0.1.2
   * Add RablRails#render method (see README or source code)
   * Fix fail when JSON engine is not found. Now fallback to MultiJson.default_adapter
