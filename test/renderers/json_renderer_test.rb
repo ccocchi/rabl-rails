@@ -4,7 +4,6 @@ class TestJsonRenderer < ActiveSupport::TestCase
 
   setup do
     @data = User.new(1, 'foobar', 'male')
-    @data.stub(:respond_to?).with(:each).and_return(false)
 
     @context = Context.new
     @context.assigns['data'] = @data
@@ -28,6 +27,13 @@ class TestJsonRenderer < ActiveSupport::TestCase
     assert_equal %q([{}]), render_json_output
   end
 
+  test "render object with local methods (used by decent_exposure)" do
+    @context.stub(:user).and_return(@data)
+    @template.data = :user
+    @template.source = { :id => :id }
+    assert_equal %q({"id":1}), render_json_output
+  end
+
   test "render single object attributes" do
     @template.source = { :id => :id, :name => :name }
     assert_equal %q({"id":1,"name":"foobar"}), render_json_output
@@ -41,6 +47,12 @@ class TestJsonRenderer < ActiveSupport::TestCase
 
   test "render child with arbitrary data source" do
     @template.source = { :author => { :_data => :@data, :name => :name } }
+    assert_equal %q({"author":{"name":"foobar"}}), render_json_output
+  end
+
+  test "render child with local methods (used by decent_exposure)" do
+    @context.stub(:user).and_return(@data)
+    @template.source = { :author => { :_data => :user, :name => :name } }
     assert_equal %q({"author":{"name":"foobar"}}), render_json_output
   end
 
@@ -75,7 +87,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @template.source = { :name => [condition, proc] }
     assert_equal %q({}), render_json_output
   end
-  
+
   test "node with context method call" do
     @context.stub(:respond_to?).with(:context_method).and_return(true)
     @context.stub(:context_method).and_return('marty')
@@ -86,7 +98,6 @@ class TestJsonRenderer < ActiveSupport::TestCase
 
   test "partial should be evaluated at rendering time" do
     # Set assigns
-    @data.stub(:respond_to?).with(:empty?).and_return(false)
     @context.assigns['user'] = @data
 
     # Stub Library#get
@@ -114,17 +125,17 @@ class TestJsonRenderer < ActiveSupport::TestCase
 
     assert_equal %q({"users":[]}), render_json_output
   end
-  
+
   test "render object with root node" do
     @template.root_name = :author
     @template.source = { :id => :id, :name => :name }
-    assert_equal %q({"author":{"id":1,"name":"foobar"}}), render_json_output    
+    assert_equal %q({"author":{"id":1,"name":"foobar"}}), render_json_output
   end
-  
+
   test "render object with root options set to false" do
     RablRails.include_json_root = false
     @template.root_name = :author
     @template.source = { :id => :id, :name => :name }
-    assert_equal %q({"id":1,"name":"foobar"}), render_json_output    
+    assert_equal %q({"id":1,"name":"foobar"}), render_json_output
   end
 end

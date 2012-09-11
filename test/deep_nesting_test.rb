@@ -19,7 +19,6 @@ class DeepNestingTest < ActiveSupport::TestCase
     @post = Post.new(42, 'I rock !')
     @user = User.new(1, 'foobar', 'male')
     @user.stub(:posts).and_return([@post])
-    @user.stub(:respond_to?).with(:each).and_return(false)
 
     @context = Context.new
     @context.assigns['user'] = @user
