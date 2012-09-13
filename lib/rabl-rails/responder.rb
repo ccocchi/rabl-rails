@@ -6,14 +6,14 @@ module RablRails
   #
   class Responder < ActionController::Responder
     protected
-    
+
     def api_behavior(error)
       rabl_options = options.merge(template: RablRails.responder_default_template)
-      
+
       if get?
         controller.default_render rabl_options
       elsif post?
-        controller.default_render rabl_options.merge!(status: :created, location: api_location)
+        controller.default_render rabl_options.merge!(status: :created, location: api_location, locals: { resource: resource })
       else
         head :no_content
       end
