@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.2.0 (unrelased)
+  * Default template to render with responder can be set per controller
+  * Reponder works out of the box with devise
+  * object or collection can be skipped if use with `respond_to` blocks
+
 ## 0.1.3
   * Render correcly when variables are not passed via the assigns ivar but as helper methods
     (decent_exposure, focused_controller)
