@@ -26,9 +26,6 @@ module RablRails
   mattr_accessor :include_json_root
   @@include_json_root = true
 
-  mattr_reader :json_engine
-  @@json_engine = :yajl
-
   mattr_accessor :use_custom_responder
   @@use_custom_responder = false
 
@@ -43,9 +40,12 @@ module RablRails
 
   def self.json_engine=(name)
     MultiJson.engine = name
-    @@json_engine = name
   rescue LoadError
-    Rails.logger.warn %Q(WARNING: rabl-rails could not load "#{self.json_engine}" as JSON engine, fallback to default)
+    Rails.logger.warn %Q(WARNING: rabl-rails could not load "#{name}" as JSON engine, fallback to default)
+  end
+
+  def self.json_engine
+    MultiJson.engine
   end
 
   def self.cache_templates?
@@ -53,6 +53,6 @@ module RablRails
   end
 
   def self.load_default_engines!
-    self.json_engine = :yajl
+    self.json_engine = MultiJson.default_engine
   end
 end
