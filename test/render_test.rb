@@ -6,7 +6,6 @@ class RenderTest < ActiveSupport::TestCase
 
   setup do
     @user = User.new(1, 'Marty')
-    @user.stub(:respond_to?).with(:each).and_return(false)
     @tmp_path = Pathname.new(Dir.mktmpdir)
   end
 
@@ -29,16 +28,16 @@ class RenderTest < ActiveSupport::TestCase
     end
     assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path)
   end
-  
+
   test "raise error if template is not found" do
     assert_raises(RablRails::Renderer::TemplateNotFound) { RablRails.render(@user, 'not_found') }
   end
-  
+
   test "instance variables can be passed via options[:locals]" do
     File.open(@tmp_path + "instance.json.rabl", "w") do |f|
       f.puts %q{
         object false
-        node(:username) { |_| @user.name } 
+        node(:username) { |_| @user.name }
       }
     end
     assert_equal %q({"username":"Marty"}), RablRails.render(nil, 'instance', view_path: @tmp_path, locals: { user: @user })
@@ -51,7 +50,7 @@ class RenderTest < ActiveSupport::TestCase
         extends 'base'
       }
     end
-    
+
     File.open(@tmp_path + "base.json.rabl", "w") do |f|
       f.puts %q{
         attribute :name, as: :extended_name

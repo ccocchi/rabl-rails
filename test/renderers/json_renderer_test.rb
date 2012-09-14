@@ -89,6 +89,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
   end
 
   test "node with context method call" do
+    @context.stub(:respond_to?).with(:@data).and_return(false)
     @context.stub(:respond_to?).with(:context_method).and_return(true)
     @context.stub(:context_method).and_return('marty')
     proc = lambda { |object| context_method }

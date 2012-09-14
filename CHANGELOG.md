@@ -1,7 +1,10 @@
 # CHANGELOG
 
-## 0.1.4 (Unreleased)
+## 0.2.0 (unrelased)
   * Use MultiJson's preferred JSON engine as default
+  * Default template to render with responder can be set per controller
+  * Reponder works out of the box with devise
+  * object or collection can be skipped if use with `respond_to` blocks
 
 ## 0.1.3
   * Render correctly when variables are not passed via the assigns ivar but as helper methods

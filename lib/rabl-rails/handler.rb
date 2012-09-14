@@ -7,7 +7,7 @@ module RablRails
       def self.call(template)
         %{
           RablRails::Library.instance.
-            get_rendered_template(#{template.source.inspect}, self)
+            get_rendered_template(#{template.source.inspect}, self, local_assigns)
         }
       end
     end

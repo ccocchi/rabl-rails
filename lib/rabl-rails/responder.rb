@@ -5,15 +5,20 @@ module RablRails
   # representation but instead use a rabl template
   #
   class Responder < ActionController::Responder
+    def initialize(controller, resources, options = {})
+      super
+      @api_template = @controller.respond_to?(:responder_default_template, true) ? controller.send(:responder_default_template) : nil
+    end
+
     protected
-    
+
     def api_behavior(error)
-      rabl_options = options.merge(template: RablRails.responder_default_template)
-      
+      rabl_options = options.merge(template: @api_template || RablRails.responder_default_template)
+
       if get?
         controller.default_render rabl_options
       elsif post?
-        controller.default_render rabl_options.merge!(status: :created, location: api_location)
+        controller.default_render rabl_options.merge!(status: :created, location: api_location, locals: { resource: resource })
       else
         head :no_content
       end
