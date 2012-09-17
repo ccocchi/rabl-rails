@@ -71,9 +71,9 @@ The only places where you can actually used instance variables  are into Proc (o
 ```ruby
 # We reference the @posts varibles that will be used at rendering time
 collection :@posts
-	
+
 # Here you can use directly the instance variable because it
-# will be evaluated when rendering the object 
+# will be evaluated when rendering the object
 node(:read) { |post| post.read_by?(@user) }
 ```
 
@@ -92,6 +92,7 @@ RablRails works out of the box, with default options and fastest engine availabl
     # config.cache_templates = true
     # config.include_json_root = true
     # config.json_engine = :yajl
+    # config.xml_engine = 'LibXML'
   end
 ```
 
@@ -139,7 +140,7 @@ You can aliases these attributes in your response
 
 ```ruby
 attributes title: :foo, to_s: :bar
-# => { "foo" : <title value>, "bar" : <to_s value> } 
+# => { "foo" : <title value>, "bar" : <to_s value> }
 ```
 
 ### Child nodes
@@ -175,7 +176,7 @@ node(:full_name) { |u| u.first_name + " " + u.last_name }
 You can add the node only if a condition is true
 
 ```ruby
-node(:email, if: -> { |u| u.valid_email? }) do |u| 
+node(:email, if: -> { |u| u.valid_email? }) do |u|
 	u.email
 end
 ```
@@ -246,7 +247,7 @@ There are cases when you want to render object outside Rails view context. For i
 Rabl.render(object, template, :view_path => 'app/views', :format => :json) #=> "{...}"
 ```
 
-You can find more informations about how to use this method in the [wiki](http://github.com/ccocchi/rabl-rails/wiki/Render-object-directly) 
+You can find more informations about how to use this method in the [wiki](http://github.com/ccocchi/rabl-rails/wiki/Render-object-directly)
 
 ## Performance
 
