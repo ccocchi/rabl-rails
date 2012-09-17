@@ -23,6 +23,8 @@ end
 
 require 'rabl-rails'
 
+ActiveSupport::XmlMini.backend = 'LibXML'
+
 module ActiveSupport
   class TestCase
     RSpec::Mocks::setup(self)
