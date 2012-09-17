@@ -8,14 +8,14 @@ module RablRails
       @cached_templates = {}
     end
 
-    def get_rendered_template(source, context)
+    def get_rendered_template(source, context, locals = nil)
       path = context.instance_variable_get(:@virtual_path)
       @lookup_context = context.lookup_context
 
       compiled_template = compile_template_from_source(source, path)
 
       format = context.params[:format] || 'json'
-      Renderers.const_get(format.upcase!).new(context).render(compiled_template)
+      Renderers.const_get(format.upcase!).new(context, locals).render(compiled_template)
     end
 
     def compile_template_from_source(source, path = nil)

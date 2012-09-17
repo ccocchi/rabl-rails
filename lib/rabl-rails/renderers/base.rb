@@ -3,11 +3,12 @@ module RablRails
     class PartialError < StandardError; end
 
     class Base
-      attr_accessor :options
+      attr_accessor :_options
 
-      def initialize(context) # :nodoc:
+      def initialize(context, locals = nil) # :nodoc:
         @_context = context
-        @options = {}
+        @_options = {}
+        @_resource = locals[:resource] if locals
         setup_render_context
       end
 
@@ -18,10 +19,17 @@ module RablRails
       # method defined by the renderer.
       #
       def render(template)
-        collection_or_resource = @_context.instance_variable_get(template.data) if template.data
+        collection_or_resource = if template.data
+          if @_context.respond_to?(template.data)
+            @_context.send(template.data)
+          else
+            instance_variable_get(template.data)
+          end
+        end
+        collection_or_resource ||= @_resource
         output_hash = collection_or_resource.respond_to?(:each) ? render_collection(collection_or_resource, template.source) :
           render_resource(collection_or_resource, template.source)
-        options[:root_name] = template.root_name
+        _options[:root_name] = template.root_name
         format_output(output_hash)
       end
 
@@ -54,7 +62,13 @@ module RablRails
           when Hash
             current_value = value.dup
             data_symbol = current_value.delete(:_data)
-            object = data_symbol.nil? ? data : data_symbol.to_s.start_with?('@') ? @_context.instance_variable_get(data_symbol) : data.send(data_symbol)
+            object = if data_symbol == nil
+              data
+            else
+              data_symbol.to_s.start_with?('@') ? instance_variable_get(data_symbol)
+                                                : data.respond_to?(data_symbol) ? data.send(data_symbol)
+                                                                                : send(data_symbol)
+            end
 
             if key.to_s.start_with?('_') # glue
               current_value.each_pair { |k, v|
@@ -108,7 +122,7 @@ module RablRails
       #
       def setup_render_context
         @_context.instance_variable_get(:@_assigns).each_pair { |k, v|
-          instance_variable_set("@#{k}", v) unless k.start_with?('_') || k == @data
+          instance_variable_set("@#{k}", v) unless k.start_with?('_')
         }
       end
     end

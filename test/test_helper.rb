@@ -31,10 +31,15 @@ module ActiveSupport
 end
 
 class Context
-  attr_accessor :virtual_path
+  attr_writer :virtual_path
 
   def initialize
     @_assigns = {}
+    @virtual_path = nil
+  end
+
+  def assigns
+    @_assigns
   end
 
   def params
@@ -42,4 +47,11 @@ class Context
   end
 end
 
-User = Struct.new(:id, :name, :sex)
+class User
+  attr_accessor :id, :name, :sex
+  def initialize(id=nil, name=nil, sex=nil)
+    @id = id
+    @name = name
+    @sex = sex
+  end
+end
