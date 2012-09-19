@@ -1,7 +1,8 @@
 # CHANGELOG
 
 ## 0.2.0 (unrelased)
-  * Use MultiJson's preferred JSON engine as default
+  * Add XML renderer
+  * Use MultiJson's preferred JSON engine as default (shmeltex)
   * Default template to render with responder can be set per controller
   * Reponder works out of the box with devise
   * object or collection can be skipped if use with `respond_to` blocks
