@@ -13,12 +13,12 @@ module RablRails
     protected
 
     def api_behavior(error)
-      rabl_options = options.merge(template: @api_template || RablRails.responder_default_template)
+      rabl_options = options.merge(template: @api_template || RablRails.responder_default_template, locals: { resource: resource })
 
       if get?
         controller.default_render rabl_options
       elsif post?
-        controller.default_render rabl_options.merge!(status: :created, location: api_location, locals: { resource: resource })
+        controller.default_render rabl_options.merge!(status: :created, location: api_location)
       else
         head :no_content
       end
