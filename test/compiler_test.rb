@@ -24,6 +24,16 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal({}, t.source)
   end
 
+  test "root can be defined via keyword" do
+    t = @compiler.compile_source(%{ root :author })
+    assert_equal :author, t.root_name
+  end
+
+  test "root keyword override object root" do
+    t = @compiler.compile_source(%{ object :@user ; root :author })
+    assert_equal :author, t.root_name
+  end
+
   test "collection set the data for the template" do
     t = @compiler.compile_source(%{ collection :@user })
     assert_equal :@user, t.data
@@ -42,7 +52,7 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal :@user, t.data
     assert_equal :users, t.root_name
   end
-  
+
   test "root can be set to false via options" do
     t = @compiler.compile_source(%( object :@user, root: false))
     assert_equal false, t.root_name
@@ -154,7 +164,7 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal({ :user => { :_data => :@user, :id => :id } }, t.source)
     assert_equal false, t.data
   end
-  
+
   test "name extraction from argument" do
     assert_equal [:@users, 'users'], @compiler.send(:extract_data_and_name, :@users)
     assert_equal [:users, :users], @compiler.send(:extract_data_and_name, :users)

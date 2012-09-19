@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 0.2.0 (unrelased)
+  * Add `root` in DSL to set root without changing the source
   * Add XML renderer
   * Use MultiJson's preferred JSON engine as default (shmeltex)
   * Default template to render with responder can be set per controller

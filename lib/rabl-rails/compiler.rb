@@ -30,6 +30,10 @@ module RablRails
     end
     alias_method :collection, :object
 
+    def root(name)
+      @template.root_name = name
+    end
+
     #
     # Includes the attribute or method in the output
     # Example:
