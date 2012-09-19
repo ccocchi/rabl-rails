@@ -48,11 +48,22 @@ module RablRails
     MultiJson.engine
   end
 
+  def self.xml_engine=(name)
+    ActiveSupport::XmlMini.backend = name
+  rescue LoadError, NameError
+    Rails.logger.warn %Q(WARNING: rabl-rails could not load "#{name}" as XML engine, fallback to default)
+  end
+
+  def self.xml_engine
+    ActiveSupport::XmlMini.backend
+  end
+
   def self.cache_templates?
     ActionController::Base.perform_caching && @@cache_templates
   end
 
   def self.load_default_engines!
     self.json_engine = MultiJson.default_engine
+    self.xml_engine  = 'LibXML'
   end
 end
