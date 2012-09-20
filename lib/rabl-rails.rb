@@ -64,6 +64,6 @@ module RablRails
 
   def self.load_default_engines!
     self.json_engine = MultiJson.default_engine
-    self.xml_engine  = 'LibXML'
+    self.xml_engine  = 'LibXML' if defined?(LibXML)
   end
 end
