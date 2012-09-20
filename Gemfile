@@ -2,7 +2,7 @@ source "http://rubygems.org"
 
 gemspec
 
-gem 'yajl-ruby'
+gem 'oj'
 gem 'libxml-ruby'
 
 group :test do

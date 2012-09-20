@@ -83,7 +83,7 @@ After the template is compiled into a hash, Rabl-rails will use a renderer to do
 
 ## Configuration
 
-RablRails works out of the box, with default options and fastest engine available (yajl, libxml). But depending on your needs, you might want to change that or how your output looks like. You can set global configuration in your application:
+RablRails works out of the box, with default options and fastest engine available (oj, libxml). But depending on your needs, you might want to change that or how your output looks like. You can set global configuration in your application:
 
 ```ruby
   # config/initializers/rabl_rails.rb
@@ -91,7 +91,7 @@ RablRails works out of the box, with default options and fastest engine availabl
     # These are the default
     # config.cache_templates = true
     # config.include_json_root = true
-    # config.json_engine = :yajl
+    # config.json_engine = :oj
     # config.xml_engine = 'LibXML'
   end
 ```
