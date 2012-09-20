@@ -7,13 +7,19 @@ module RablRails
   class Responder < ActionController::Responder
     def initialize(controller, resources, options = {})
       super
-      @api_template = @controller.respond_to?(:responder_default_template, true) ? controller.send(:responder_default_template) : nil
+      if options[:locals]
+        options[:locals][:resource] = resource
+      else
+        options[:locals] = { resource: resource }
+      end
     end
 
     protected
 
     def api_behavior(error)
-      rabl_options = options.merge(template: @api_template || RablRails.responder_default_template, locals: { resource: resource })
+      template = @controller.respond_to?(:responder_default_template, true) ? controller.send(:responder_default_template)
+                                                                            : RablRails.responder_default_template
+      rabl_options = options.merge(template: template)
 
       if get?
         controller.default_render rabl_options
