@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.1
+  * Avoid useless render on POST request with custom responder
+  * Custom responder now fallback to Rails default in case the template is not found
+
 ## 0.2.0
   * Add `root` in DSL to set root without changing the data source
   * Add XML renderer
