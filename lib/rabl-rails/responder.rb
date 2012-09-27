@@ -14,20 +14,33 @@ module RablRails
       end
     end
 
+    def to_format
+      if get? || response_overridden?
+        default_render
+      elsif has_errors?
+        display_errors
+      else
+        api_behavior(nil)
+      end
+    end
+
     protected
 
     def api_behavior(error)
-      template = @controller.respond_to?(:responder_default_template, true) ? controller.send(:responder_default_template)
-                                                                            : RablRails.responder_default_template
-      rabl_options = options.merge(template: template)
+      if post?
+        template = if @controller.respond_to?(:responder_default_template, true)
+          controller.send(:responder_default_template)
+        else
+          RablRails.responder_default_template
+        end
+        options[:template] ||= "#{@controller.controller_name}/#{template}"
 
-      if get?
-        controller.default_render rabl_options
-      elsif post?
-        controller.default_render rabl_options.merge!(status: :created, location: api_location)
+        controller.default_render options.merge(status: :created, location: api_location)
       else
         head :no_content
       end
+    rescue ActionView::MissingTemplate => e
+      super(e)
     end
   end
 end
