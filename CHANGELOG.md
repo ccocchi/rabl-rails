@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 0.2.1
+  * Avoid useless render on POST request with custom responder
+  * Custom responder now fallback to Rails default in case the template is not found
+
+## 0.2.0
+  * Add `root` in DSL to set root without changing the data source
+  * Add XML renderer
+  * Use MultiJson's preferred JSON engine as default (shmeltex)
+  * Default template to render with responder can be set per controller
+  * Reponder works out of the box with devise
+  * object or collection can be skipped if use with `respond_to` blocks
+
+## 0.1.3
+  * Render correctly when variables are not passed via the assigns ivar but as helper methods
+    (decent_exposure, focused_controller)
+  * Add custom Responder
+
 ## 0.1.2
   * Add RablRails#render method (see README or source code)
   * Fix fail when JSON engine is not found. Now fallback to MultiJson.default_adapter
@@ -8,7 +25,7 @@
 ## 0.1.1
 
   * Add CHANGELOG
-  * Remove unnused test in loop
+  * Remove unused test in loop
   * Speed up rendering by not double copying variable from context
   * Rename private variable to avoid name conflict
   * Remove sqlite3 development dependency

@@ -2,9 +2,9 @@
 
 RABL (Ruby API Builder Language) is a ruby templating system for rendering resources in different format (JSON, XML, BSON, ...). You can find documentation [here](http://github.com/nesquena/rabl).
 
-RABL-rails only target Rails 3+ application because Rails 2 applications are becoming less and less present and will be obsolete with Rails 4. So let's look to the future !
+rabl-rails is **faster** and uses **less memory** than the standard rabl gem while letting you access the same features. There are some slight changes to do on your templates to get this gem to work but it should't take you more than 5 minutes.
 
-So now you ask why used `rabl-rails` if `rabl` already exists and supports Rails. Rabl-rails is **faster** and uses **less memory** than standard rabl gem while letting you access same features. Of course, there are some slight changes to do on your templates to get this gem to work but it should't take you more than 5 minutes.
+rabl-rails only target **Rails 3+ application**.
 
 ## Installation
 
@@ -24,7 +24,7 @@ And that's it !
 
 ## Overview
 
-Once you have installed RABL, you can directly used RABL templates to render your resources without changing anything to you controller. As example,
+Once you have installed rabl-rails, you can directly used RABL-rails templates to render your resources without changing anything to you controller. As example,
 assuming you have a `Post` model filled with blog posts, and a `PostController` that look like this :
 
 ```ruby
@@ -32,7 +32,7 @@ class PostController < ApplicationController
   respond_to :html, :json, :xml
 
   def index
-	  @posts = Post.order('created_at DESC')
+	 @posts = Post.order('created_at DESC')
 	  respond_with(@posts)
   end
 end
@@ -71,9 +71,9 @@ The only places where you can actually used instance variables  are into Proc (o
 ```ruby
 # We reference the @posts varibles that will be used at rendering time
 collection :@posts
-	
+
 # Here you can use directly the instance variable because it
-# will be evaluated when rendering the object 
+# will be evaluated when rendering the object
 node(:read) { |post| post.read_by?(@user) }
 ```
 
@@ -83,16 +83,19 @@ After the template is compiled into a hash, Rabl-rails will use a renderer to do
 
 ## Configuration
 
-RablRails works out of the box, with default options and fastest engine available (yajl, libxml). But depending on your needs, you might want to change that or how your output looks like. You can set global configuration in your application:
+RablRails works out of the box, with default options and fastest engine available (oj, libxml). But depending on your needs, you might want to change that or how your output looks like. You can set global configuration in your application:
 
 ```ruby
-  # config/initializers/rabl_rails.rb
-  RablRails.configure do |config|
-    # These are the default
-    # config.cache_templates = true
-    # config.include_json_root = true
-    # config.json_engine = :yajl
-  end
+# config/initializers/rabl_rails.rb
+RablRails.configure do |config|
+  # These are the default
+  # config.cache_templates = true
+  # config.include_json_root = true
+  # config.json_engine = :oj
+  # config.xml_engine = 'LibXML'
+  # config.use_custom_responder = false
+	# config.default_responder_template = 'show'
+end
 ```
 
 ## Usage
@@ -127,6 +130,24 @@ node(:some_count) { |_| @user.posts.count }
 child(:@user) { attribute :name }
 ```
 
+If you use gem like *decent_exposure* or *focused_controller*, you can use your variable directly without the leading `@`
+
+```ruby
+object :object_exposed
+```
+
+You can even skip data declaration at all. If you used `respond_with`, rabl-rails will render the data you passed to it.
+As there is no name, you can set a root via the `root` macro. This allow you to use your template without caring about variables passed to it.
+
+```ruby
+# in controller
+respond_with(@post)
+
+# in rabl-rails template
+root :article
+attribute :title
+```
+
 ### Attributes / Methods
 
 Basic usage is to declared attributes to include in the response. These can be database attributes or any instance method.
@@ -139,7 +160,7 @@ You can aliases these attributes in your response
 
 ```ruby
 attributes title: :foo, to_s: :bar
-# => { "foo" : <title value>, "bar" : <to_s value> } 
+# => { "foo" : <title value>, "bar" : <to_s value> }
 ```
 
 ### Child nodes
@@ -175,7 +196,7 @@ node(:full_name) { |u| u.first_name + " " + u.last_name }
 You can add the node only if a condition is true
 
 ```ruby
-node(:email, if: -> { |u| u.valid_email? }) do |u| 
+node(:email, if: -> { |u| u.valid_email? }) do |u|
 	u.email
 end
 ```
@@ -232,12 +253,6 @@ child :posts do
 end
 ```
 
-### Caching
-
-Caching is not a part of Rabl-rails. It is already in Rails itself, because caching all view output is the same as action caching (Rails caching is even better because it will also not run your queries).
-
-Moreover caching each object in a collection can be really not effective with big collections or simple objects. This is also a nightmare with cache expiration.
-
 ### Render object directly
 
 There are cases when you want to render object outside Rails view context. For instance to render objects in the console or to create message queue payloads. For these situations, you can use `RablRails.render` as show below:
@@ -246,13 +261,17 @@ There are cases when you want to render object outside Rails view context. For i
 Rabl.render(object, template, :view_path => 'app/views', :format => :json) #=> "{...}"
 ```
 
-You can find more informations about how to use this method in the [wiki](http://github.com/ccocchi/rabl-rails/wiki/Render-object-directly) 
+You can find more informations about how to use this method in the [wiki](http://github.com/ccocchi/rabl-rails/wiki/Render-object-directly)
+
+### Other features
+
+You can find more informations about other features (caching, custom_responder, ...) in the [WIKI](https://github.com/ccocchi/rabl-rails/wiki)
 
 ## Performance
 
 Benchmarks have been made using this [application](http://github.com/ccocchi/rabl-benchmark), with rabl 0.6.14 and rabl-rails 0.1.0
 
-Overall, Rabl-rails is **20% faster and use 10% less memory**.
+Overall, Rabl-rails is **20% faster and use 10% less memory**, even **twice faster** when rendering collections with extends.
 
 You can see full tests on test application repository.
 

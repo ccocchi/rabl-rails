@@ -24,6 +24,16 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal({}, t.source)
   end
 
+  test "root can be defined via keyword" do
+    t = @compiler.compile_source(%{ root :author })
+    assert_equal :author, t.root_name
+  end
+
+  test "root keyword override object root" do
+    t = @compiler.compile_source(%{ object :@user ; root :author })
+    assert_equal :author, t.root_name
+  end
+
   test "collection set the data for the template" do
     t = @compiler.compile_source(%{ collection :@user })
     assert_equal :@user, t.data

@@ -5,9 +5,10 @@ module RablRails
     class Base
       attr_accessor :_options
 
-      def initialize(context) # :nodoc:
+      def initialize(context, locals = nil) # :nodoc:
         @_context = context
         @_options = {}
+        @_resource = locals[:resource] if locals
         setup_render_context
       end
 
@@ -18,8 +19,14 @@ module RablRails
       # method defined by the renderer.
       #
       def render(template)
-        collection_or_resource = instance_variable_get(template.data) if template.data
-        collection_or_resource = @_context.target_object unless collection_or_resource || template.data == false || !@_context.respond_to?(:target_object)
+        collection_or_resource = if template.data
+          if @_context.respond_to?(template.data)
+            @_context.send(template.data)
+          else
+            instance_variable_get(template.data)
+          end
+        end
+        collection_or_resource ||= @_resource
         output_hash = collection_or_resource.respond_to?(:each) ? render_collection(collection_or_resource, template.source) :
           render_resource(collection_or_resource, template.source)
         _options[:root_name] = template.root_name
@@ -55,7 +62,13 @@ module RablRails
           when Hash
             current_value = value.dup
             data_symbol = current_value.delete(:_data)
-            object = data_symbol.nil? ? data : data_symbol.to_s.start_with?('@') ? instance_variable_get(data_symbol) : data.send(data_symbol)
+            object = if data_symbol == nil
+              data
+            else
+              data_symbol.to_s.start_with?('@') ? instance_variable_get(data_symbol)
+                                                : data.respond_to?(data_symbol) ? data.send(data_symbol)
+                                                                                : send(data_symbol)
+            end
 
             if key.to_s.start_with?('_') # glue
               current_value.each_pair { |k, v|

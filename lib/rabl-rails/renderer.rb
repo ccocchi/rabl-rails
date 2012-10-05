@@ -1,10 +1,11 @@
 require 'rabl-rails/renderers/base'
 require 'rabl-rails/renderers/json'
+require 'rabl-rails/renderers/xml'
 
 module RablRails
   module Renderer
     class TemplateNotFound < StandardError; end
-    
+
     mattr_reader :view_path
     @@view_path = 'app/views'
 
@@ -33,7 +34,6 @@ module RablRails
     #
     class Context
       attr_reader :format
-      attr_accessor :target_object
 
       def initialize(path, options)
         @virtual_path = path
@@ -56,17 +56,17 @@ module RablRails
         @lookup_context ||= LookupContext.new(@options[:view_path], format)
       end
     end
-  
+
     #
     # Renders object with the given rabl template.
-    # 
+    #
     # Object can also be passed as an option :
     # { locals: { object: obj_to_render } }
     #
     # Default render format is JSON, but can be changed via
     # an option: { format: 'xml' }
     #
-    # If template includes uses of instance variables (usually 
+    # If template includes uses of instance variables (usually
     # defined in the controller), you can passed them as locals
     # options.
     # For example, if you have this template:
@@ -80,12 +80,11 @@ module RablRails
       object = options[:locals].delete(:object) if !object && options[:locals]
 
       c = Context.new(template, options)
-      c.target_object = object
-
       t = c.lookup_context.find_template(template, [], false)
+
       raise TemplateNotFound unless t
 
-      Library.instance.get_rendered_template(t.source, c)
+      Library.instance.get_rendered_template(t.source, c, resource: object)
     end
   end
 end
