@@ -153,6 +153,12 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal 2, t.source[:foo].size
   end
 
+  test "conditionnal block compile nicely" do
+    t = @compiler.compile_source(%{ condition(->(u) {}) do attributes :secret end })
+    assert_instance_of RablRails::Condition, t.source[:_if0]
+    assert_equal({ :secret => :secret }, t.source[:_if0].source)
+  end
+
   test "compile with no object" do
     t = @compiler.compile_source(%{
      object false
