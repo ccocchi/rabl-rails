@@ -127,6 +127,18 @@ class TestJsonRenderer < ActiveSupport::TestCase
     assert_equal %q({"users":[]}), render_json_output
   end
 
+  test "condition blocks are transparent if the condition passed" do
+    c = RablRails::Condition.new(->(u) { true }, { :name => :name })
+    @template.source = { :_if0 => c }
+    assert_equal %q({"name":"foobar"}), render_json_output
+  end
+
+  test "condition blocks are ignored if the condition is not met" do
+    c = RablRails::Condition.new(->(u) { false }, { :name => :name })
+    @template.source = { :_if0 => c }
+    assert_equal %q({}), render_json_output
+  end
+
   test "render object with root node" do
     @template.root_name = :author
     @template.source = { :id => :id, :name => :name }
