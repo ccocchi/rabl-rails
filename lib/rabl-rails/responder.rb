@@ -28,12 +28,13 @@ module RablRails
 
     def api_behavior(error)
       if post?
-        template = if @controller.respond_to?(:responder_default_template, true)
+        template = if controller.respond_to?(:responder_default_template, true)
           controller.send(:responder_default_template)
         else
           RablRails.responder_default_template
         end
-        options[:template] ||= "#{@controller.controller_name}/#{template}"
+        options[:prefixes] = controller._prefixes
+        options[:template] ||= template
 
         controller.default_render options.merge(status: :created, location: api_location)
       else
