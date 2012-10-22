@@ -21,7 +21,6 @@ module RablRails
     def compile_template_from_source(source, path = nil)
       if path && RablRails.cache_templates?
         @cached_templates[path] ||= Compiler.new.compile_source(source)
-        @cached_templates[path].dup
       else
         Compiler.new.compile_source(source)
       end

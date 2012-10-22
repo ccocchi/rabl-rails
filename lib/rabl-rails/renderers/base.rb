@@ -48,8 +48,7 @@ module RablRails
       # template source passed.
       #
       def render_resource(data, source)
-        source.inject({}) { |output, current|
-          key, value = current
+        source.inject({}) { |output, (key, value)|
 
           out = case value
           when Symbol
