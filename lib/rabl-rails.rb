@@ -33,6 +33,12 @@ module RablRails
   mattr_accessor :responder_default_template
   @@responder_default_template = 'show'
 
+  mattr_accessor :plist_engine
+  @@plist_engine = nil
+
+  mattr_accessor :include_plist_root
+  @@include_plist_root = nil
+
   def self.configure
     yield self
 
@@ -64,7 +70,8 @@ module RablRails
   end
 
   def self.load_default_engines!
-    self.json_engine = MultiJson.default_engine
-    self.xml_engine  = 'LibXML' if defined?(LibXML)
+    self.json_engine  = MultiJson.default_engine
+    self.xml_engine   = 'LibXML' if defined?(LibXML)
+    self.plist_engine = Plist::Emit if defined?(Plist)
   end
 end
