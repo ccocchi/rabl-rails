@@ -36,7 +36,7 @@ module RablRails
         options[:prefixes] = controller._prefixes
         options[:template] ||= template
 
-        controller.default_render options.merge(status: :created, location: api_location)
+        controller.default_render options.merge(status: :created)
       else
         head :no_content
       end
