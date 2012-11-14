@@ -1,4 +1,7 @@
 require 'test_helper'
+require 'plist'
+
+RablRails.plist_engine = Plist::Emit
 
 class TestPlistRenderer < ActiveSupport::TestCase
   INDENT_REGEXP = /\n(\s)*/
@@ -18,6 +21,10 @@ class TestPlistRenderer < ActiveSupport::TestCase
   def render_plist_output
     output = RablRails::Renderers::PLIST.new(@context).render(@template).to_s.gsub!(INDENT_REGEXP, '')
     output.sub!(HEADER_REGEXP, '').gsub!(%r(</?plist[^>]*>), '').sub!(%r(<dict/?>), '').sub(%r(</dict>), '')
+  end
+
+  test "plist engine should responsd to #dump" do
+    assert_raises(RuntimeError) { RablRails.plist_engine = Object.new }
   end
 
   test "render object wth empty template" do

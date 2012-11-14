@@ -22,9 +22,6 @@ class <<Singleton
 end
 
 require 'rabl-rails'
-require 'plist'
-
-RablRails.plist_engine = Plist::Emit
 
 module ActiveSupport
   class TestCase

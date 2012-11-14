@@ -33,7 +33,7 @@ module RablRails
   mattr_accessor :responder_default_template
   @@responder_default_template = 'show'
 
-  mattr_accessor :plist_engine
+  mattr_reader :plist_engine
   @@plist_engine = nil
 
   mattr_accessor :include_plist_root
@@ -63,6 +63,11 @@ module RablRails
 
   def self.xml_engine
     ActiveSupport::XmlMini.backend
+  end
+
+  def self.plist_engine=(name)
+    raise "Your plist engine does not respond to #dump" unless name.respond_to?(:dump)
+    @@plist_engine = name
   end
 
   def self.cache_templates?
