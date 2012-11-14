@@ -2,10 +2,10 @@ source "http://rubygems.org"
 
 gemspec
 
-gem 'oj'
 gem 'plist'
 
 platforms :ruby do
+  gem 'oj'
   gem 'libxml-ruby'
 end
 
