@@ -1,7 +1,4 @@
 require 'test_helper'
-require 'plist'
-
-RablRails.plist_engine = Plist::Emit
 
 class TestPlistRenderer < ActiveSupport::TestCase
   INDENT_REGEXP = /\n(\s)*/

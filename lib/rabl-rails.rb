@@ -76,7 +76,12 @@ module RablRails
 
   def self.load_default_engines!
     self.json_engine  = MultiJson.default_engine
-    self.xml_engine   = 'LibXML' if defined?(LibXML)
     self.plist_engine = Plist::Emit if defined?(Plist)
+
+    if defined?(LibXML)
+      self.xml_engine = 'LibXML'
+    elsif defined?(Nokogiri)
+      self.xml_engine = 'Nokogiri'
+    end
   end
 end

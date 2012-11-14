@@ -22,6 +22,15 @@ class <<Singleton
 end
 
 require 'rabl-rails'
+require 'plist'
+
+if RUBY_ENGINE == 'ruby'
+  require 'libxml'
+else
+  require 'nokogiri'
+end
+
+RablRails.load_default_engines!
 
 module ActiveSupport
   class TestCase
