@@ -1,6 +1,7 @@
 require 'rabl-rails/renderers/base'
 require 'rabl-rails/renderers/json'
 require 'rabl-rails/renderers/xml'
+require 'rabl-rails/renderers/plist'
 
 module RablRails
   module Renderer

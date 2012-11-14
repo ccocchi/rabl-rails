@@ -33,6 +33,12 @@ module RablRails
   mattr_accessor :responder_default_template
   @@responder_default_template = 'show'
 
+  mattr_reader :plist_engine
+  @@plist_engine = nil
+
+  mattr_accessor :include_plist_root
+  @@include_plist_root = nil
+
   def self.configure
     yield self
 
@@ -59,12 +65,18 @@ module RablRails
     ActiveSupport::XmlMini.backend
   end
 
+  def self.plist_engine=(name)
+    raise "Your plist engine does not respond to #dump" unless name.respond_to?(:dump)
+    @@plist_engine = name
+  end
+
   def self.cache_templates?
     ActionController::Base.perform_caching && @@cache_templates
   end
 
   def self.load_default_engines!
-    self.json_engine = MultiJson.default_engine
-    self.xml_engine  = 'LibXML' if defined?(LibXML)
+    self.json_engine  = MultiJson.default_engine
+    self.xml_engine   = 'LibXML' if defined?(LibXML)
+    self.plist_engine = Plist::Emit if defined?(Plist)
   end
 end

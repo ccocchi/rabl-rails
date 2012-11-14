@@ -1,6 +1,11 @@
 require 'test_helper'
+require 'plist'
 
-class TestJsonRenderer < ActiveSupport::TestCase
+RablRails.plist_engine = Plist::Emit
+
+class TestPlistRenderer < ActiveSupport::TestCase
+  INDENT_REGEXP = /\n(\s)*/
+  HEADER_REGEXP = /<\?[^>]+><![^>]+>/
 
   setup do
     @data = User.new(1, 'foobar', 'male')
@@ -10,82 +15,76 @@ class TestJsonRenderer < ActiveSupport::TestCase
 
     @template = RablRails::CompiledTemplate.new
     @template.data = :@data
+    @template.root_name = :user
   end
 
-  def render_json_output
-    RablRails::Renderers::JSON.new(@context).render(@template).to_s
+  def render_plist_output
+    output = RablRails::Renderers::PLIST.new(@context).render(@template).to_s.gsub!(INDENT_REGEXP, '')
+    output.sub!(HEADER_REGEXP, '').gsub!(%r(</?plist[^>]*>), '').sub!(%r(<dict/?>), '').sub(%r(</dict>), '')
+  end
+
+  test "plist engine should responsd to #dump" do
+    assert_raises(RuntimeError) { RablRails.plist_engine = Object.new }
   end
 
   test "render object wth empty template" do
     @template.source = {}
-    assert_equal %q({}), render_json_output
+    assert_equal %q(), render_plist_output
   end
 
   test "render collection with empty template" do
     @context.assigns['data'] = [@data]
     @template.source = {}
-    assert_equal %q([{}]), render_json_output
+    assert_equal %q(<array></array>), render_plist_output
   end
 
   test "render object with local methods (used by decent_exposure)" do
     @context.stub(:user).and_return(@data)
     @template.data = :user
     @template.source = { :id => :id }
-    assert_equal %q({"id":1}), render_json_output
+    assert_equal %q(<key>id</key><integer>1</integer>), render_plist_output
   end
 
   test "render single object attributes" do
     @template.source = { :id => :id, :name => :name }
-    assert_equal %q({"id":1,"name":"foobar"}), render_json_output
+    assert_equal %q(<key>id</key><integer>1</integer><key>name</key><string>foobar</string>), render_plist_output
   end
 
   test "render child with object association" do
     @data.stub(:address).and_return(mock(:city => 'Paris'))
     @template.source = { :address => { :_data => :address, :city => :city } }
-    assert_equal %q({"address":{"city":"Paris"}}), render_json_output
+    assert_equal %q(<key>address</key><dict><key>city</key><string>Paris</string></dict>), render_plist_output
   end
 
   test "render child with arbitrary data source" do
     @template.source = { :author => { :_data => :@data, :name => :name } }
-    assert_equal %q({"author":{"name":"foobar"}}), render_json_output
+    assert_equal %q(<key>author</key><dict><key>name</key><string>foobar</string></dict>), render_plist_output
   end
 
   test "render child with local methods (used by decent_exposure)" do
     @context.stub(:user).and_return(@data)
     @template.source = { :author => { :_data => :user, :name => :name } }
-    assert_equal %q({"author":{"name":"foobar"}}), render_json_output
-  end
-
-  test "render glued attributes from single object" do
-    @template.source = { :_glue0 => { :_data => :@data, :name => :name } }
-    assert_equal %q({"name":"foobar"}), render_json_output
-  end
-
-  test "render collection with attributes" do
-    @data = [User.new(1, 'foo', 'male'), User.new(2, 'bar', 'female')]
-    @context.assigns['data'] = @data
-    @template.source = { :uid => :id, :name => :name, :gender => :sex }
-    assert_equal %q([{"uid":1,"name":"foo","gender":"male"},{"uid":2,"name":"bar","gender":"female"}]), render_json_output
+    assert_equal %q(<key>author</key><dict><key>name</key><string>foobar</string></dict>), render_plist_output
   end
 
   test "render node property" do
     proc = lambda { |object| object.name }
     @template.source = { :name => proc }
-    assert_equal %q({"name":"foobar"}), render_json_output
+    assert_equal %q(<key>name</key><string>foobar</string>), render_plist_output
   end
 
   test "render node property with true condition" do
     condition = lambda { |u| true }
     proc = lambda { |object| object.name }
     @template.source = { :name => [condition, proc] }
-    assert_equal %q({"name":"foobar"}), render_json_output
+    assert_equal %q(<key>name</key><string>foobar</string>), render_plist_output
   end
 
   test "render node property with false condition" do
     condition = lambda { |u| false }
     proc = lambda { |object| object.name }
     @template.source = { :name => [condition, proc] }
-    assert_equal %q({}), render_json_output
+    assert_equal %q(), render_plist_output
   end
 
   test "node with context method call" do
@@ -94,62 +93,46 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @context.stub(:context_method).and_return('marty')
     proc = lambda { |object| context_method }
     @template.source = { :name => proc }
-    assert_equal %q({"name":"marty"}), render_json_output
-  end
-
-  test "partial should be evaluated at rendering time" do
-    # Set assigns
-    @context.assigns['user'] = @data
-
-    # Stub Library#get
-    t = RablRails::CompiledTemplate.new
-    t.source = { :name => :name }
-    RablRails::Library.reset_instance
-    RablRails::Library.instance.should_receive(:compile_template_from_path).with('users/base').and_return(t)
-
-    @template.data = false
-    @template.source = { :user => ->(s) { partial('users/base', :object => @user) } }
-
-    assert_equal %q({"user":{"name":"foobar"}}), render_json_output
+    assert_equal %q(<key>name</key><string>marty</string>), render_plist_output
   end
 
   test "partial with no values should raise an error" do
     @template.data = false
     @template.source = { :user => ->(s) { partial('users/base') } }
 
-    assert_raises(RablRails::Renderers::PartialError) { render_json_output }
+    assert_raises(RablRails::Renderers::PartialError) { render_plist_output }
   end
 
   test "partial with empty values should not raise an error" do
     @template.data = false
     @template.source = { :users => ->(s) { partial('users/base', :object => []) } }
 
-    assert_equal %q({"users":[]}), render_json_output
+    assert_equal %q(<key>users</key><array/>), render_plist_output
   end
 
   test "condition blocks are transparent if the condition passed" do
     c = RablRails::Condition.new(->(u) { true }, { :name => :name })
     @template.source = { :_if0 => c }
-    assert_equal %q({"name":"foobar"}), render_json_output
+    assert_equal %q(<key>name</key><string>foobar</string>), render_plist_output
   end
 
   test "condition blocks are ignored if the condition is not met" do
     c = RablRails::Condition.new(->(u) { false }, { :name => :name })
     @template.source = { :_if0 => c }
-    assert_equal %q({}), render_json_output
+    assert_equal %q(), render_plist_output
   end
 
   test "render object with root node" do
-    RablRails.include_json_root = true
+    RablRails.include_plist_root = true
     @template.root_name = :author
     @template.source = { :id => :id, :name => :name }
-    assert_equal %q({"author":{"id":1,"name":"foobar"}}), render_json_output
+    assert_equal %q(<key>author</key><dict><key>id</key><integer>1</integer><key>name</key><string>foobar</string></dict>), render_plist_output
   end
 
   test "render object with root options set to false" do
-    RablRails.include_json_root = false
+    RablRails.include_plist_root = false
     @template.root_name = :author
     @template.source = { :id => :id, :name => :name }
-    assert_equal %q({"id":1,"name":"foobar"}), render_json_output
+    assert_equal %q(<key>id</key><integer>1</integer><key>name</key><string>foobar</string>), render_plist_output
   end
 end
