@@ -140,6 +140,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
   end
 
   test "render object with root node" do
+    RablRails.include_json_root = true
     @template.root_name = :author
     @template.source = { :id => :id, :name => :name }
     assert_equal %q({"author":{"id":1,"name":"foobar"}}), render_json_output
