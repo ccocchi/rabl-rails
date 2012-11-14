@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.3.0
+  * Add test for keywords used as variable names
+  * Add PList renderer
+  * Remove location header from post responses in responder
+  * Fix bug with incomplete template prefixing
+
 ## 0.2.2
   * Add condition blocks
 
