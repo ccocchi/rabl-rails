@@ -24,10 +24,10 @@ end
 require 'rabl-rails'
 require 'plist'
 
-if RUBY_ENGINE == 'ruby'
-  require 'libxml'
-else
+if RUBY_ENGINE == 'jruby'
   require 'nokogiri'
+else
+  require 'libxml'
 end
 
 RablRails.load_default_engines!
