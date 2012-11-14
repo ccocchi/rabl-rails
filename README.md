@@ -4,7 +4,7 @@ RABL (Ruby API Builder Language) is a ruby templating system for rendering resou
 
 rabl-rails is **faster** and uses **less memory** than the standard rabl gem while letting you access the same features. There are some slight changes to do on your templates to get this gem to work but it should't take you more than 5 minutes.
 
-rabl-rails only target **Rails 3+ application**.
+rabl-rails only targets **Rails 3+ application** and is compatible with mri 1.9.3, jRuby and rubinius.
 
 ## Installation
 
@@ -269,9 +269,9 @@ You can find more informations about other features (caching, custom_responder, 
 
 ## Performance
 
-Benchmarks have been made using this [application](http://github.com/ccocchi/rabl-benchmark), with rabl 0.6.14 and rabl-rails 0.1.0
+Benchmarks have been made using this [application](http://github.com/ccocchi/rabl-benchmark), with rabl 0.7.6 and rabl-rails 0.3.0
 
-Overall, Rabl-rails is **20% faster and use 10% less memory**, even **twice faster** when rendering collections with extends.
+Overall, Rabl-rails is **20% faster and use 10% less memory**, even **twice faster** when using extends.
 
 You can see full tests on test application repository.
 
@@ -280,11 +280,12 @@ You can see full tests on test application repository.
 * [Christopher Cocchi-Perrier](http://github.com/ccocchi) - Creator of the project
 
 Want to add another format to Rabl-rails ? Checkout [JSON renderer](http://github.com/ccocchi/rabl-rails/blob/master/lib/rabl-rails/renderers/json.rb) for reference
-Want to make another change ? Just fork and contribute, any help is very much appreciated
+Want to make another change ? Just fork and contribute, any help is very much appreciated. If you found a bug, you can report it via the Github issues.
 
 ## Original idea
 
-* [RABL](http://github.com/nesquena/rabl) Standart RABL gem. I used it a lot before deciding I wanted faster views
+* [RABL](http://github.com/nesquena/rabl) Standart RABL gem. I used it a lot but I needed to improve my API response time, and
+  since most of the time was spent in view rendering, I decided to implement a faster rabl gem.
 
 ## Copyright
 
