@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 0.3.0
+  * Travis integration
   * Add test for keywords used as variable names
   * Add PList renderer
   * Remove location header from post responses in responder
