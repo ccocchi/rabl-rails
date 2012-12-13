@@ -83,7 +83,13 @@ module RablRails
             end
             next output
           end
-          output[key] = out
+  
+          if key.nil?
+            output.merge!(out)
+          else
+            output[key] = out
+          end
+          
           output
         }
       end
