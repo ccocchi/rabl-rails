@@ -70,9 +70,7 @@ module RablRails
             end
 
             if key.to_s.start_with?('_') # glue
-              current_value.each_pair { |k, v|
-                output[k] = object.send(v)
-              }
+              output.merge!(render_resource(object, current_value))
               next output
             else # child
               object.respond_to?(:each) ? render_collection(object, current_value) : render_resource(object, current_value)
