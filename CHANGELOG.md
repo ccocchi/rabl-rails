@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.3.1
+  * Add full template stack support to `glue` (fnordfish)
+
 ## 0.3.0
   * Travis integration
   * Add test for keywords used as variable names

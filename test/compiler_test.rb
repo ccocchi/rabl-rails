@@ -132,6 +132,18 @@ class CompilerTest < ActiveSupport::TestCase
     }, t.source)
   end
 
+  test "glue accepts all dsl in its body" do
+    t = @compiler.compile_source(%{
+      glue :@user do node(:foo) { |u| u.name } end
+    })
+
+    assert_not_nil(t.source[:_glue0])
+    s = t.source[:_glue0]
+
+    assert_equal(:@user, s[:_data])
+    assert_instance_of(Proc, s[:foo])
+  end
+
   test "extends use other template source as itself" do
     template = mock('template', :source => { :id => :id })
     RablRails::Library.reset_instance

@@ -61,6 +61,11 @@ class TestJsonRenderer < ActiveSupport::TestCase
     assert_equal %q({"name":"foobar"}), render_json_output
   end
 
+  test "render glued node" do
+    @template.source = { :_glue0 => { :_data => :@data, :foo => lambda { |u| u.name } } }
+    assert_equal(%q({"foo":"foobar"}), render_json_output)
+  end
+
   test "render collection with attributes" do
     @data = [User.new(1, 'foo', 'male'), User.new(2, 'bar', 'female')]
     @context.assigns['data'] = @data
