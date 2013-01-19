@@ -2,6 +2,7 @@
 
 ## 0.3.1
   * Add full template stack support to `glue` (fnordfish)
+  * Allow format to be a symbol (lloydmeta)
 
 ## 0.3.0
   * Travis integration
