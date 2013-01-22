@@ -113,6 +113,7 @@ class CompilerTest < ActiveSupport::TestCase
 
     t = @compiler.compile_source(%{child(:user, :partial => 'users/base') })
     assert_equal( {:user => { :_data => :user, :id => :id } }, t.source)
+    assert_equal( {:id => :id}, mock_template.source)
   end
 
   test "glue is compiled as a child but with anonymous name" do

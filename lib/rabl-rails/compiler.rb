@@ -67,7 +67,7 @@ module RablRails
       name = options[:root] if options.has_key? :root
       if options[:partial]
         template = Library.instance.compile_template_from_path(options[:partial])
-        @template[name] = template.merge!(:_data => data)
+        @template[name] = template.merge(:_data => data)
       elsif block_given?
         @template[name] = sub_compile(data) { yield }
       end
