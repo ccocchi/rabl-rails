@@ -2,7 +2,7 @@ module RablRails
   class CompiledTemplate
     attr_accessor :source, :data, :root_name
 
-    delegate :[], :[]=, :merge!, :to => :source
+    delegate :[], :[]=, :merge!, :merge, :to => :source
 
     def initialize
       @source = {}
