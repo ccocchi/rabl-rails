@@ -112,7 +112,7 @@ class CompilerTest < ActiveSupport::TestCase
     RablRails::Library.instance.stub(:compile_template_from_path).with('users/base').and_return(mock_template)
 
     t = @compiler.compile_source(%{child(:user, :partial => 'users/base') })
-    assert_equal( {:user => { :_data => :user, :id => :id } }, t.source)
+    assert_equal({:user => { :_data => :user, :id => :id } }, t.source)
   end
 
   test "glue is compiled as a child but with anonymous name" do

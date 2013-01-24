@@ -21,14 +21,15 @@ module RablRails
     def compile_template_from_source(source, path = nil)
       if path && RablRails.cache_templates?
         @cached_templates[path] ||= Compiler.new.compile_source(source)
+        @cached_templates[path].dup
       else
         Compiler.new.compile_source(source)
       end
     end
 
     def compile_template_from_path(path)
-      template = @cached_templates[path]
-      return template if template
+      return @cached_templates[path].dup if @cached_templates.has_key?(path)
+      
       t = @lookup_context.find_template(path, [], false)
       compile_template_from_source(t.source, path)
     end

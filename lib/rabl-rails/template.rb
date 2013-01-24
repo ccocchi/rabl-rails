@@ -7,5 +7,10 @@ module RablRails
     def initialize
       @source = {}
     end
+
+    def initialize_dup(other)
+      super
+      self.source = other.source.dup
+    end
   end
 end

@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 0.3.1
+  * Avoid to unexpectedly change cached templates (johnbintz)
   * Add full template stack support to `glue` (fnordfish)
   * Allow format to be a symbol (lloydmeta)
 
