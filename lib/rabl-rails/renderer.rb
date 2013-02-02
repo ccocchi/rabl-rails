@@ -54,7 +54,7 @@ module RablRails
       end
 
       def lookup_context
-        @lookup_context ||= LookupContext.new(@options[:view_path], format)
+        @lookup_context ||= LookupContext.new(@options[:view_path], format.downcase)
       end
     end
 
