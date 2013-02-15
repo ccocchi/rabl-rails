@@ -165,6 +165,14 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal 2, t.source[:foo].size
   end
 
+  test "node can take no arguments and behave like a merge" do
+    
+  end
+
+  test "merge compile like a node but with a reserved keyword as name" do
+    
+  end
+
   test "conditionnal block compile nicely" do
     t = @compiler.compile_source(%{ condition(->(u) {}) do attributes :secret end })
     assert_instance_of RablRails::Condition, t.source[:_if0]

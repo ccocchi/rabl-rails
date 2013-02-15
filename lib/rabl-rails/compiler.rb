@@ -5,7 +5,7 @@ module RablRails
   #
   class Compiler
     def initialize
-      @i = 0
+      @i = -1
     end
 
     #
@@ -80,9 +80,7 @@ module RablRails
     #
     def glue(data)
       return unless block_given?
-      name = :"_glue#{@i}"
-      @i += 1
-      @template[name] = sub_compile(data) { yield }
+      @template[sequence('glue')] = sub_compile(data) { yield }
     end
 
     #
@@ -93,7 +91,8 @@ module RablRails
     #   node(:name) { |user| user.first_name + user.last_name }
     #   node(:role, if: ->(u) { !u.admin? }) { |u| u.role }
     #
-    def node(name, options = {}, &block)
+    def node(name = nil, options = {}, &block)
+      name ||= sequence('merge')
       condition = options[:if]
 
       if condition
@@ -107,6 +106,17 @@ module RablRails
       end
     end
     alias_method :code, :node
+
+    #
+    # Merge arbitrary data into json output. Given block should
+    # return a hash.
+    # Example:
+    #   merge { |item| partial("specific/#{item.to_s}", object: item) }
+    #
+    def merge(&block)
+      return unless block_given?
+      node(sequence('merge'), &block)
+    end
 
     #
     # Extends an existing rabl template
@@ -127,12 +137,18 @@ module RablRails
     #
     def condition(proc)
       return unless block_given?
-      name = :"_if#{@i}"
-      @i += 1
-      @template[name] = Condition.new(proc, sub_compile(nil) { yield })
+      @template[sequence('if')] = Condition.new(proc, sub_compile(nil) { yield })
     end
 
     protected
+
+    #
+    # Return unique symbol starting with given name
+    #
+    def sequence(name)
+      @i += 1
+      :"_#{name}#{@i}"
+    end
 
     #
     # Extract data root_name and root name
