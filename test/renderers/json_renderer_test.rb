@@ -157,4 +157,14 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @template.source = { :id => :id, :name => :name }
     assert_equal %q({"id":1,"name":"foobar"}), render_json_output
   end
+
+  test "merge should raise is return from given block is not a hash" do
+    @template.source = { :_merge0 => ->(c) { 'foo' } }
+    assert_raises(RablRails::Renderers::PartialError) { render_json_output }
+  end
+
+  test "result from merge is merge inside current response" do
+    @template.source = { :_merge0 => ->(c) { { :custom => c.name } } }
+    assert_equal %q({"custom":"foobar"}), render_json_output
+  end
 end

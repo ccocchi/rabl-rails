@@ -56,7 +56,8 @@ module RablRails
           when Proc
             result = instance_exec data, &value
 
-            if key.to_s.start_with?('_') #merge
+            if key.to_s.start_with?('_') # merge
+              raise PartialError, '`merge` block should return a hash' unless result.is_a?(Hash) 
               output.merge!(result)
               next output
             else # node
