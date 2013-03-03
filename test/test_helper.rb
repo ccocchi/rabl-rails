@@ -26,7 +26,7 @@ require 'plist'
 
 if RUBY_ENGINE == 'jruby'
   require 'nokogiri'
-else
+elsif RUBY_ENGINE == 'ruby'
   require 'libxml'
 end
 
