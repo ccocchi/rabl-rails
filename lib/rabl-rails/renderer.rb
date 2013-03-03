@@ -15,7 +15,7 @@ module RablRails
 
       def initialize(view_path, format)
         @view_path = view_path || RablRails::Renderer.view_path
-        @format = format
+        @format = format.to_s.downcase
       end
 
       #
