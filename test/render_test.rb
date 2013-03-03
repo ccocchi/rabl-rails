@@ -60,4 +60,16 @@ class RenderTest < ActiveSupport::TestCase
     assert_equal %q({"user":{"extended_name":"Marty"}}), RablRails.render(@user, 'extend', view_path: @tmp_path)
   end
 
+  test "format can be passed as symbol or string" do
+    File.open(@tmp_path + "show.json.rabl", "w") do |f|
+      f.puts %q{
+        object :@user
+        attributes :id, :name
+      }
+    end
+    assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path, format: :json)
+    assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path, format: 'json')
+    assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path, format: 'JSON')
+  end
+
 end
