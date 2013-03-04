@@ -165,7 +165,8 @@ attributes title: :foo, to_s: :bar
 
 ### Child nodes
 
-You can include nested information from data associated with the parent model. You can also alias these associations.
+You can include informations from data associated with the parent model or arbitrary data. These informations can be grouped under a node or directly merged into current node.
+
 For example if you have a `Post` model that belongs to a `User`
 
 ```ruby
@@ -183,9 +184,19 @@ child(:@users) do
 end
 ```
 
+If you want to merge directly into current node, you can use the `glue` keywork
+
+```ruby
+attribute :title
+glue(:user) do
+  attributes :name => :author_name
+end
+# => { "post" : { "title" : "Foo", "author_name" : "John D." } }
+```
+
 ### Custom nodes
 
-You can create custom node in your response, based on the result of the given block
+You can create custom node in your response, based on the result of the given block.
 
 ```ruby
 object :@user
@@ -193,7 +204,7 @@ node(:full_name) { |u| u.first_name + " " + u.last_name }
 # => { "user" : { "full_name" : "John Doe" } }
 ```
 
-You can add the node only if a condition is true
+You can add condition on your custom nodes (if the condition is evaluated to false, the node will not be included).
 
 ```ruby
 node(:email, if: -> { |u| u.valid_email? }) do |u|
@@ -205,6 +216,14 @@ Nodes are evaluated at the rendering time, so you can use any instance variables
 
 ```ruby
 node(:url) { |post| post_url(post) }
+```
+
+If you want to include directly the result into the current node, use the `merge` keyword (result returned from the block should be a hash)
+
+```ruby
+object :@user
+merge { |u| { name: u.first_name + " " + u.last_name } }
+# => { "user" : { "name" : "John Doe" } }
 ```
 
 Custom nodes are really usefull to create flexible representations of your resources.

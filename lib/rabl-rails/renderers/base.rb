@@ -54,7 +54,15 @@ module RablRails
           when Symbol
             data.send(value) # attributes
           when Proc
-            instance_exec data, &value # node
+            result = instance_exec data, &value
+
+            if key.to_s.start_with?('_') # merge
+              raise PartialError, '`merge` block should return a hash' unless result.is_a?(Hash) 
+              output.merge!(result)
+              next output
+            else # node
+               result
+            end
           when Array # node with condition
             next output if !instance_exec data, &(value.first)
             instance_exec data, &(value.last)
