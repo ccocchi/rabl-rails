@@ -81,7 +81,11 @@ module RablRails
               output.merge!(render_resource(object, current_value))
               next output
             else # child
-              object.respond_to?(:each) ? render_collection(object, current_value) : render_resource(object, current_value)
+              if object
+                object.respond_to?(:each) ? render_collection(object, current_value) : render_resource(object, current_value)
+              else
+                nil
+              end
             end
           when Condition
             if instance_exec data, &(value.proc)

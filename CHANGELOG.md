@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 0.3.2 (unreleased)
+  * Using child with a nil value will be correctly formatted as nil
 
 ## 0.3.1
   * Add `merge` keywork
