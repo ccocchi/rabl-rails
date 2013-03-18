@@ -6,6 +6,10 @@ module RablRails
         hash = { _options[:root_name] => hash } if _options[:root_name] && RablRails.include_plist_root
         RablRails.plist_engine.dump(hash)
       end
+
+      def resolve_cache_key(data, key)
+        "#{super}.xml"
+      end
     end
   end
 end

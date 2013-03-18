@@ -9,6 +9,10 @@ module RablRails
       	xml_options = { root: _options[:root_name] }.merge!(DEFAULT_OPTIONS)
 				hash.to_xml(xml_options)
       end
+
+      def resolve_cache_key(data, key)
+        "#{super}.xml"
+      end
     end
   end
 end
