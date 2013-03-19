@@ -6,7 +6,6 @@ require 'active_support/core_ext/class/attribute_accessors'
 require 'rabl-rails/version'
 require 'rabl-rails/template'
 require 'rabl-rails/condition'
-require 'rabl-rails/cache'
 require 'rabl-rails/compiler'
 
 require 'rabl-rails/renderer'
