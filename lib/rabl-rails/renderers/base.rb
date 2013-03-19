@@ -140,7 +140,8 @@ module RablRails
       end
 
       def resolve_cache_key(key, data)
-        key && key.is_a?(Proc) ? instance_exec(data, &key) : data.cache_key
+        return data.cache_key unless key
+        key.is_a?(Proc) ? instance_exec(data, &key) : key
       end
 
       private
