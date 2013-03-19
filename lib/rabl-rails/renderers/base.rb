@@ -28,7 +28,7 @@ module RablRails
         end
         collection_or_resource ||= @_resource
 
-        render_with_cache(collection_or_resource, template.cache_key) do
+        render_with_cache(template.cache_key, collection_or_resource) do
           output_hash = collection_or_resource.respond_to?(:each) ? render_collection(collection_or_resource, template.source)
                                                                   : render_resource(collection_or_resource, template.source)
           _options[:root_name] = template.root_name
@@ -46,9 +46,9 @@ module RablRails
 
       protected
 
-      def render_with_cache(collection_or_resource, key, &block)
+      def render_with_cache(key, collection_or_resource, &block)
         unless key === false
-          Rails.cache.fetch(resolve_cache_key(collection_or_resource, key)) do
+          Rails.cache.fetch(resolve_cache_key(key, collection_or_resource)) do
             yield
           end
         else
@@ -98,10 +98,6 @@ module RablRails
               output.merge!(render_resource(data, value.source))
             end
             next output
-          when Cache
-            object = object_from_data(data, value.data)
-            object.respond_to?(:each) ? render_collection_with_cache(object, value)
-                                      : render_resource_with_cache(object, value)
           end
           output[key] = out
           output
@@ -118,16 +114,6 @@ module RablRails
       #
       def render_collection(collection, source)
         collection.map { |o| render_resource(o, source) }
-      end
-
-      def render_collection_with_cache(collection, cache)
-        collection.map { |o| render_resource_with_cache(o, cache) }
-      end
-
-      def render_resource_with_cache(data, cache)
-        Rails.cache.fetch(resolve_cache_key(data, cache.key)) do
-          render_resource(o, cache.source)
-        end
       end
 
       #
@@ -153,7 +139,7 @@ module RablRails
         @_context.respond_to?(name) ? @_context.send(name, *args, &block) : super
       end
 
-      def resolve_cache_key(data, key)
+      def resolve_cache_key(key, data)
         key && key.is_a?(Proc) ? instance_exec(data, &key) : data.cache_key
       end
 

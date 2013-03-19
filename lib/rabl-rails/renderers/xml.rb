@@ -10,7 +10,7 @@ module RablRails
 				hash.to_xml(xml_options)
       end
 
-      def resolve_cache_key(data, key)
+      def resolve_cache_key(key, data)
         "#{super}.xml"
       end
     end

@@ -7,7 +7,7 @@ module RablRails
         RablRails.plist_engine.dump(hash)
       end
 
-      def resolve_cache_key(data, key)
+      def resolve_cache_key(key, data)
         "#{super}.xml"
       end
     end

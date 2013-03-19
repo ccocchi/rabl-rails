@@ -65,15 +65,13 @@ module RablRails
     def child(name_or_data, options = {})
       data, name = extract_data_and_name(name_or_data)
       name = options[:root] if options.has_key? :root
-      result = if options[:partial]
+
+      @template[name] = if options[:partial]
         template = Library.instance.compile_template_from_path(options[:partial])
         template.merge!(:_data => data)
       elsif block_given?
         sub_compile(data) { yield }
       end
-
-      result = Cache.new(options[:cache], result) if options.has_key?(:cache)
-      @template[name] = result
     end
 
     #

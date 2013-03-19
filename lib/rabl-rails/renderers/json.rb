@@ -8,7 +8,7 @@ module RablRails
         RablRails.enable_jsonp_callbacks && params.has_key?(:callback) ? "#{params[:callback]}(#{json})" : json
       end
 
-      def resolve_cache_key(data, key)
+      def resolve_cache_key(key, data)
         "#{super}.json"
       end
     end
