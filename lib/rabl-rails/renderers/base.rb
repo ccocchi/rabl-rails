@@ -47,7 +47,7 @@ module RablRails
       protected
 
       def render_with_cache(key, collection_or_resource, &block)
-        unless key.is_a?(FalseClass)
+        unless key.is_a?(FalseClass) || !ActionController::Base.perform_caching
           Rails.cache.fetch(resolve_cache_key(key, collection_or_resource)) do
             yield
           end
