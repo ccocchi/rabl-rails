@@ -141,8 +141,8 @@ module RablRails
       @template[sequence('if')] = Condition.new(proc, sub_compile(nil) { yield })
     end
 
-    def cache(key = nil)
-      @template.cache_key = key
+    def cache(&block)
+      @template.cache_key = block_given? ? block : nil
     end
 
     protected
