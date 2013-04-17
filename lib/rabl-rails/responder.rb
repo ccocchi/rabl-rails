@@ -18,6 +18,7 @@ module RablRails
       if get? || response_overridden?
         default_render
       elsif has_errors?
+        controller.response.status = :unprocessable_entity
         display_errors
       else
         api_behavior(nil)
@@ -37,6 +38,8 @@ module RablRails
         options[:template] ||= template
 
         controller.default_render options.merge(status: :created)
+      elsif put?
+        display resource, :status => :ok
       else
         head :no_content
       end
