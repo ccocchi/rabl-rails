@@ -94,6 +94,7 @@ module RablRails
             next output
           end
           output[key] = out
+          output[key] = "" if out.nil? && RablRails.replace_nil_values_with_empty_strings
           output
         }
       end

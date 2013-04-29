@@ -18,6 +18,10 @@ class TestBaseRenderer < ActiveSupport::TestCase
     @template.data = :@data
   end
 
+  teardown do
+    RablRails.replace_nil_values_with_empty_strings = false
+  end
+
   def render_hash
     RablRails::Renderers::Base.new(@context).render(@template)
   end
@@ -33,5 +37,11 @@ class TestBaseRenderer < ActiveSupport::TestCase
     assert_nothing_raised do
       render_hash
     end
+  end
+
+  test "child with nil data should render empty string if replace_nil_values_with_empty_strings is set" do
+    RablRails.replace_nil_values_with_empty_strings = true
+    @template.source = { :author => { :_data => :@nil, :name => :name } }
+    assert_equal({ :author => "" }, render_hash)
   end
 end

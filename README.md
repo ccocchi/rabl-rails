@@ -95,6 +95,7 @@ RablRails.configure do |config|
   # config.xml_engine = 'LibXML'
   # config.use_custom_responder = false
 	# config.default_responder_template = 'show'
+	# config.replace_nil_values_with_empty_strings = false
 end
 ```
 
@@ -303,7 +304,7 @@ Want to make another change ? Just fork and contribute, any help is very much ap
 
 ## Original idea
 
-* [RABL](http://github.com/nesquena/rabl) Standart RABL gem. I used it a lot but I needed to improve my API response time, and
+* [RABL](http://github.com/nesquena/rabl) Standard RABL gem. I used it a lot but I needed to improve my API response time, and
   since most of the time was spent in view rendering, I decided to implement a faster rabl gem.
 
 ## Copyright

@@ -39,6 +39,9 @@ module RablRails
   mattr_accessor :include_plist_root
   @@include_plist_root = nil
 
+  mattr_accessor :replace_nil_values_with_empty_strings
+  @@replace_nil_values_with_empty_strings = false
+
   def self.configure
     yield self
 
