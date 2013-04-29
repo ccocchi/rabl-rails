@@ -57,7 +57,7 @@ module RablRails
             result = instance_exec data, &value
 
             if key.to_s.start_with?('_') # merge
-              raise PartialError, '`merge` block should return a hash' unless result.is_a?(Hash) 
+              raise PartialError, '`merge` block should return a hash' unless result.is_a?(Hash)
               output.merge!(result)
               next output
             else # node
@@ -94,6 +94,7 @@ module RablRails
             next output
           end
           output[key] = out
+          output[key] = "" if out.nil? && RablRails.replace_nil_values_with_empty_strings
           output
         }
       end
@@ -136,7 +137,7 @@ module RablRails
       #
       def setup_render_context
         @_context.instance_variable_get(:@_assigns).each_pair { |k, v|
-          instance_variable_set("@#{k}", v) unless k.start_with?('_')
+          instance_variable_set("@#{k}", v) unless k.to_s.start_with?('_')
         }
       end
     end

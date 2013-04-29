@@ -2,12 +2,18 @@ ENV["RAILS_ENV"] = "test"
 $:.unshift File.expand_path('../../lib', __FILE__)
 
 require 'rspec/mocks'
-require 'minitest/autorun'
+
+# minitest mocks conflict with rspec/mocks, requiring minitest/autorun require minitest/mocks, so dont.
+require 'minitest/unit'
+require 'minitest/spec'
+MiniTest::Unit.autorun
+
 require 'active_support/test_case'
 
 require 'action_controller'
 
 require 'singleton'
+
 class <<Singleton
   def included_with_reset(klass)
     included_without_reset(klass)
