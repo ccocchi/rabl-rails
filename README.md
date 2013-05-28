@@ -1,4 +1,4 @@
-# RABL for Rails #
+# RABL for Rails [![Build Status](https://travis-ci.org/ccocchi/rabl-rails.png?branch=master)](https://travis-ci.org/ccocchi/rabl-rails)
 
 RABL (Ruby API Builder Language) is a ruby templating system for rendering resources in different format (JSON, XML, BSON, ...). You can find documentation [here](http://github.com/nesquena/rabl).
 
@@ -94,7 +94,7 @@ RablRails.configure do |config|
   # config.json_engine = :oj
   # config.xml_engine = 'LibXML'
   # config.use_custom_responder = false
-	# config.default_responder_template = 'show'
+  # config.default_responder_template = 'show'
   # config.enable_jsonp_callbacks = false
 end
 ```
