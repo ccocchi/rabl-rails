@@ -25,7 +25,7 @@ class KeywordTest < ActiveSupport::TestCase
     @context.stub(lookup_context: nil)
   end
 
-  test "collections model should render correctly" do
+  test "collections model should not collide with rabl-rails reserved keyword" do
     source = %{
       object :@user
       child(:@collections => :collections) do
