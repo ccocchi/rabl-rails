@@ -13,7 +13,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
   end
 
   def render_json_output
-    RablRails::Renderers::JSON.new(@context).render(@template).to_s
+    RablRails::Renderers::JSON.new(@context).render(@template)
   end
 
   test "render object wth empty template" do
@@ -166,5 +166,12 @@ class TestJsonRenderer < ActiveSupport::TestCase
   test "result from merge is merge inside current response" do
     @template.source = { :_merge0 => ->(c) { { :custom => c.name } } }
     assert_equal %q({"custom":"foobar"}), render_json_output
+  end
+
+  test "render with jsonp callback" do
+    RablRails.enable_jsonp_callbacks = true
+    @context.stub(:params).and_return({ callback: 'some_callback' })
+    @template.source = { :name => :name }
+    assert_equal %q[some_callback({"name":"foobar"})], render_json_output
   end
 end

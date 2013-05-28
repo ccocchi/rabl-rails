@@ -4,6 +4,7 @@
   * Using child with a nil value will be correctly formatted as nil
   * Allow controller's assigns to have symbol keys
   * Does not modify in place format extracted from context
+  * Add JSONP support
 
 ## 0.3.1
   * Add `merge` keywork

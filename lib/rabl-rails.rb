@@ -39,6 +39,9 @@ module RablRails
   mattr_accessor :include_plist_root
   @@include_plist_root = nil
 
+  mattr_accessor :enable_jsonp_callbacks
+  @@enable_jsonp_callbacks = false
+
   def self.configure
     yield self
 

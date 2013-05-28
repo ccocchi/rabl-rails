@@ -98,6 +98,10 @@ module RablRails
         }
       end
 
+      def params
+        @_context.params
+      end
+
       #
       # Call the render_resource mtehod on each object of the collection
       # and return an array of the returned values.
