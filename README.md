@@ -207,7 +207,7 @@ node(:full_name) { |u| u.first_name + " " + u.last_name }
 You can add condition on your custom nodes (if the condition is evaluated to false, the node will not be included).
 
 ```ruby
-node(:email, if: -> { |u| u.valid_email? }) do |u|
+node(:email, if: ->(u) { u.valid_email? }) do |u|
 	u.email
 end
 ```
