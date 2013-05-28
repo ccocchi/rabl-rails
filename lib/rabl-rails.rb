@@ -21,6 +21,9 @@ module RablRails
 
   autoload :Responder, 'rabl-rails/responder'
 
+  mattr_accessor :render_jsonp_callback
+  @@render_jsonp_callback = true
+  
   mattr_accessor :cache_templates
   @@cache_templates = true
 
