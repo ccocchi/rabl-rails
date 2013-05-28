@@ -14,8 +14,7 @@ module RablRails
 
       compiled_template = compile_template_from_source(source, path)
 
-      format = context.params[:format] ? context.params[:format].to_s : 'json'
-      format.upcase!
+      format = context.params[:format] ? context.params[:format].to_s.upcase : :JSON
       Renderers.const_get(format).new(context, locals).render(compiled_template)
     end
 
@@ -30,7 +29,7 @@ module RablRails
 
     def compile_template_from_path(path)
       return @cached_templates[path].dup if @cached_templates.has_key?(path)
-      
+
       t = @lookup_context.find_template(path, [], false)
       compile_template_from_source(t.source, path)
     end
