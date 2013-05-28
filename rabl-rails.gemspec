@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Christopher Cocchi-Perrier"]
   s.email       = ["cocchi.c@gmail.com"]
   s.homepage    = "https://github.com/ccocchi/rabl-rails"
-  s.summary     = "Fast Rails 3+ templating system with JSON and XML support"
-  s.description = "Fast Rails 3+ templating system with JSON and XML support"
+  s.summary     = "Fast Rails 3+ templating system with JSON, XML and PList support"
+  s.description = "Fast Rails 3+ templating system with JSON, XML and PList support"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- test/*`.split("\n")
