@@ -58,6 +58,21 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal false, t.root_name
   end
 
+  test "template should not have a cache key if cache is not enable" do
+    t = @compiler.compile_source('')
+    assert_equal false, t.cache_key
+  end
+
+  test "cache can take no argument" do
+    t = @compiler.compile_source(%{ cache })
+    assert_nil t.cache_key
+  end
+
+  test "cache can take a block" do
+    t = @compiler.compile_source(%( cache { 'foo' }))
+    assert_instance_of Proc, t.cache_key
+  end
+
   # Compilation
 
   test "simple attributes are compiled to hash" do
