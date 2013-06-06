@@ -8,7 +8,7 @@ module RablRails
       end
 
       def resolve_cache_key(key, data)
-        "#{super}.xml"
+        "#{super}.plist"
       end
     end
   end
