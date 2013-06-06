@@ -167,6 +167,23 @@ class CompilerTest < ActiveSupport::TestCase
     assert_equal({ :id => :id }, t.source)
   end
 
+  test "extends should not overwrite nodes previously defined" do
+    skip('Bug reported by @abrisse')
+
+    template = mock('file_template', :source => %(condition(-> { true }) { 'foo' }))
+    lookup_context = mock
+    lookup_context.stub(:find_template).with('users/xtnd', [], false).and_return(template)
+    RablRails::Library.reset_instance
+    RablRails::Library.instance.instance_variable_set(:@lookup_context, lookup_context)
+
+    t = @compiler.compile_source(%{
+      condition(-> { false }) { 'bar' }
+      extends('users/xtnd')
+    })
+
+    assert_equal 2, t.source.keys.size
+  end
+
   test "node are compiled without evaluating the block" do
     t = @compiler.compile_source(%{ node(:foo) { bar } })
     assert_not_nil t.source[:foo]
