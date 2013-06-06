@@ -285,7 +285,10 @@ You can find more informations about how to use this method in the [wiki](http:/
 
 ### Other features
 
-You can find more informations about other features (caching, custom_responder, ...) in the [WIKI](https://github.com/ccocchi/rabl-rails/wiki)
+* [Caching](https://github.com/ccocchi/rabl-rails/wiki/Caching)
+* [Custom responder](https://github.com/ccocchi/rabl-rails/wiki/Using-custom-responder)
+
+And more in the [WIKI](https://github.com/ccocchi/rabl-rails/wiki)
 
 ## Performance
 

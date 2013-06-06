@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.3.3
+  * Add response caching
+
 ## 0.3.2
   * Using child with a nil value will be correctly formatted as nil
   * Allow controller's assigns to have symbol keys
