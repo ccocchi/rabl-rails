@@ -65,11 +65,12 @@ module RablRails
     def child(name_or_data, options = {})
       data, name = extract_data_and_name(name_or_data)
       name = options[:root] if options.has_key? :root
-      if options[:partial]
+
+      @template[name] = if options[:partial]
         template = Library.instance.compile_template_from_path(options[:partial])
-        @template[name] = template.merge!(:_data => data)
+        template.merge!(:_data => data)
       elsif block_given?
-        @template[name] = sub_compile(data) { yield }
+        sub_compile(data) { yield }
       end
     end
 
@@ -138,6 +139,10 @@ module RablRails
     def condition(proc)
       return unless block_given?
       @template[sequence('if')] = Condition.new(proc, sub_compile(nil) { yield })
+    end
+
+    def cache(&block)
+      @template.cache_key = block_given? ? block : nil
     end
 
     protected

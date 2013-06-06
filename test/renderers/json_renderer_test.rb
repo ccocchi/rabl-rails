@@ -174,4 +174,16 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @template.source = { :name => :name }
     assert_equal %q[some_callback({"name":"foobar"})], render_json_output
   end
+
+  test "cache key should be different from Base to avoid name collisions" do
+    ActionController::Base.stub(:perform_caching).and_return(true)
+    @data.stub(:cache_key).and_return('data_cache_key')
+    @template.cache_key = nil
+
+    @cache = mock
+    @cache.should_receive(:fetch).with('data_cache_key.json').and_return(%("some":"json"))
+    Rails.stub(:cache).and_return(@cache)
+
+    assert_equal %("some":"json"), render_json_output
+  end
 end
