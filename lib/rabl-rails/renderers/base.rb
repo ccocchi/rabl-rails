@@ -27,10 +27,13 @@ module RablRails
           end
         end
         collection_or_resource ||= @_resource
-        output_hash = collection_or_resource.respond_to?(:each) ? render_collection(collection_or_resource, template.source) :
-          render_resource(collection_or_resource, template.source)
-        _options[:root_name] = template.root_name
-        format_output(output_hash)
+
+        render_with_cache(template.cache_key, collection_or_resource) do
+          output_hash = collection_or_resource.respond_to?(:each) ? render_collection(collection_or_resource, template.source)
+                                                                  : render_resource(collection_or_resource, template.source)
+          _options[:root_name] = template.root_name
+          format_output(output_hash)
+        end
       end
 
       #
@@ -42,6 +45,16 @@ module RablRails
       end
 
       protected
+
+      def render_with_cache(key, collection_or_resource, &block)
+        if !key.is_a?(FalseClass) && ActionController::Base.perform_caching
+          Rails.cache.fetch(resolve_cache_key(key, collection_or_resource)) do
+            yield
+          end
+        else
+          yield
+        end
+      end
 
       #
       # Render a single resource as a hash, according to the compiled
@@ -68,14 +81,7 @@ module RablRails
             instance_exec data, &(value.last)
           when Hash
             current_value = value.dup
-            data_symbol = current_value.delete(:_data)
-            object = if data_symbol == nil
-              data
-            else
-              data_symbol.to_s.start_with?('@') ? instance_variable_get(data_symbol)
-                                                : data.respond_to?(data_symbol) ? data.send(data_symbol)
-                                                                                : send(data_symbol)
-            end
+            object = object_from_data(data, current_value.delete(:_data))
 
             if key.to_s.start_with?('_') # glue
               output.merge!(render_resource(object, current_value))
@@ -131,6 +137,23 @@ module RablRails
       #
       def method_missing(name, *args, &block)
         @_context.respond_to?(name) ? @_context.send(name, *args, &block) : super
+      end
+
+      def resolve_cache_key(key, data)
+        return data.cache_key unless key
+        key.is_a?(Proc) ? instance_exec(data, &key) : key
+      end
+
+      private
+
+      def object_from_data(data, symbol)
+        return data if symbol == nil
+
+        if symbol.to_s.start_with?('@')
+          instance_variable_get(symbol)
+        else
+          data.respond_to?(symbol) ? data.send(symbol) : send(symbol)
+        end
       end
 
       #
