@@ -18,7 +18,7 @@ class TestBaseRenderer < ActiveSupport::TestCase
     @template.source = {}
     @template.data = :@data
 
-    @cache = mock
+    @cache = double
     Rails.stub(:cache).and_return(@cache)
   end
 

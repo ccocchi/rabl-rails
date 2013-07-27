@@ -160,7 +160,7 @@ class CompilerTest < ActiveSupport::TestCase
   end
 
   test "extends use other template source as itself" do
-    template = mock('template', :source => { :id => :id })
+    template = double('template', :source => { :id => :id })
     RablRails::Library.reset_instance
     RablRails::Library.instance.stub(:compile_template_from_path).with('users/base').and_return(template)
     t = @compiler.compile_source(%{ extends 'users/base' })

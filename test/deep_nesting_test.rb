@@ -23,7 +23,7 @@ class DeepNestingTest < ActiveSupport::TestCase
     @context = Context.new
     @context.assigns['user'] = @user
     @context.virtual_path = 'users/show'
-    @context.stub(:lookup_context).and_return(mock(:find_template => mock(:source => %{ object :@comment\n attribute :content })))
+    @context.stub(:lookup_context).and_return(double(:find_template => double(:source => %{ object :@comment\n attribute :content })))
   end
 
   test "compile and render deep nesting template" do
