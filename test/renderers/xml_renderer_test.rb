@@ -128,4 +128,12 @@ class TestXmlRenderer < ActiveSupport::TestCase
 
     assert_equal %q(<list><users type="array"/></list>), render_xml_output
   end
+
+  test "render underscorized xml" do
+    RablRails.xml_options = {:dasherize => false, :skip_types => false }
+    condition = lambda { |u| true }
+    proc = lambda { |object| object.name }
+    @template.source = { :first_name => [condition, proc] }
+    assert_equal %q(<user><first_name>foobar</first_name></user>), render_xml_output
+  end
 end
