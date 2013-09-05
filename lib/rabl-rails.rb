@@ -42,6 +42,9 @@ module RablRails
   mattr_accessor :enable_jsonp_callbacks
   @@enable_jsonp_callbacks = false
 
+  mattr_accessor :xml_options
+  @@xml_options = { dasherize: true, skip_types: false }
+
   def self.configure
     yield self
 
