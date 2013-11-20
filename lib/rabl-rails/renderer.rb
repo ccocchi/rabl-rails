@@ -39,12 +39,7 @@ module RablRails
           nil
         end
       end
-      # How it looked before.
-      # def find_template(name, opt, partial = false)
-      #   path = File.join(@view_path, "#{name}.#{@format}.rabl")
-      #   File.exists?(path) ? T.new(File.read(path)) : nil
-      # end
-      end
+    end
 
     #
     # Context class to emulate normal Rails view
