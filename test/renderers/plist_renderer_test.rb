@@ -48,7 +48,7 @@ class TestPlistRenderer < ActiveSupport::TestCase
   end
 
   test "render child with object association" do
-    @data.stub(:address).and_return(mock(:city => 'Paris'))
+    @data.stub(:address).and_return(double(:city => 'Paris'))
     @template.source = { :address => { :_data => :address, :city => :city } }
     assert_equal %q(<key>address</key><dict><key>city</key><string>Paris</string></dict>), render_plist_output
   end

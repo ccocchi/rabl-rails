@@ -40,7 +40,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
   end
 
   test "render child with object association" do
-    @data.stub(:address).and_return(mock(:city => 'Paris'))
+    @data.stub(:address).and_return(double(:city => 'Paris'))
     @template.source = { :address => { :_data => :address, :city => :city } }
     assert_equal %q({"address":{"city":"Paris"}}), render_json_output
   end
@@ -180,7 +180,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
     @data.stub(:cache_key).and_return('data_cache_key')
     @template.cache_key = nil
 
-    @cache = mock
+    @cache = double
     @cache.should_receive(:fetch).with('data_cache_key.json').and_return(%("some":"json"))
     Rails.stub(:cache).and_return(@cache)
 
