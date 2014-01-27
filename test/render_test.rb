@@ -10,7 +10,7 @@ class RenderTest < ActiveSupport::TestCase
   end
 
   test "allow object to be passed as an option" do
-    File.open(@tmp_path + "nil.json.rabl", "w") do |f|
+    File.open(@tmp_path + "nil.rabl", "w") do |f|
       f.puts %q{
         object :@user
         attributes :name
@@ -20,7 +20,7 @@ class RenderTest < ActiveSupport::TestCase
   end
 
   test "load source from file" do
-    File.open(@tmp_path + "show.json.rabl", "w") do |f|
+    File.open(@tmp_path + "show.rabl", "w") do |f|
       f.puts %q{
         object :@user
         attributes :id, :name
@@ -29,12 +29,23 @@ class RenderTest < ActiveSupport::TestCase
     assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path)
   end
 
+  test "handles legacy .FORMAT.rabl templates" do
+    File.open(@tmp_path + "show.json.rabl", "w") do |f|
+      f.puts %q{
+        object :@user
+        attributes :id, :name
+      }
+    end
+    ActiveSupport::Deprecation.should_receive(:warn).with(/rename #@tmp_path\/show\.json\.rabl as show\.rabl/)
+    assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path)
+  end
+
   test "raise error if template is not found" do
     assert_raises(RablRails::Renderer::TemplateNotFound) { RablRails.render(@user, 'not_found') }
   end
 
   test "instance variables can be passed via options[:locals]" do
-    File.open(@tmp_path + "instance.json.rabl", "w") do |f|
+    File.open(@tmp_path + "instance.rabl", "w") do |f|
       f.puts %q{
         object false
         node(:username) { |_| @user.name }
@@ -44,14 +55,14 @@ class RenderTest < ActiveSupport::TestCase
   end
 
   test "handle path for extends" do
-    File.open(@tmp_path + "extend.json.rabl", "w") do |f|
+    File.open(@tmp_path + "extend.rabl", "w") do |f|
       f.puts %q{
         object :@user
         extends 'base'
       }
     end
 
-    File.open(@tmp_path + "base.json.rabl", "w") do |f|
+    File.open(@tmp_path + "base.rabl", "w") do |f|
       f.puts %q{
         attribute :name, as: :extended_name
       }
@@ -61,7 +72,7 @@ class RenderTest < ActiveSupport::TestCase
   end
 
   test "format can be passed as symbol or a string" do
-    File.open(@tmp_path + "show.json.rabl", "w") do |f|
+    File.open(@tmp_path + "show.rabl", "w") do |f|
       f.puts %q{
         object :@user
         attributes :id, :name
@@ -71,6 +82,17 @@ class RenderTest < ActiveSupport::TestCase
     assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path, format: :json)
     assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path, format: 'json')
     assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path, format: 'JSON')
+  end
+
+  test "render XML" do
+    File.open(@tmp_path + "show.rabl", "w") do |f|
+      f.puts %q{
+        object :@user
+        attributes :id, :name
+      }
+    end
+    assert_equal "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<user>\n  <id type=\"integer\">1</id>\n  <name>Marty</name>\n</user>\n",
+      RablRails.render(@user, 'show', view_path: @tmp_path, format: 'XML')
   end
 
 end
