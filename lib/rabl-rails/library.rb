@@ -31,7 +31,8 @@ module RablRails
       return @cached_templates[path].dup if @cached_templates.has_key?(path)
 
       t = @lookup_context.find_template(path, [], false)
-      compile_template_from_source(t.source, path)
+      source = t.source || File.binread(t.identifier)
+      compile_template_from_source(source, path)
     end
   end
 end
