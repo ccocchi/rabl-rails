@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.4.0 (unreleased)
+  * Update travis configuration and remove warning in tests (petergoldstein)
+
 ## 0.3.3
   * Add response caching
 
