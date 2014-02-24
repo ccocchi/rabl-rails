@@ -23,9 +23,21 @@ module RablRails
       # View path can be set via options, otherwise default Rails
       # path is used
       #
+
+      # Allows you to add path without format.
+      # This makes it easier for RSPEC testing.
       def find_template(name, opt, partial = false)
-        path = File.join(@view_path, "#{name}.#{@format}.rabl")
-        File.exists?(path) ? T.new(File.read(path)) : nil
+        path = File.join(@view_path, "#{name}.rabl")
+        path_with_format = File.join(@view_path, "#{name}.#{@format}.rabl")
+
+        case
+        when File.exists?(path) then
+          T.new(File.read(path))
+        when File.exists?(path_with_format) then
+          T.new(File.read(path_with_format))
+        else
+          nil
+        end
       end
     end
 
