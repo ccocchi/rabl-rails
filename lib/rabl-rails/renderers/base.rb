@@ -162,6 +162,8 @@ module RablRails
       # evaluating 'node' properties.
       #
       def setup_render_context
+        # Rails 3.0.x use @assigns, @_assings appears in 3.1 branch, see https://github.com/rails/rails/commit/49b6f33f99a28d68f18203a696fb47854a9085d2
+        @_context.instance_variable_set(:@_assigns, @_context.instance_variable_get(:@assigns))
         @_context.instance_variable_get(:@_assigns).each_pair { |k, v|
           instance_variable_set("@#{k}", v) unless k.to_s.start_with?('_')
         }
