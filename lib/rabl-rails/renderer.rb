@@ -19,13 +19,34 @@ module RablRails
       end
 
       #
-      # Manually find given rabl template file with given format.
+      # Manually find given rabl template file with given name.
       # View path can be set via options, otherwise default Rails
       # path is used
       #
       def find_template(name, opt, partial = false)
-        path = File.join(@view_path, "#{name}.#{@format}.rabl")
-        File.exists?(path) ? T.new(File.read(path)) : nil
+        path = _find_template([name, :rabl].join('.'))
+        path = find_legacy_template(name) unless path
+
+        T.new(File.read(path)) if path
+      end
+
+      private
+
+      # Find legacy .json.rabl templates and prints a deprecation
+      # warning asking the user to rename them.
+      def find_legacy_template(name)
+        _find_template([name, @format, :rabl].join('.')).tap do |path|
+          if path
+            ActiveSupport::Deprecation.warn(
+              ".#@format.rabl templates are deprecated. " \
+              "Please rename #@view_path/#{name}.#@format.rabl as #{name}.rabl")
+          end
+        end
+      end
+
+      def _find_template(name)
+        path = File.join(@view_path, name)
+        return path if File.exists?(path)
       end
     end
 
