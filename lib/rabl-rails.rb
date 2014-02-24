@@ -45,6 +45,9 @@ module RablRails
   mattr_accessor :allow_empty_format_in_template
   @@allow_empty_format_in_template = false
 
+  mattr_accessor :xml_options
+  @@xml_options = { dasherize: true, skip_types: false }
+
   def self.configure
     yield self
 

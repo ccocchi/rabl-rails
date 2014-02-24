@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## 0.4.0 (unreleased)
+  * Add `xml_options` option to root_level (brettallred)
+
   * Format can be omitted in template filename
 
       RablRails.allow_empty_format_in_template = true
