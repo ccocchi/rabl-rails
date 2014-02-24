@@ -15,7 +15,7 @@ module RablRails
 
       def initialize(view_path, format)
         @view_path = view_path || RablRails::Renderer.view_path
-        @format = format.to_s.downcase
+        @extension = format ? ".#{format.to_s.downcase}.rabl" : ".rabl"
       end
 
       #
@@ -24,7 +24,7 @@ module RablRails
       # path is used
       #
       def find_template(name, opt, partial = false)
-        path = File.join(@view_path, "#{name}.#{@format}.rabl")
+        path = File.join(@view_path, "#{name}#{@extension}")
         File.exists?(path) ? T.new(File.read(path)) : nil
       end
     end
@@ -38,7 +38,7 @@ module RablRails
 
       def initialize(path, options)
         @virtual_path = path
-        @format = options.delete(:format) || 'json'
+        @format = options.delete(:format) || (RablRails.allow_empty_format_in_template ? nil : 'json')
         @_assigns = {}
         @options = options
 

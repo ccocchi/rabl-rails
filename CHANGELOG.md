@@ -1,6 +1,11 @@
 # CHANGELOG
 
 ## 0.4.0 (unreleased)
+  * Format can be omitted in template filename
+
+      RablRails.allow_empty_format_in_template = true
+      RablRails.render(user, 'show') # => app/view/user.rabl
+
   * Update travis configuration and remove warning in tests (petergoldstein)
 
 ## 0.3.3

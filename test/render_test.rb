@@ -73,4 +73,20 @@ class RenderTest < ActiveSupport::TestCase
     assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path, format: 'JSON')
   end
 
+  test "format can be omitted if option is set" do
+    begin
+      RablRails.allow_empty_format_in_template = true
+      File.open(@tmp_path + "show.rabl", "w") do |f|
+        f.puts %q{
+          object :@user
+          attributes :id, :name
+        }
+      end
+
+      assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path)
+    ensure
+      RablRails.allow_empty_format_in_template = false
+    end
+  end
+
 end
