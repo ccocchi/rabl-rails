@@ -4,10 +4,6 @@ module RablRails
   # representing data structure
   #
   class Compiler
-    def initialize
-      @i = -1
-    end
-
     #
     # Compile from source code and return the CompiledTemplate
     # created.
@@ -41,15 +37,19 @@ module RablRails
     #   attribute :email => :super_secret
     #
     def attribute(*args)
+      node = Nodes::Attribute.new
+
       if args.first.is_a?(Hash)
-        args.first.each_pair { |k, v| @template[v] = k }
+        args.first.each_pair { |k, v| node[v] = k }
       else
         options = args.extract_options!
         args.each { |name|
           key = options[:as] || name
-          @template[key] = name
+          node[key] = name
         }
       end
+
+      @template.add_node node
     end
     alias_method :attributes, :attribute
 
@@ -66,12 +66,14 @@ module RablRails
       data, name = extract_data_and_name(name_or_data)
       name = options[:root] if options.has_key? :root
 
-      @template[name] = if options[:partial]
+      template = if options[:partial]
         template = Library.instance.compile_template_from_path(options[:partial])
-        template.merge!(:_data => data)
+        template.data = data
       elsif block_given?
         sub_compile(data) { yield }
       end
+
+      @template.add_node Nodes::Child.new(name, template)
     end
 
     #
@@ -81,7 +83,9 @@ module RablRails
     #
     def glue(data)
       return unless block_given?
-      @template[sequence('glue')] = sub_compile(data) { yield }
+
+      template = sub_compile(data) { yield }
+      @template.add_node Nodes::Glue.new(template)
     end
 
     #
@@ -92,19 +96,9 @@ module RablRails
     #   node(:name) { |user| user.first_name + user.last_name }
     #   node(:role, if: ->(u) { !u.admin? }) { |u| u.role }
     #
-    def node(name = nil, options = {}, &block)
-      name ||= sequence('merge')
-      condition = options[:if]
-
-      if condition
-        if condition.is_a?(Proc)
-          @template[name] = [condition, block]
-        else
-          @template[name] = block if condition
-        end
-      else
-        @template[name] = block
-      end
+    def node(name, options = {}, &block)
+      return unless block_given?
+      @template.add_node Nodes::Code.new(name, block, options[:if])
     end
     alias_method :code, :node
 
@@ -114,9 +108,9 @@ module RablRails
     # Example:
     #   merge { |item| partial("specific/#{item.to_s}", object: item) }
     #
-    def merge(&block)
+    def merge
       return unless block_given?
-      node(sequence('merge'), &block)
+      node(nil) { yield }
     end
 
     #
@@ -125,8 +119,7 @@ module RablRails
     #   extends 'users/base'
     #
     def extends(path)
-      t = Library.instance.compile_template_from_path(path)
-      @template.merge!(t.source)
+      @template.extends Library.instance.compile_template_from_path(path)
     end
 
     #
@@ -138,7 +131,7 @@ module RablRails
     #
     def condition(proc)
       return unless block_given?
-      @template[sequence('if')] = Condition.new(proc, sub_compile(nil) { yield })
+      @template.add_node Nodes::Condition.new(proc, sub_compile(nil) { yield })
     end
 
     def cache(&block)
@@ -146,14 +139,6 @@ module RablRails
     end
 
     protected
-
-    #
-    # Return unique symbol starting with given name
-    #
-    def sequence(name)
-      @i += 1
-      :"_#{name}#{@i}"
-    end
 
     #
     # Extract data root_name and root name
@@ -174,10 +159,11 @@ module RablRails
     end
 
     def sub_compile(data)
-      return {} unless block_given?
-      old_template, @template = @template, {}
+      raise unless block_given?
+      old_template, @template = @template, CompiledTemplate.new
       yield
-      data ? @template.merge!(:_data => data) : @template
+      @template.data = data
+      @template
     ensure
       @template = old_template
     end

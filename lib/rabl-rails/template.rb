@@ -1,17 +1,23 @@
 module RablRails
   class CompiledTemplate
-    attr_accessor :source, :data, :root_name, :cache_key
-
-    delegate :[], :[]=, :merge!, :to => :source
+    attr_accessor :nodes, :data, :root_name, :cache_key
 
     def initialize
-      @source = {}
+      @nodes = []
       @cache_key = false
     end
 
     def initialize_dup(other)
       super
-      self.source = other.source.dup
+      self.nodes = other.nodes.dup
+    end
+
+    def add_node(n)
+      @nodes << n
+    end
+
+    def extends(template)
+      @nodes.concat template.nodes
     end
   end
 end

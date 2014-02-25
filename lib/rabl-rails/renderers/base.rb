@@ -29,8 +29,8 @@ module RablRails
         collection_or_resource ||= @_resource
 
         render_with_cache(template.cache_key, collection_or_resource) do
-          output_hash = collection_or_resource.respond_to?(:each) ? render_collection(collection_or_resource, template.source)
-                                                                  : render_resource(collection_or_resource, template.source)
+          output_hash = collection_or_resource.respond_to?(:each) ? render_collection(collection_or_resource, template.nodes)
+                                                                  : render_resource(collection_or_resource, template.nodes)
           _options[:root_name] = template.root_name
           format_output(output_hash)
         end
@@ -46,7 +46,7 @@ module RablRails
 
       protected
 
-      def render_with_cache(key, collection_or_resource, &block)
+      def render_with_cache(key, collection_or_resource)
         if !key.is_a?(FalseClass) && ActionController::Base.perform_caching
           Rails.cache.fetch(resolve_cache_key(key, collection_or_resource)) do
             yield
@@ -60,48 +60,50 @@ module RablRails
       # Render a single resource as a hash, according to the compiled
       # template source passed.
       #
-      def render_resource(data, source)
-        source.inject({}) { |output, (key, value)|
+      def render_resource(data, nodes)
+        Visitors::Foo.new(data).visit nodes
 
-          out = case value
-          when Symbol
-            data.send(value) # attributes
-          when Proc
-            result = instance_exec data, &value
+        # source.inject({}) { |output, (key, value)|
 
-            if key.to_s.start_with?('_') # merge
-              raise PartialError, '`merge` block should return a hash' unless result.is_a?(Hash)
-              output.merge!(result)
-              next output
-            else # node
-              result
-            end
-          when Array # node with condition
-            next output if !instance_exec data, &(value.first)
-            instance_exec data, &(value.last)
-          when Hash
-            current_value = value.dup
-            object = object_from_data(data, current_value.delete(:_data))
+        #   out = case value
+        #   when Symbol
+        #     data.send(value) # attributes
+        #   when Proc
+        #     result = instance_exec data, &value
 
-            if key.to_s.start_with?('_') # glue
-              output.merge!(render_resource(object, current_value))
-              next output
-            else # child
-              if object
-                object.respond_to?(:each) ? render_collection(object, current_value) : render_resource(object, current_value)
-              else
-                nil
-              end
-            end
-          when Condition
-            if instance_exec data, &(value.proc)
-              output.merge!(render_resource(data, value.source))
-            end
-            next output
-          end
-          output[key] = out
-          output
-        }
+        #     if key.to_s.start_with?('_') # merge
+        #       raise PartialError, '`merge` block should return a hash' unless result.is_a?(Hash)
+        #       output.merge!(result)
+        #       next output
+        #     else # node
+        #       result
+        #     end
+        #   when Array # node with condition
+        #     next output if !instance_exec data, &(value.first)
+        #     instance_exec data, &(value.last)
+        #   when Hash
+        #     current_value = value.dup
+        #     object = object_from_data(data, current_value.delete(:_data))
+
+        #     if key.to_s.start_with?('_') # glue
+        #       output.merge!(render_resource(object, current_value))
+        #       next output
+        #     else # child
+        #       if object
+        #         object.respond_to?(:each) ? render_collection(object, current_value) : render_resource(object, current_value)
+        #       else
+        #         nil
+        #       end
+        #     end
+        #   when Condition
+        #     if instance_exec data, &(value.proc)
+        #       output.merge!(render_resource(data, value.source))
+        #     end
+        #     next output
+        #   end
+        #   output[key] = out
+        #   output
+        # }
       end
 
       def params
@@ -117,8 +119,8 @@ module RablRails
       end
 
       #
-      # Allow to use partial inside of node blocks (they are evaluated at)
-      # rendering time.
+      # Allow to use partial inside of node blocks (they are evaluated at
+      # rendering time).
       #
       def partial(template_path, options = {})
         raise PartialError.new("No object was given to partial #{template_path}") unless options[:object]
@@ -139,12 +141,12 @@ module RablRails
         @_context.respond_to?(name) ? @_context.send(name, *args, &block) : super
       end
 
+      private
+
       def resolve_cache_key(key, data)
         return data.cache_key unless key
         key.is_a?(Proc) ? instance_exec(data, &key) : key
       end
-
-      private
 
       def object_from_data(data, symbol)
         return data if symbol == nil

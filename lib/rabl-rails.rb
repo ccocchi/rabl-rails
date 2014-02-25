@@ -5,9 +5,10 @@ require 'active_support/core_ext/class/attribute_accessors'
 
 require 'rabl-rails/version'
 require 'rabl-rails/template'
-require 'rabl-rails/condition'
+require 'rabl-rails/nodes'
 require 'rabl-rails/compiler'
 
+require 'rabl-rails/visitors'
 require 'rabl-rails/renderer'
 
 require 'rabl-rails/library'
