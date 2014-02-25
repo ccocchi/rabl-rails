@@ -61,7 +61,10 @@ module RablRails
       # template source passed.
       #
       def render_resource(data, nodes)
-        Visitors::Foo.new(data).visit nodes
+        v = Visitors::Foo.new(data)
+        v.visit nodes
+        v.result
+
 
         # source.inject({}) { |output, (key, value)|
 

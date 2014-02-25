@@ -7,7 +7,7 @@ module Nodes
     def initialize(name, block, condition = nil)
       @name = name
       @block = block
-      @condition = nil
+      @condition = condition
     end
   end
 end
