@@ -1,12 +1,10 @@
 module Nodes
-  class Child
-    include Node
-
-    attr_reader :name, :template
+  class Child < Glue
+    attr_reader :name
 
     def initialize(name, template)
+      super(template)
       @name = name
-      @template = template
     end
   end
 end

@@ -6,10 +6,10 @@ module Visitors
 
     def initialize(view_context, resource = nil)
       @_context  = view_context
-      copy_instance_variables_from_context
-
       @_result   = {}
       @_resource = resource
+
+      copy_instance_variables_from_context
     end
 
     def reset_for(resource)
@@ -26,12 +26,10 @@ module Visitors
     end
 
     def visit_Child n
-      data = n.template.data
-      object = object_from_data(_resource, data)
+      object = object_from_data(_resource, n.data, n.instance_variable_data?)
 
       @_result[n.name] = if object
-        nodes = n.template.nodes
-        object.respond_to?(:each) ? object.map { |o| sub_visit(o, nodes) } : sub_visit(object, nodes)
+        object.respond_to?(:each) ? object.map { |o| sub_visit(o, n.nodes) } : sub_visit(object, n.nodes)
       else
         nil
       end
@@ -49,7 +47,7 @@ module Visitors
     end
 
     def visit_Glue n
-      object = object_from_data(_resource, n.template.data)
+      object = object_from_data(_resource, n.data, n.instance_variable_data?)
       @_result.merge! sub_visit(object, n.template.nodes)
     end
 
@@ -95,13 +93,13 @@ module Visitors
       @_result = old_result
     end
 
-    def object_from_data(resource, symbol)
-      return data if symbol == nil
+    def object_from_data(resource, symbol, is_variable)
+      return resource if symbol == nil
 
-      if symbol.to_s.start_with?('@')
+      if is_variable
         @_context.instance_variable_get(symbol)
       else
-        data.respond_to?(symbol) ? data.send(symbol) : @_context.send(symbol)
+        resource.respond_to?(symbol) ? resource.send(symbol) : @_context.send(symbol)
       end
     end
   end
