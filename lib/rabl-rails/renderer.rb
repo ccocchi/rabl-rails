@@ -1,4 +1,4 @@
-require 'rabl-rails/renderers/base'
+require 'rabl-rails/renderers/hash'
 require 'rabl-rails/renderers/json'
 require 'rabl-rails/renderers/xml'
 require 'rabl-rails/renderers/plist'
@@ -33,7 +33,7 @@ module RablRails
     # Context class to emulate normal Rails view
     # context
     #
-    class Context
+    class ViewContext
       attr_reader :format
 
       def initialize(path, options)
@@ -80,7 +80,7 @@ module RablRails
     def render(object, template, options = {})
       object = options[:locals].delete(:object) if !object && options[:locals]
 
-      c = Context.new(template, options)
+      c = ViewContext.new(template, options)
       t = c.lookup_context.find_template(template, [], false)
 
       raise TemplateNotFound unless t

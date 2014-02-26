@@ -15,7 +15,7 @@ module RablRails
       compiled_template = compile_template_from_source(source, path)
 
       format = context.params[:format] ? context.params[:format].to_s.upcase : :JSON
-      Renderers.const_get(format).new(context, locals).render(compiled_template)
+      Renderers.const_get(format).render(compiled_template, context, locals)
     end
 
     def compile_template_from_source(source, path = nil)

@@ -2,9 +2,12 @@ require 'active_support/core_ext/hash/conversions'
 
 module RablRails
   module Renderers
-    class XML < Base
-      def format_output(hash)
-      	xml_options = { root: _options[:root_name] }.merge!(RablRails.xml_options)
+    module XML
+      include Renderers::Hash
+      extend self
+
+      def format_output(hash, options = {})
+      	xml_options = { root: options[:root_name] }.merge!(RablRails.xml_options)
 				hash.to_xml(xml_options)
       end
 
