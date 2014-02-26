@@ -72,8 +72,12 @@ module Visitors
 
       return [] if object.respond_to?(:empty?) && object.empty?
 
-      template = Library.instance.compile_template_from_path(template_path)
-      object.respond_to?(:each) ? render_collection(object, template.source) : render_resource(object, template.source)
+      template = RablRails::Library.instance.compile_template_from_path(template_path)
+      if object.respond_to?(:each)
+        object.map { |o| sub_visit o, template.nodes }
+      else
+        sub_visit object, template.nodes
+      end
     end
 
     private
@@ -85,12 +89,12 @@ module Visitors
     end
 
     def sub_visit(resource, nodes)
-      old_result, @_result = @_result, {}
+      old_result, old_resource, @_result = @_result, @_resource, {}
       reset_for resource
       visit nodes
       _result
     ensure
-      @_result = old_result
+      @_result, @_resource = old_result, old_resource
     end
 
     def object_from_data(resource, symbol, is_variable)
