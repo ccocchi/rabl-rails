@@ -16,7 +16,7 @@ class TestXmlRenderer < ActiveSupport::TestCase
   end
 
   def render_xml_output
-    RablRails::Renderers::XML.new(@context).render(@template).to_s.gsub!(INDENT_REGEXP, '').sub!(HEADER_REGEXP, '')
+    RablRails::Renderers::XML.render(@template, @context).to_s.gsub!(INDENT_REGEXP, '').sub!(HEADER_REGEXP, '')
   end
 
   test "render object simple object" do

@@ -66,11 +66,11 @@ module RablRails
       data, name = extract_data_and_name(name_or_data)
       name = options[:root] if options.has_key? :root
 
-      template = if options[:partial]
+      if options[:partial]
         template = Library.instance.compile_template_from_path(options[:partial])
         template.data = data
       elsif block_given?
-        sub_compile(data) { yield }
+        template = sub_compile(data) { yield }
       end
 
       @template.add_node Nodes::Child.new(name, template)
@@ -96,7 +96,7 @@ module RablRails
     #   node(:name) { |user| user.first_name + user.last_name }
     #   node(:role, if: ->(u) { !u.admin? }) { |u| u.role }
     #
-    def node(name, options = {}, &block)
+    def node(name = nil, options = {}, &block)
       return unless block_given?
       @template.add_node Nodes::Code.new(name, block, options[:if])
     end

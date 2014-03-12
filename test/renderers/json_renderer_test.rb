@@ -13,7 +13,7 @@ class TestJsonRenderer < ActiveSupport::TestCase
   end
 
   def render_json_output
-    RablRails::Renderers::JSON.new(@context).render(@template)
+    RablRails::Renderers::JSON.render(@template, @context)
   end
 
   test "render object wth empty template" do

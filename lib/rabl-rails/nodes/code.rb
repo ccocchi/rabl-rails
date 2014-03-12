@@ -1,13 +1,15 @@
-module Nodes
-  class Code
-    include Node
+module RablRails
+  module Nodes
+    class Code
+      include Node
 
-    attr_reader :name, :block, :condition
+      attr_reader :name, :block, :condition
 
-    def initialize(name, block, condition = nil)
-      @name = name
-      @block = block
-      @condition = condition
+      def initialize(name, block, condition = nil)
+        @name = name
+        @block = block
+        @condition = condition
+      end
     end
   end
 end

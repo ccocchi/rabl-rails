@@ -16,7 +16,7 @@ class TestPlistRenderer < ActiveSupport::TestCase
   end
 
   def render_plist_output
-    output = RablRails::Renderers::PLIST.new(@context).render(@template).to_s.gsub!(INDENT_REGEXP, '')
+    output = RablRails::Renderers::PLIST.render(@template, @context).to_s.gsub!(INDENT_REGEXP, '')
     output.sub!(HEADER_REGEXP, '').gsub!(%r(</?plist[^>]*>), '').sub!(%r(<dict/?>), '').sub(%r(</dict>), '')
   end
 

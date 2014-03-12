@@ -1,13 +1,6 @@
 require 'test_helper'
 
 class TestBaseRenderer < ActiveSupport::TestCase
-
-  RablRails::Renderers::Base.class_eval do
-    def format_output(hash)
-      hash
-    end
-  end
-
   setup do
     @data = User.new(1, 'foobar', 'male')
 
@@ -23,7 +16,7 @@ class TestBaseRenderer < ActiveSupport::TestCase
   end
 
   def render_hash
-    RablRails::Renderers::Base.new(@context).render(@template)
+    RablRails::Renderers::Hash.render(@template, @context)
   end
 
   test "child with nil data should render nil" do
