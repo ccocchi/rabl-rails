@@ -7,6 +7,7 @@ module RablRails
       def format_output(hash, options = {})
         hash = { options[:root_name] => hash } if options[:root_name] && RablRails.include_json_root
         json = MultiJson.encode(hash)
+        params = options.fetch(:params, {})
 
         RablRails.enable_jsonp_callbacks && params.has_key?(:callback) ? "#{params[:callback]}(#{json})" : json
       end

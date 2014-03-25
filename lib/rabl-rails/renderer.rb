@@ -6,6 +6,7 @@ require 'rabl-rails/renderers/plist'
 module RablRails
   module Renderer
     class TemplateNotFound < StandardError; end
+    class PartialError < StandardError; end
 
     mattr_reader :view_path
     @@view_path = 'app/views'

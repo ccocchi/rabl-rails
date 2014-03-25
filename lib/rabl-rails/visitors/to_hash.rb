@@ -2,8 +2,6 @@ module Visitors
   class ToHash < Visitor
     attr_reader :_resource, :_result
 
-    class PartialError < StandardError; end
-
     def initialize(view_context, resource = nil)
       @_context  = view_context
       @_result   = {}
@@ -38,12 +36,18 @@ module Visitors
     def visit_Code n
       if !n.condition || instance_exec(_resource, &(n.condition))
         result = instance_exec _resource, &(n.block)
-        n.name ? @_result[n.name] = result : @_result.merge!(result)
+
+        if n.merge?
+          raise RablRails::Renderer::PartialError, '`merge` block should return a hash' unless result.is_a?(Hash)
+          @_result.merge!(result)
+        else
+          @_result[n.name] = result
+        end
       end
     end
 
     def visit_Condition n
-      @_result.merge!(sub_visit(_resource, n.template.nodes)) if instance_exec _resource, &(n.condition)
+      @_result.merge!(sub_visit(_resource, n.nodes)) if instance_exec _resource, &(n.condition)
     end
 
     def visit_Glue n
@@ -67,7 +71,7 @@ module Visitors
     # rendering time).
     #
     def partial(template_path, options = {})
-      raise PartialError.new("No object was given to partial #{template_path}") unless options[:object]
+      raise RablRails::Renderer::PartialError.new("No object was given to partial #{template_path}") unless options[:object]
       object = options[:object]
 
       return [] if object.respond_to?(:empty?) && object.empty?
@@ -101,7 +105,7 @@ module Visitors
       return resource if symbol == nil
 
       if is_variable
-        @_context.instance_variable_get(symbol)
+        instance_variable_get(symbol)
       else
         resource.respond_to?(symbol) ? resource.send(symbol) : @_context.send(symbol)
       end

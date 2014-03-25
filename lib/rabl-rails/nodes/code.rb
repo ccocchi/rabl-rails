@@ -10,6 +10,10 @@ module RablRails
         @block = block
         @condition = condition
       end
+
+      def merge?
+        !name
+      end
     end
   end
 end

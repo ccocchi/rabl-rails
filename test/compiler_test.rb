@@ -244,7 +244,7 @@ class CompilerTest < ActiveSupport::TestCase
     node = t.nodes.first
 
     assert_instance_of RablRails::Nodes::Condition, node
-    assert_equal([{ secret: :secret }], extract_attributes(node.template.nodes))
+    assert_equal([{ secret: :secret }], extract_attributes(node.nodes))
   end
 
   test "compile with no object" do

@@ -3,11 +3,11 @@ module RablRails
     class Condition
       include Node
 
-      attr_reader :condition, :template
+      attr_reader :condition, :nodes
 
-      def initialize(condition, template)
+      def initialize(condition, nodes)
         @condition = condition
-        @template = template
+        @nodes = nodes
       end
     end
   end

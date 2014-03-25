@@ -131,7 +131,7 @@ module RablRails
     #
     def condition(proc)
       return unless block_given?
-      @template.add_node Nodes::Condition.new(proc, sub_compile(nil) { yield })
+      @template.add_node Nodes::Condition.new(proc, sub_compile(nil, true) { yield })
     end
 
     def cache(&block)
@@ -158,12 +158,12 @@ module RablRails
       end
     end
 
-    def sub_compile(data)
+    def sub_compile(data, only_nodes = false)
       raise unless block_given?
       old_template, @template = @template, CompiledTemplate.new
       yield
       @template.data = data
-      @template
+      only_nodes ? @template.nodes : @template
     ensure
       @template = old_template
     end

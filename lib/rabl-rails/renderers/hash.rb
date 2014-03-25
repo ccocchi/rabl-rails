@@ -28,7 +28,7 @@ module RablRails
             render_resource(collection_or_resource, template.nodes, visitor)
           end
 
-          format_output(output_hash, root_name: template.root_name)
+          format_output(output_hash, root_name: template.root_name, params: context.params)
         end
       end
 
@@ -42,6 +42,8 @@ module RablRails
         hash = { options[:root_name] => hash } if options[:root_name]
         hash
       end
+
+      private
 
       #
       # Render a single resource as a hash, according to the compiled

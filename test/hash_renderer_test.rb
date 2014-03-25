@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class TestBaseRenderer < ActiveSupport::TestCase
+class TestHashRenderer < ActiveSupport::TestCase
   setup do
     @data = User.new(1, 'foobar', 'male')
 
@@ -8,7 +8,6 @@ class TestBaseRenderer < ActiveSupport::TestCase
     @context.assigns['data'] = @data
 
     @template = RablRails::CompiledTemplate.new
-    @template.source = {}
     @template.data = :@data
 
     @cache = double
@@ -17,11 +16,6 @@ class TestBaseRenderer < ActiveSupport::TestCase
 
   def render_hash
     RablRails::Renderers::Hash.render(@template, @context)
-  end
-
-  test "child with nil data should render nil" do
-    @template.source = { :author => { :_data => :@nil, :name => :name } }
-    assert_equal({ :author => nil }, render_hash)
   end
 
   test "properly handle assigns with symbol keys" do
