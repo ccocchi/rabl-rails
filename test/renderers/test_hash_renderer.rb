@@ -1,26 +1,69 @@
 require 'test_helper'
 
-class TestHashRenderer < ActiveSupport::TestCase
-  setup do
-    @data = User.new(1, 'foobar', 'male')
+class TestHashRenderer < MiniTest::Unit::TestCase
+  describe 'hash renderer' do
+    def render(locals = nil)
+      Visitors::ToHash.stub :new, @visitor do
+        RablRails::Renderers::Hash.render(@template, @context, locals)
+      end
+    end
 
-    @context = Context.new
-    @context.assigns['data'] = @data
+    def with_cache
+      ActionController::Base.stub :perform_caching, true do
+        Rails.stub :cache, @cache do
+          yield
+        end
+      end
+    end
 
-    @template = RablRails::CompiledTemplate.new
-    @template.data = :@data
+    before do
+      @cache    = MiniTest::Mock.new
+      @resource = User.new(1, 'Marty')
+      @context  = Context.new
+      @context.assigns['user'] = @resource
+      @template = RablRails::CompiledTemplate.new
+      @template.data = :@user
+      @visitor  = Visitors::ToHash.new(@context)
+    end
 
-    @cache = double
-    Rails.stub(:cache).and_return(@cache)
+    describe 'cache' do
+      it 'uses resource cache_key by default' do
+        def @resource.cache_key; 'marty_cache' end
+        @template.cache_key = nil
+        @cache.expect :fetch, { user: 'Marty' }, ['marty_cache']
+        with_cache {
+          assert_equal({ user: 'Marty' }, render)
+        }
+        @cache.verify
+      end
+
+      it 'uses template cache_key if present' do
+        @template.cache_key = ->(u) { u.name }
+        @cache.expect :fetch, { user: 'Marty' }, ['Marty']
+        with_cache {
+          assert_equal({ user: 'Marty' }, render)
+        }
+        @cache.verify
+      end
+    end
   end
 
-  def render_hash
-    RablRails::Renderers::Hash.render(@template, @context)
-  end
 
-  # test "properly handle assigns with symbol keys" do
-  #   @context.assigns[:foo] = 'bar'
-  #   assert_nothing_raised { render_hash }
+  # setup do
+  #   @data = User.new(1, 'foobar', 'male')
+
+  #   @context = Context.new
+  #   @context.assigns['data'] = @data
+
+  #   @template = RablRails::CompiledTemplate.new
+  #   @template.data = :@data
+
+  #   @cache = double
+  #   Rails.stub(:cache).and_return(@cache)
+  # end
+
+  # def render_hash
+  #   RablRails::Renderers::Hash.render(@template, @context)
   # end
 
   # test "cache should be applied if no cache key is given" do

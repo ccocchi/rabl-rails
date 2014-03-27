@@ -41,6 +41,10 @@ module ActiveSupport
   end
 end
 
+module Rails
+  def self.cache; end
+end
+
 class Context
   attr_writer :virtual_path
 
