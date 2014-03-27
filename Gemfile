@@ -22,7 +22,6 @@ end
 
 group :test do
   gem 'minitest'
-  gem 'byebug'
 end
 
 gem 'plist'

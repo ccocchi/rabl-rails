@@ -2,14 +2,15 @@ require 'test_helper'
 require 'pathname'
 require 'tmpdir'
 
-class RenderTest < ActiveSupport::TestCase
+class TestRender < MiniTest::Unit::TestCase
+  @@tmp_path = Pathname.new(Dir.mktmpdir)
 
-  setup do
+  def setup
     @user = User.new(1, 'Marty')
-    @tmp_path = Pathname.new(Dir.mktmpdir)
+    @tmp_path = @@tmp_path
   end
 
-  test "allow object to be passed as an option" do
+  def test_object_as_option
     File.open(@tmp_path + "nil.json.rabl", "w") do |f|
       f.puts %q{
         object :@user
@@ -19,7 +20,7 @@ class RenderTest < ActiveSupport::TestCase
     assert_equal %q({"user":{"name":"Marty"}}), RablRails.render(nil, 'nil', locals: { object: @user }, view_path: @tmp_path)
   end
 
-  test "load source from file" do
+  def test_load_source_from_file
     File.open(@tmp_path + "show.json.rabl", "w") do |f|
       f.puts %q{
         object :@user
@@ -29,11 +30,11 @@ class RenderTest < ActiveSupport::TestCase
     assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path)
   end
 
-  test "raise error if template is not found" do
+  def test_template_not_found
     assert_raises(RablRails::Renderer::TemplateNotFound) { RablRails.render(@user, 'not_found') }
   end
 
-  test "instance variables can be passed via options[:locals]" do
+  def test_with_locals_options
     File.open(@tmp_path + "instance.json.rabl", "w") do |f|
       f.puts %q{
         object false
@@ -43,7 +44,7 @@ class RenderTest < ActiveSupport::TestCase
     assert_equal %q({"username":"Marty"}), RablRails.render(nil, 'instance', view_path: @tmp_path, locals: { user: @user })
   end
 
-  test "handle path for extends" do
+  def test_extend_with_view_path
     File.open(@tmp_path + "extend.json.rabl", "w") do |f|
       f.puts %q{
         object :@user
@@ -60,7 +61,7 @@ class RenderTest < ActiveSupport::TestCase
     assert_equal %q({"user":{"extended_name":"Marty"}}), RablRails.render(@user, 'extend', view_path: @tmp_path)
   end
 
-  test "format can be passed as symbol or a string" do
+  def test_format_as_symbol_or_string
     File.open(@tmp_path + "show.json.rabl", "w") do |f|
       f.puts %q{
         object :@user
@@ -73,7 +74,7 @@ class RenderTest < ActiveSupport::TestCase
     assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path, format: 'JSON')
   end
 
-  test "format can be omitted if option is set" do
+  def test_format_omitted
     begin
       RablRails.allow_empty_format_in_template = true
       File.open(@tmp_path + "show.rabl", "w") do |f|
@@ -88,5 +89,4 @@ class RenderTest < ActiveSupport::TestCase
       RablRails.allow_empty_format_in_template = false
     end
   end
-
 end

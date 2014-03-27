@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class TestHashVisitor < MiniTest::Unit::TestCase
-  describe 'ToHash visitor' do
+  describe 'hash visitor' do
     def visitor_result
       visitor = Visitors::ToHash.new(@context)
       visitor.reset_for @resource
