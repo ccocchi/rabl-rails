@@ -20,6 +20,11 @@ group :development, :test do
   gem 'actionpack', rails
 end
 
+group :test do
+  gem 'minitest'
+  gem 'byebug'
+end
+
 gem 'plist'
 
 platforms :ruby do
@@ -36,7 +41,6 @@ end
 
 platforms :rbx do
   gem 'rubysl', '~> 2.0'
-  gem 'minitest'
   gem 'rubysl-test-unit'
 end
 

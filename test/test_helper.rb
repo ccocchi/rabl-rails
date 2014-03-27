@@ -1,9 +1,9 @@
 ENV["RAILS_ENV"] = "test"
 $:.unshift File.expand_path('../../lib', __FILE__)
 
-require 'rspec/mocks'
-require 'minitest/unit'
-MiniTest::Unit.autorun
+# require 'rspec/mocks'
+require 'minitest/mock'
+require 'minitest/autorun'
 
 require 'active_support/test_case'
 
@@ -36,8 +36,8 @@ RablRails.load_default_engines!
 
 module ActiveSupport
   class TestCase
-    RSpec::Mocks::setup(self)
-    include RSpec::Mocks::ExampleMethods
+    # RSpec::Mocks::setup(self)
+    # include RSpec::Mocks::ExampleMethods
   end
 end
 
