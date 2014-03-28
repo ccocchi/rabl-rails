@@ -60,6 +60,9 @@ class Context
   def params
     {}
   end
+
+  def context_method
+  end
 end
 
 class User
