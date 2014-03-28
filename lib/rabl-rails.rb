@@ -15,7 +15,11 @@ require 'rabl-rails/library'
 require 'rabl-rails/handler'
 require 'rabl-rails/railtie'
 
-require 'multi_json'
+begin
+  require 'oj'
+  Oj.default_options =  { mode: :compat, time_format: :ruby }
+rescue LoadError
+end
 
 module RablRails
   extend Renderer
@@ -55,14 +59,8 @@ module RablRails
     ActionController::Base.responder = Responder if self.use_custom_responder
   end
 
-  def self.json_engine=(name)
-    MultiJson.engine = name
-  rescue LoadError
-    Rails.logger.warn %Q(WARNING: rabl-rails could not load "#{name}" as JSON engine, fallback to default)
-  end
-
   def self.json_engine
-    MultiJson.engine
+    @json_engine ||= defined?(::Oj) ? ::Oj : ::JSON
   end
 
   def self.xml_engine=(name)
@@ -85,7 +83,6 @@ module RablRails
   end
 
   def self.load_default_engines!
-    self.json_engine  = MultiJson.default_engine
     self.plist_engine = Plist::Emit if defined?(Plist)
 
     if defined?(LibXML)
