@@ -38,7 +38,7 @@ module RablRails
   @@plist_engine = nil
 
   mattr_accessor :include_plist_root
-  @@include_plist_root = nil
+  @@include_plist_root = false
 
   mattr_accessor :enable_jsonp_callbacks
   @@enable_jsonp_callbacks = false
