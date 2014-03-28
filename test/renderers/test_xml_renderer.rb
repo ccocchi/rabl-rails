@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'helper'
 
 class TestXMLRenderer < MiniTest::Unit::TestCase
   INDENT_REGEXP = /\n(\s)*/

@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'helper'
 
 class TestJSONRenderer < MiniTest::Unit::TestCase
   describe 'JSON renderer' do

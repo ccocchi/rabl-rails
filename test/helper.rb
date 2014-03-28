@@ -1,27 +1,25 @@
-ENV["RAILS_ENV"] = "test"
+ENV['RAILS_ENV'] = 'test'
 $:.unshift File.expand_path('../../lib', __FILE__)
 
 # require 'rspec/mocks'
 require 'minitest/mock'
 require 'minitest/autorun'
 
-require 'active_support/test_case'
+# require 'action_controller'
 
-require 'action_controller'
-
-require 'singleton'
-class <<Singleton
-  def included_with_reset(klass)
-    included_without_reset(klass)
-    class <<klass
-      def reset_instance
-        Singleton.send :__init__, self
-        self
-      end
-    end
-  end
-  alias_method_chain :included, :reset
-end
+# require 'singleton'
+# class <<Singleton
+#   def included_with_reset(klass)
+#     included_without_reset(klass)
+#     class <<klass
+#       def reset_instance
+#         Singleton.send :__init__, self
+#         self
+#       end
+#     end
+#   end
+#   alias_method_chain :included, :reset
+# end
 
 require 'rabl-rails'
 require 'plist'
@@ -34,15 +32,16 @@ end
 
 RablRails.load_default_engines!
 
-module ActiveSupport
-  class TestCase
-    # RSpec::Mocks::setup(self)
-    # include RSpec::Mocks::ExampleMethods
-  end
-end
-
 module Rails
   def self.cache; end
+end
+
+module ActionController
+  module Base
+    def self.perform_caching
+      false
+    end
+  end
 end
 
 class Context

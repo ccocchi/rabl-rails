@@ -16,10 +16,6 @@ end
 gem 'activesupport', rails
 gem 'railties', rails
 
-group :development, :test do
-  gem 'actionpack', rails
-end
-
 group :test do
   gem 'minitest'
 end

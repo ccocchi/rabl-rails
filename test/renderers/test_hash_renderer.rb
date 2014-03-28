@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'helper'
 
 class TestHashRenderer < MiniTest::Unit::TestCase
   describe 'hash renderer' do

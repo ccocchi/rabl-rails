@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'helper'
 
 class TestCompiler < MiniTest::Unit::TestCase
   describe 'compiler' do

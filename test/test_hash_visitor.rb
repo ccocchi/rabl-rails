@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'helper'
 
 class TestHashVisitor < MiniTest::Unit::TestCase
   describe 'hash visitor' do

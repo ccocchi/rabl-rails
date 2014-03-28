@@ -15,10 +15,7 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- test/*`.split("\n")
   s.require_paths = ["lib"]
 
-  s.add_dependency "activesupport", ">= 3.1"
-  s.add_dependency "railties", ">= 3.1"
+  s.add_dependency 'activesupport', '>= 3.1'
+  s.add_dependency 'railties', '>= 3.1'
   s.add_dependency 'thread_safe', '~> 0.3.1'
-
-  s.add_development_dependency "actionpack", ">= 3.1"
-  s.add_development_dependency "rspec-mocks"
 end

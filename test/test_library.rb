@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'helper'
 
 class TestLibrary < MiniTest::Unit::TestCase
   RablRails::Library.send(:attr_reader, :cached_templates)
@@ -25,7 +25,6 @@ class TestLibrary < MiniTest::Unit::TestCase
         assert_equal '{}', result
         assert renderer.verify
       end
-
 
       it 'accepts format as string' do
         result = @library.stub :compile_template_from_source, @template do
