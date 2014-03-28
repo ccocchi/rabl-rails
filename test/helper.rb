@@ -5,22 +5,6 @@ $:.unshift File.expand_path('../../lib', __FILE__)
 require 'minitest/mock'
 require 'minitest/autorun'
 
-# require 'action_controller'
-
-# require 'singleton'
-# class <<Singleton
-#   def included_with_reset(klass)
-#     included_without_reset(klass)
-#     class <<klass
-#       def reset_instance
-#         Singleton.send :__init__, self
-#         self
-#       end
-#     end
-#   end
-#   alias_method_chain :included, :reset
-# end
-
 require 'rabl-rails'
 require 'plist'
 
@@ -65,10 +49,10 @@ class Context
 end
 
 class User
-  attr_accessor :id, :name, :sex
-  def initialize(id=nil, name=nil, sex=nil)
+  attr_accessor :id, :name
+
+  def initialize(id = nil, name = nil)
     @id = id
     @name = name
-    @sex = sex
   end
 end
