@@ -25,7 +25,6 @@ group :test do
 end
 
 gem 'plist'
-gem 'thread_safe'
 
 platforms :ruby do
   gem 'oj'
