@@ -76,7 +76,7 @@ module Visitors
 
       return [] if object.respond_to?(:empty?) && object.empty?
 
-      template = RablRails::Library.instance.compile_template_from_path(template_path)
+      template = RablRails::Library.instance.compile_template_from_path(template_path, @_context)
       if object.respond_to?(:each)
         object.map { |o| sub_visit o, template.nodes }
       else

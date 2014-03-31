@@ -1,37 +1,64 @@
 require 'singleton'
+require 'monitor'
+require 'thread_safe'
 
 module RablRails
   class Library
     include Singleton
 
     def initialize
-      @cached_templates = {}
+      @cached_templates = ThreadSafe::Cache.new
+      @mutex = Monitor.new
     end
 
-    def get_rendered_template(source, context, locals = nil)
-      path = context.instance_variable_get(:@virtual_path)
-      @lookup_context = context.lookup_context
-
-      compiled_template = compile_template_from_source(source, path)
-
-      format = context.params[:format] ? context.params[:format].to_s.upcase : :JSON
-      Renderers.const_get(format).render(compiled_template, context, locals)
+    def reset_cache!
+      @cached_templates = ThreadSafe::Cache.new
     end
 
-    def compile_template_from_source(source, path = nil)
-      if path && RablRails.cache_templates?
-        @cached_templates[path] ||= Compiler.new.compile_source(source)
-        @cached_templates[path].dup
+    def get_rendered_template(source, view, locals = nil)
+      compiled_template = compile_template_from_source(source, view)
+      format = view.params[:format] ? view.params[:format].to_s.upcase : :JSON
+      Renderers.const_get(format).render(compiled_template, view, locals)
+    end
+
+    def compile_template_from_source(source, view)
+      if RablRails.cache_templates?
+        path = view.instance_variable_get(:@virtual_path)
+        synchronized_compile(path, source, view)
       else
-        Compiler.new.compile_source(source)
+        compile(source, view)
       end
     end
 
-    def compile_template_from_path(path)
-      return @cached_templates[path].dup if @cached_templates.has_key?(path)
+    def compile_template_from_path(path, view)
+      if RablRails.cache_templates?
+        synchronized_compile(path, nil, view)
+      else
+        source = fetch_source(path, view)
+        compile(source, view)
+      end
+    end
 
-      t = @lookup_context.find_template(path, [], false)
-      compile_template_from_source(t.source, path)
+    private
+
+    def synchronized_compile(path, source, view)
+      @cached_templates[path] || @mutex.synchronize do
+        # Any thread holding this lock will be compiling the template needed
+        # by the threads waiting. So re-check the template presence to avoid
+        # re-compilation
+        @cached_templates.fetch(path) do
+          source ||= fetch_source(path, view)
+          @cached_templates[path] = compile(source, view)
+        end
+      end
+    end
+
+    def compile(source, view)
+      Compiler.new(view).compile_source(source)
+    end
+
+    def fetch_source(path, view)
+      view.lookup_context.find_template(path, [], false).source
     end
   end
 end

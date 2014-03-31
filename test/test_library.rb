@@ -1,35 +1,86 @@
 require 'test_helper'
 
-class TestLibrary < ActiveSupport::TestCase
+class TestLibrary < MiniTest::Unit::TestCase
+  RablRails::Library.send(:attr_reader, :cached_templates)
 
-  setup do
-    RablRails::Library.reset_instance
-    @library = RablRails::Library.instance
-    RablRails.cache_templates = true
+  describe 'library' do
+    before do
+      @library = RablRails::Library.instance
+      @library.reset_cache!
+      @context = Context.new
+      @template = RablRails::CompiledTemplate.new
+    end
+
+    describe '#get_rendered_template' do
+      it 'compiles and renders template' do
+        renderer = MiniTest::Mock.new
+        renderer.expect :render, '{}', [@template, @context, nil]
+
+        result = @library.stub :compile_template_from_source, @template do
+          RablRails::Renderers.stub :const_get, renderer do
+            @library.get_rendered_template '', @context
+          end
+        end
+
+        assert_equal '{}', result
+        assert renderer.verify
+      end
+
+
+      it 'accepts format as string' do
+        result = @library.stub :compile_template_from_source, @template do
+          @context.stub :params, { format: 'xml' } do
+            RablRails::Renderers::XML.stub :render, '<xml>' do
+              @library.get_rendered_template '', @context
+            end
+          end
+        end
+
+        assert_equal '<xml>', result
+      end
+
+      it 'accepts format as symbol' do
+        result = @library.stub :compile_template_from_source, @template do
+          @context.stub :params, { format: :plist } do
+            RablRails::Renderers::PLIST.stub :render, '<plist>' do
+              @library.get_rendered_template '', @context
+            end
+          end
+        end
+
+        assert_equal '<plist>', result
+      end
+    end
+
+    describe '#compile_template_from_source' do
+      it 'compiles a template' do
+        compiler = MiniTest::Mock.new
+        compiler.expect :compile_source, @template, ['attribute :id']
+
+        result = RablRails::Compiler.stub :new, compiler do
+          @library.compile_template_from_source('attribute :id', @context)
+        end
+
+        assert_equal @template, result
+      end
+
+      it 'caches compiled template if option is set' do
+        @context.virtual_path = 'users/base'
+        template = RablRails.stub :cache_templates?, true do
+          @library.compile_template_from_source("attribute :id", @context)
+        end
+
+        assert_equal(template, @library.cached_templates['users/base'])
+      end
+
+      it 'compiles source without caching it if options is not set' do
+        @context.virtual_path = 'users/base'
+        template = RablRails.stub :cache_templates?, false do
+          @library.compile_template_from_source("attribute :id", @context)
+        end
+
+        assert_empty @library.cached_templates
+      end
+    end
   end
-
-  # test "cache templates if perform_caching is active and cache_templates is enabled" do
-  #   ActionController::Base.stub(:perform_caching).and_return(true)
-  #   @library.compile_template_from_source('', 'some/path')
-  #   t = @library.compile_template_from_source("attribute :id", 'some/path')
-
-  #   assert_equal({}, t.source)
-  # end
-
-  # test "cached templates should not be modifiable in place" do
-  #   ActionController::Base.stub(:perform_caching).and_return(true)
-  #   t = @library.compile_template_from_source('', 'some/path')
-
-  #   t.merge!(:_data => :foo)
-
-  #   assert_equal({}, @library.compile_template_from_path('some/path').source)
-  # end
-
-  # test "don't cache templates cache_templates is enabled but perform_caching is not active" do
-  #   ActionController::Base.stub(:perform_caching).and_return(false)
-  #   @library.compile_template_from_source('', 'some/path')
-  #   t = @library.compile_template_from_source("attribute :id", 'some/path')
-
-  #   assert_equal({ :id => :id }, t.source)
-  # end
 end

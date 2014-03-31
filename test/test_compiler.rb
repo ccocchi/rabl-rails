@@ -7,7 +7,8 @@ class TestCompiler < MiniTest::Unit::TestCase
     end
 
     before do
-      @compiler = RablRails::Compiler.new
+      @view = MiniTest::Mock.new
+      @compiler = RablRails::Compiler.new(@view)
     end
 
     it "returns a compiled template instance" do
@@ -197,10 +198,15 @@ class TestCompiler < MiniTest::Unit::TestCase
     it "extends other template" do
       template = RablRails::CompiledTemplate.new
       template.add_node RablRails::Nodes::Attribute.new(id: :id)
-      t = RablRails::Library.instance.stub :compile_template_from_path, template do
+
+      library = MiniTest::Mock.new
+      library.expect :compile_template_from_path, template, ['users/base', @view]
+
+      t = RablRails::Library.stub :instance, library do
         @compiler.compile_source(%{ extends 'users/base' })
       end
       assert_equal([{ :id => :id }], extract_attributes(t.nodes))
+      library.verify
     end
 
     it "compiles extend without overwriting nodes previously defined" do

@@ -4,6 +4,10 @@ module RablRails
   # representing data structure
   #
   class Compiler
+    def initialize(view)
+      @view = view
+    end
+
     #
     # Compile from source code and return the CompiledTemplate
     # created.
@@ -66,8 +70,8 @@ module RablRails
       data, name = extract_data_and_name(name_or_data)
       name = options[:root] if options.has_key? :root
 
-      if options[:partial]
-        template = Library.instance.compile_template_from_path(options[:partial])
+      if options.key?(:partial)
+        template = Library.instance.compile_template_from_path(options[:partial], @view)
         template.data = data
       elsif block_given?
         template = sub_compile(data) { yield }
@@ -119,7 +123,7 @@ module RablRails
     #   extends 'users/base'
     #
     def extends(path)
-      @template.extends Library.instance.compile_template_from_path(path)
+      @template.extends Library.instance.compile_template_from_path(path, @view)
     end
 
     #

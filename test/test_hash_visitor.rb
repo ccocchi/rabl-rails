@@ -158,10 +158,15 @@ class TestHashVisitor < MiniTest::Unit::TestCase
       template.add_node(RablRails::Nodes::Attribute.new(name: :name))
       proc = ->(u) { partial('users/base', object: u) }
 
+      library = MiniTest::Mock.new
+      library.expect :compile_template_from_path, template, ['users/base', @context]
+
       @nodes << RablRails::Nodes::Code.new(:user, proc)
-      RablRails::Library.instance.stub :compile_template_from_path, template do
+      RablRails::Library.stub :instance, library do
         assert_equal({ user: { name: 'Marty' } }, visitor_result)
       end
+
+      library.verify
     end
 
     it 'renders partial with empty target' do
