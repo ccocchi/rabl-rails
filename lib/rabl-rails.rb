@@ -19,6 +19,7 @@ begin
   require 'oj'
   Oj.default_options =  { mode: :compat, time_format: :ruby }
 rescue LoadError
+  require 'json'
 end
 
 module RablRails
