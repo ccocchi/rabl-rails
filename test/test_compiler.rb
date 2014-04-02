@@ -7,7 +7,7 @@ class TestCompiler < MiniTest::Unit::TestCase
     end
 
     before do
-      @view = MiniTest::Mock.new
+      @view = Context.new
       @compiler = RablRails::Compiler.new(@view)
     end
 
