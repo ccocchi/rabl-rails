@@ -1,3 +1,5 @@
+require 'active_support/core_ext/module/attribute_accessors'
+
 require 'rabl-rails/renderers/hash'
 require 'rabl-rails/renderers/json'
 require 'rabl-rails/renderers/xml'
