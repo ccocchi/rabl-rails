@@ -40,6 +40,3 @@ platforms :rbx do
   gem 'rubysl-test-unit'
 end
 
-group :test do
-  gem 'rspec-mocks'
-end

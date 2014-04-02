@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.4.0 (unreleased)
+## 0.3.4
   * Add `xml_options` option to root_level (brettallred)
 
   * Format can be omitted in template filename
