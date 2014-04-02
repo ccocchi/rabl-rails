@@ -3,6 +3,7 @@ require 'rails/railtie'
 require 'active_support'
 
 require 'rabl-rails/version'
+require 'rabl-rails/helpers'
 require 'rabl-rails/template'
 require 'rabl-rails/nodes'
 require 'rabl-rails/compiler'

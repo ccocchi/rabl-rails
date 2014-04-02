@@ -1,5 +1,7 @@
 module Visitors
   class ToHash < Visitor
+    include RablRails::Helpers
+
     attr_reader :_resource, :_result
 
     def initialize(view_context, resource = nil)
@@ -27,7 +29,7 @@ module Visitors
       object = object_from_data(_resource, n.data, n.instance_variable_data?)
 
       @_result[n.name] = if object
-        object.respond_to?(:each) && !object.is_a?(Struct) ? object.map { |o| sub_visit(o, n.nodes) } : sub_visit(object, n.nodes)
+        collection?(object) ? object.map { |o| sub_visit(o, n.nodes) } : sub_visit(object, n.nodes)
       else
         nil
       end

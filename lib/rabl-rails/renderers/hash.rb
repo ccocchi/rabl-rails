@@ -1,6 +1,7 @@
 module RablRails
   module Renderers
     module Hash
+      include ::RablRails::Helpers
       extend self
 
       #
@@ -22,7 +23,7 @@ module RablRails
         collection_or_resource ||= locals[:resource] if locals
 
         render_with_cache(template.cache_key, collection_or_resource) do
-          output_hash = if collection_or_resource.respond_to?(:each)
+          output_hash = if collection?(collection_or_resource)
             render_collection(collection_or_resource, template.nodes, visitor)
           else
             render_resource(collection_or_resource, template.nodes, visitor)
