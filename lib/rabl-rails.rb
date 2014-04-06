@@ -35,5 +35,9 @@ module RablRails
     def configuration
       @_configuration ||= Configuration.new
     end
+
+    def reset_configuration
+      @_configuration = nil
+    end
   end
 end

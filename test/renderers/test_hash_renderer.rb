@@ -50,7 +50,7 @@ class TestHashRenderer < MiniTest::Unit::TestCase
       visitor.expect :instance_variable_get, @resource, [:@user]
       visitor.expect :reset_for, nil, [@resource]
       visitor.expect :visit, nil, [Array]
-      visitor.expect :_result, { some: 'result' }
+      visitor.expect :result, { some: 'result' }
 
       Visitors::ToHash.stub :new, visitor do
         assert_equal({ some: 'result' }, render)

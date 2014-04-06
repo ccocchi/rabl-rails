@@ -2,7 +2,7 @@ module Visitors
   class ToHash < Visitor
     include RablRails::Helpers
 
-    attr_reader :_resource, :_result
+    attr_reader :_resource
 
     def initialize(view_context, resource = nil)
       @_context  = view_context
@@ -57,6 +57,21 @@ module Visitors
       @_result.merge! sub_visit(object, n.template.nodes)
     end
 
+    def result
+      case RablRails.configuration.result_flags
+      when 0
+        @_result
+      when 1
+        @_result.each { |k, v| @_result[k] = '' if v == nil }
+      when 2, 3
+        @_result.each { |k, v| @_result[k] = nil if v == '' }
+      when 4, 5
+        @_result.delete_if { |_, v| v == nil }
+      when 6
+        @_result.delete_if { |_, v| v == nil || v == '' }
+      end
+    end
+
     protected
 
     #
@@ -98,7 +113,7 @@ module Visitors
       old_result, old_resource, @_result = @_result, @_resource, {}
       reset_for resource
       visit nodes
-      _result
+      result
     ensure
       @_result, @_resource = old_result, old_resource
     end

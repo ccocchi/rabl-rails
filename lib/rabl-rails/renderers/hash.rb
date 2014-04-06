@@ -53,7 +53,7 @@ module RablRails
       def render_resource(resource, nodes, visitor)
         visitor.reset_for resource
         visitor.visit nodes
-        visitor._result
+        visitor.result
       end
 
       #

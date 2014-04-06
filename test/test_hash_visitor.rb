@@ -6,7 +6,7 @@ class TestHashVisitor < MiniTest::Unit::TestCase
       visitor = Visitors::ToHash.new(@context)
       visitor.reset_for @resource
       visitor.visit @nodes
-      visitor._result
+      visitor.result
     end
 
     before do
@@ -179,6 +179,46 @@ class TestHashVisitor < MiniTest::Unit::TestCase
       proc = ->(u) { partial('users/base') }
       @nodes << RablRails::Nodes::Code.new(:user, proc)
       assert_raises(RablRails::Renderer::PartialError) { visitor_result }
+    end
+
+    describe 'when hash options are set' do
+      before do
+        RablRails.reset_configuration
+        @nodes << RablRails::Nodes::Attribute.new(name: :name)
+      end
+
+      after { RablRails.reset_configuration }
+
+      it 'replaces nil values by strings' do
+        RablRails.configuration.replace_nil_values_with_empty_strings = true
+        @resource = User.new(1, nil)
+
+        assert_equal({ name: '' }, visitor_result)
+      end
+
+      it 'replaces empty string by nil' do
+        RablRails.configuration.replace_empty_string_values_with_nil = true
+        @resource = User.new(1, '')
+
+        assert_equal({ name: nil }, visitor_result)
+      end
+
+      it 'excludes nil values' do
+        RablRails.configuration.exclude_nil_values = true
+        @resource = User.new(1, nil)
+        @nodes << RablRails::Nodes::Attribute.new(id: :id)
+
+        assert_equal({ id: 1 }, visitor_result)
+      end
+
+      it 'excludes nil values and empty strings' do
+        RablRails.configuration.replace_empty_string_values_with_nil = true
+        RablRails.configuration.exclude_nil_values = true
+        @resource = User.new(nil, '')
+        @nodes << RablRails::Nodes::Attribute.new(id: :id)
+
+        assert_equal({}, visitor_result)
+      end
     end
   end
 end
