@@ -17,7 +17,7 @@ gem 'activesupport', rails
 gem 'railties', rails
 
 group :test do
-  gem 'minitest'
+  gem 'minitest', '~> 4.7.5'
 end
 
 gem 'plist'
