@@ -64,16 +64,6 @@ module RablRails
     @json_engine ||= defined?(::Oj) ? ::Oj : ::JSON
   end
 
-  def self.xml_engine=(name)
-    ActiveSupport::XmlMini.backend = name
-  rescue LoadError, NameError
-    Rails.logger.warn %Q(WARNING: rabl-rails could not load "#{name}" as XML engine, fallback to default)
-  end
-
-  def self.xml_engine
-    ActiveSupport::XmlMini.backend
-  end
-
   def self.plist_engine=(name)
     raise "Your plist engine does not respond to #dump" unless name.respond_to?(:dump)
     @@plist_engine = name
@@ -85,11 +75,5 @@ module RablRails
 
   def self.load_default_engines!
     self.plist_engine = Plist::Emit if defined?(Plist)
-
-    if defined?(LibXML)
-      self.xml_engine = 'LibXML'
-    elsif defined?(Nokogiri)
-      self.xml_engine = 'Nokogiri'
-    end
   end
 end
