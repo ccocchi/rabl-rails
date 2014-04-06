@@ -5,8 +5,8 @@ module RablRails
       extend self
 
       def format_output(hash, options = {})
-        hash = { options[:root_name] => hash } if options[:root_name] && RablRails.include_plist_root
-        RablRails.plist_engine.dump(hash)
+        hash = { options[:root_name] => hash } if options[:root_name] && RablRails.configuration.include_plist_root
+        RablRails.configuration.plist_engine.dump(hash)
       end
 
       def resolve_cache_key(key, data)

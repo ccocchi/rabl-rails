@@ -14,10 +14,21 @@ elsif RUBY_ENGINE == 'ruby'
   require 'libxml'
 end
 
-RablRails.load_default_engines!
+module Configurable
+  def with_configuration(key, value)
+    accessor = "#{key}="
+    old_value = RablRails.configuration.send(key)
+    RablRails.configuration.send(accessor, value)
+    yield
+  ensure
+    RablRails.configuration.send(accessor, old_value)
+  end
+end
+Minitest::Unit::TestCase.send(:include, Configurable)
 
 module Rails
-  def self.cache; end
+  def self.cache
+  end
 end
 
 module ActionController

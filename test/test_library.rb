@@ -65,7 +65,7 @@ class TestLibrary < MiniTest::Unit::TestCase
 
       it 'caches compiled template if option is set' do
         @context.virtual_path = 'users/base'
-        template = RablRails.stub :cache_templates?, true do
+        template = with_configuration :cache_templates, true do
           @library.compile_template_from_source("attribute :id", @context)
         end
 
@@ -74,7 +74,7 @@ class TestLibrary < MiniTest::Unit::TestCase
 
       it 'compiles source without caching it if options is not set' do
         @context.virtual_path = 'users/base'
-        template = RablRails.stub :cache_templates?, false do
+        template = with_configuration :cache_templates, false do
           @library.compile_template_from_source("attribute :id", @context)
         end
 

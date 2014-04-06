@@ -22,7 +22,7 @@ module RablRails
     end
 
     def compile_template_from_source(source, view)
-      if RablRails.cache_templates?
+      if RablRails.configuration.cache_templates
         path = view.instance_variable_get(:@virtual_path)
         synchronized_compile(path, source, view)
       else
@@ -31,7 +31,7 @@ module RablRails
     end
 
     def compile_template_from_path(path, view)
-      if RablRails.cache_templates?
+      if RablRails.configuration.cache_templates
         synchronized_compile(path, nil, view)
       else
         source = fetch_source(path, view)

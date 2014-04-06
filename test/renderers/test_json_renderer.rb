@@ -30,14 +30,14 @@ class TestJSONRenderer < MiniTest::Unit::TestCase
 
     it 'ignores template root_name option if include_json_root is disabled' do
       @template.root_name = :user
-      RablRails.stub :include_json_root, false do
+      with_configuration :include_json_root, false do
         assert_equal %q({"name":"Marty"}), render
       end
     end
 
     it 'renders jsonp callback' do
       @context.stub :params, { callback: 'some_callback' } do
-        RablRails.stub :enable_jsonp_callbacks, true do
+        with_configuration :enable_jsonp_callbacks, true do
           assert_equal %q[some_callback({"name":"Marty"})], render
         end
       end

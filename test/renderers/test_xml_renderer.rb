@@ -24,7 +24,7 @@ class TestXMLRenderer < MiniTest::Unit::TestCase
 
     it 'uses global XML options' do
       @template.nodes = [RablRails::Nodes::Attribute.new(first_name: :name)]
-      RablRails.stub :xml_options, { dasherize: false, skip_types: false } do
+      with_configuration :xml_options, { dasherize: false, skip_types: false } do
         assert_equal %q(<hash><first_name>Marty</first_name></hash>), render
       end
     end

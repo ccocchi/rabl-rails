@@ -29,7 +29,7 @@ class TestPListRenderer < MiniTest::Unit::TestCase
 
     it 'uses template root_name option if include_plist_root is set' do
       @template.root_name = :user
-      RablRails.stub :include_plist_root, true do
+      with_configuration :include_plist_root, true do
         assert_equal %q(<key>user</key><dict><key>name</key><string>Marty</string></dict>), render
       end
     end

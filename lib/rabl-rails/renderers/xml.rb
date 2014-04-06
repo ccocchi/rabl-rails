@@ -7,7 +7,7 @@ module RablRails
       extend self
 
       def format_output(hash, options = {})
-      	xml_options = { root: options[:root_name] }.merge!(RablRails.xml_options)
+      	xml_options = { root: options[:root_name] }.merge!(RablRails.configuration.xml_options)
 				hash.to_xml(xml_options)
       end
 

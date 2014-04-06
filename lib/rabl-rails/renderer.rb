@@ -8,14 +8,11 @@ module RablRails
     class TemplateNotFound < StandardError; end
     class PartialError < StandardError; end
 
-    mattr_reader :view_path
-    @@view_path = 'app/views'
-
     class LookupContext
       T = Struct.new(:source)
 
       def initialize(view_path, format)
-        @view_path = view_path || RablRails::Renderer.view_path
+        @view_path = view_path || 'app/views'
         @extension = format ? ".#{format.to_s.downcase}.rabl" : ".rabl"
       end
 
@@ -39,7 +36,7 @@ module RablRails
 
       def initialize(path, options)
         @virtual_path = path
-        @format = options.delete(:format) || (RablRails.allow_empty_format_in_template ? nil : 'json')
+        @format = options.delete(:format) || (RablRails.configuration.allow_empty_format_in_template ? nil : 'json')
         @_assigns = {}
         @options = options
 
