@@ -31,7 +31,7 @@ module RablRails
         template = if controller.respond_to?(:responder_default_template, true)
           controller.send(:responder_default_template)
         else
-          RablRails.responder_default_template
+          RablRails.configuration.responder_default_template
         end
         options[:prefixes] = controller._prefixes
         options[:template] ||= template
