@@ -3,7 +3,7 @@ module RablRails
     attr_accessor :json_engine, :include_json_root, :enable_jsonp_callbacks
     attr_accessor :xml_options
     attr_accessor :plist_engine, :include_plist_root
-    attr_accessor :cache_templates, :allow_empty_format_in_template
+    attr_accessor :cache_templates
     attr_reader   :use_custom_responder
     attr_accessor :responder_default_template
     attr_accessor :replace_nil_values_with_empty_strings
@@ -21,7 +21,6 @@ module RablRails
       @include_plist_root = false
 
       @cache_templates                = ActionController::Base.perform_caching
-      @allow_empty_format_in_template = false
 
       @use_custom_responder       = false
       @responder_default_template = 'show'

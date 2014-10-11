@@ -75,14 +75,12 @@ class TestRender < MiniTest::Unit::TestCase
   end
 
   def test_format_omitted
-    with_configuration :allow_empty_format_in_template, true do
-      File.open(@tmp_path + "show.rabl", "w") do |f|
-        f.puts %q{
-          object :@user
-          attributes :id, :name
-        }
-      end
-      assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path)
+    File.open(@tmp_path + "show.rabl", "w") do |f|
+      f.puts %q{
+        object :@user
+        attributes :id, :name
+      }
     end
+    assert_equal %q({"user":{"id":1,"name":"Marty"}}), RablRails.render(@user, 'show', view_path: @tmp_path)
   end
 end

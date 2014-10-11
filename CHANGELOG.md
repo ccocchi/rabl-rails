@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.4.0
+  * Internal cleanup and refactor
+  * Remove the `allow_empty_format_in_template` option, since it has become
+    the default behavior.
+
 ## 0.3.4
   * Add `xml_options` option to root_level (brettallred)
 
