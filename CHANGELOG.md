@@ -4,6 +4,11 @@
   * Internal cleanup and refactor
   * Remove the `allow_empty_format_in_template` option, since it has become
     the default behavior.
+  * Remove multi_json dependency
+  * New options available
+    * replace_nil_values_with_empty_strings
+    * replace_empty_string_values_with_nil
+    * exclude_nil_values
 
 ## 0.3.4
   * Add `xml_options` option to root_level (brettallred)
