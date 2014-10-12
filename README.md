@@ -4,7 +4,7 @@ RABL (Ruby API Builder Language) is a ruby templating system for rendering resou
 
 rabl-rails is **faster** and uses **less memory** than the standard rabl gem while letting you access the same features. There are some slight changes to do on your templates to get this gem to work but it should't take you more than 5 minutes.
 
-rabl-rails only targets **Rails 3+ application** and is compatible with mri 1.9.3, jRuby and rubinius.
+rabl-rails only targets **Rails 3.2+ application** and is compatible with mri 1.9.3+, jRuby and rubinius.
 
 ## Installation
 
