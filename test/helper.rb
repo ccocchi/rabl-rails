@@ -14,6 +14,12 @@ elsif RUBY_ENGINE == 'ruby'
   require 'libxml'
 end
 
+MINITEST_TEST_CLASS = if defined?(Minitest::Test)
+  Minitest::Test
+else
+  Minitest::Unit::TestCase
+end
+
 module Configurable
   def with_configuration(key, value)
     accessor = "#{key}="
@@ -24,7 +30,7 @@ module Configurable
     RablRails.configuration.send(accessor, old_value)
   end
 end
-Minitest::Unit::TestCase.send(:include, Configurable)
+MINITEST_TEST_CLASS.send(:include, Configurable)
 
 module Rails
   def self.cache

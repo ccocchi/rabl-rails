@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestCompiler < MiniTest::Unit::TestCase
+class TestCompiler < MINITEST_TEST_CLASS
   describe 'compiler' do
     def extract_attributes(nodes)
       nodes.map(&:hash)

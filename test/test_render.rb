@@ -2,7 +2,7 @@ require 'helper'
 require 'pathname'
 require 'tmpdir'
 
-class TestRender < MiniTest::Unit::TestCase
+class TestRender < MINITEST_TEST_CLASS
   @@tmp_path = Pathname.new(Dir.mktmpdir)
 
   def setup

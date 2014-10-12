@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestLibrary < MiniTest::Unit::TestCase
+class TestLibrary < MINITEST_TEST_CLASS
   RablRails::Library.send(:attr_reader, :cached_templates)
 
   describe 'library' do

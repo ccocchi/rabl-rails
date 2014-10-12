@@ -6,18 +6,20 @@ rails_version = ENV['RAILS_VERSION'] || 'default'
 
 rails = case rails_version
 when 'master'
-  {github: 'rails/rails'}
+  { github: 'rails/rails' }
 when "default"
   '~> 3.2.0'
 else
   "~> #{rails_version}"
 end
 
+minitest_version = rails_version == '4.0.0' ? '~> 4.7' : '~> 5.4'
+
 gem 'activesupport', rails
 gem 'railties', rails
 
 group :test do
-  gem 'minitest', '~> 4.7.5'
+  gem 'minitest', minitest_version
 end
 
 gem 'plist'

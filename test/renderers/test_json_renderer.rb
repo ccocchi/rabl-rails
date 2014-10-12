@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestJSONRenderer < MiniTest::Unit::TestCase
+class TestJSONRenderer < MINITEST_TEST_CLASS
   describe 'JSON renderer' do
     def render
       RablRails::Renderers::JSON.render(@template, @context)

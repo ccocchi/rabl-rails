@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestConfiguration < MiniTest::Unit::TestCase
+class TestConfiguration < MINITEST_TEST_CLASS
   describe 'Configuration' do
     it 'has a zero score by default' do
       config = RablRails::Configuration.new

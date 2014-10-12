@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestXMLRenderer < MiniTest::Unit::TestCase
+class TestXMLRenderer < MINITEST_TEST_CLASS
   INDENT_REGEXP = /\n(\s)*/
   HEADER_REGEXP = /<[^>]+>/
 

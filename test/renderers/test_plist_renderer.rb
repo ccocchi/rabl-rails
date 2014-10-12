@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestPListRenderer < MiniTest::Unit::TestCase
+class TestPListRenderer < MINITEST_TEST_CLASS
   INDENT_REGEXP = /\n(\s)*/
   HEADER_REGEXP = /<\?[^>]+><![^>]+>/
 
