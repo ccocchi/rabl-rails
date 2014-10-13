@@ -1,7 +1,10 @@
 module RablRails
   module Helpers
     def collection?(resource)
-      resource && resource.respond_to?(:each) && !resource.is_a?(Struct)
+      klass = resource.class
+
+      resource && resource.respond_to?(:each) &&
+        RablRails.configuration.non_collection_classes.none? { |k| klass <= k }
     end
   end
 end

@@ -9,6 +9,7 @@ module RablRails
     attr_accessor :replace_nil_values_with_empty_strings
     attr_accessor :replace_empty_string_values_with_nil
     attr_accessor :exclude_nil_values
+    attr_accessor :non_collection_classes
 
     def initialize
       @json_engine            = defined?(::Oj) ? ::Oj : ::JSON
@@ -20,7 +21,7 @@ module RablRails
       @plist_engine       = defined?(::Plist) ? ::Plist::Emit : nil
       @include_plist_root = false
 
-      @cache_templates                = ActionController::Base.perform_caching
+      @cache_templates    = ActionController::Base.perform_caching
 
       @use_custom_responder       = false
       @responder_default_template = 'show'
@@ -28,6 +29,8 @@ module RablRails
       @replace_nil_values_with_empty_strings  = false
       @replace_empty_string_values_with_nil   = false
       @exclude_nil_values                     = false
+
+      @non_collection_classes = [Struct]
     end
 
     def use_custom_responder=(value)
