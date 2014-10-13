@@ -13,17 +13,11 @@ class TestLibrary < MINITEST_TEST_CLASS
 
     describe '#get_rendered_template' do
       it 'compiles and renders template' do
-        renderer = MiniTest::Mock.new
-        renderer.expect :render, '{}', [@template, @context, nil]
-
         result = @library.stub :compile_template_from_source, @template do
-          RablRails::Renderers.stub :const_get, renderer do
-            @library.get_rendered_template '', @context
-          end
+          @library.get_rendered_template '', @context
         end
 
         assert_equal '{}', result
-        assert renderer.verify
       end
 
       it 'accepts format as string' do

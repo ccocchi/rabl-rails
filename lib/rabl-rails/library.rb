@@ -6,6 +6,13 @@ module RablRails
   class Library
     include Singleton
 
+    RENDERER_MAP = {
+      'json'  => Renderers::JSON,
+      'xml'   => Renderers::XML,
+      'ruby'  => Renderers::Hash,
+      'plist' => Renderers::PLIST
+    }.freeze
+
     def initialize
       @cached_templates = ThreadSafe::Cache.new
       @mutex = Monitor.new
@@ -17,8 +24,8 @@ module RablRails
 
     def get_rendered_template(source, view, locals = nil)
       compiled_template = compile_template_from_source(source, view)
-      format = view.params[:format] ? view.params[:format].to_s.upcase : :JSON
-      Renderers.const_get(format).render(compiled_template, view, locals)
+      format = view.params[:format] ? view.params[:format].to_s.downcase : 'json'
+      RENDERER_MAP[format].render(compiled_template, view, locals)
     end
 
     def compile_template_from_source(source, view)
