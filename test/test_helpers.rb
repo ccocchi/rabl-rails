@@ -9,7 +9,7 @@ class TestHelpers < MINITEST_TEST_CLASS
   end
 
   NotACollection = Class.new do
-    def each; end
+    def to_ary; end
   end
 
   def test_collection_with_configuration
