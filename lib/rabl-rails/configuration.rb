@@ -1,3 +1,5 @@
+require 'set'
+
 module RablRails
   class Configuration
     attr_accessor :json_engine, :include_json_root, :enable_jsonp_callbacks
@@ -30,7 +32,7 @@ module RablRails
       @replace_empty_string_values_with_nil   = false
       @exclude_nil_values                     = false
 
-      @non_collection_classes = [Struct]
+      @non_collection_classes = Set.new(['Struct'])
     end
 
     def use_custom_responder=(value)

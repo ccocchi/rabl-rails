@@ -4,7 +4,7 @@ module RablRails
       klass = resource.class
 
       resource && resource.respond_to?(:each) &&
-        RablRails.configuration.non_collection_classes.none? { |k| klass <= k }
+        klass.ancestors.none? { |a| RablRails.configuration.non_collection_classes.include? a.name }
     end
   end
 end

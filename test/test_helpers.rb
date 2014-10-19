@@ -1,4 +1,5 @@
 require 'helper'
+require 'set'
 
 class TestHelpers < MINITEST_TEST_CLASS
   include RablRails::Helpers
@@ -15,8 +16,8 @@ class TestHelpers < MINITEST_TEST_CLASS
   def test_collection_with_configuration
     assert collection?(NotACollection.new)
 
-    with_configuration(:non_collection_classes, [Struct, NotACollection]) do
-      refute collection?(NotACollection.new)
+    with_configuration(:non_collection_classes, Set.new(['Struct', 'TestHelpers::NotACollection'])) do
+      refute collection?(NotACollection.new), 'NotACollection triggers #collection?'
     end
   end
 end
