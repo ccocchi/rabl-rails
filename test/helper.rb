@@ -46,11 +46,23 @@ module ActionController
 end
 
 class Context
-  attr_writer :virtual_path
+  class LookupContext
+    def initialize(format)
+      @format = format
+    end
 
-  def initialize
+    def rendered_format
+      @format.to_sym
+    end
+  end
+
+  attr_writer :virtual_path
+  attr_reader :lookup_context
+
+  def initialize(format = :json)
     @_assigns = {}
     @virtual_path = nil
+    @lookup_context = LookupContext.new(format)
   end
 
   def assigns

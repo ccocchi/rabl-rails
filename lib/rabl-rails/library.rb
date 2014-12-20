@@ -7,10 +7,10 @@ module RablRails
     include Singleton
 
     RENDERER_MAP = {
-      'json'  => Renderers::JSON,
-      'xml'   => Renderers::XML,
-      'ruby'  => Renderers::Hash,
-      'plist' => Renderers::PLIST
+      json:   Renderers::JSON,
+      xml:    Renderers::XML,
+      ruby:   Renderers::Hash,
+      plist:  Renderers::PLIST
     }.freeze
 
     def initialize
@@ -24,7 +24,7 @@ module RablRails
 
     def get_rendered_template(source, view, locals = nil)
       compiled_template = compile_template_from_source(source, view)
-      format = retrieve_format_from_view(view)
+      format = view.lookup_context.rendered_format
       RENDERER_MAP[format].render(compiled_template, view, locals)
     end
 
@@ -47,16 +47,6 @@ module RablRails
     end
 
     private
-
-    def retrieve_format_from_view(view)
-      return view.params[:format].to_s.downcase if view.params.key?(:format)
-
-      if view.respond_to?(:request)
-        view.request.format.to_sym.to_s
-      else
-        'json'
-      end
-    end
 
     def synchronized_compile(path, source, view)
       @cached_templates[path] || @mutex.synchronize do

@@ -20,28 +20,15 @@ class TestLibrary < MINITEST_TEST_CLASS
         assert_equal '{}', result
       end
 
-      it 'accepts format as string' do
+      it 'uses for from lookup context' do
+        context = Context.new(:xml)
         result = @library.stub :compile_template_from_source, @template do
-          @context.stub :params, { format: 'xml' } do
-            RablRails::Renderers::XML.stub :render, '<xml>' do
-              @library.get_rendered_template '', @context
-            end
+          RablRails::Renderers::XML.stub :render, '<xml>' do
+            @library.get_rendered_template '', context
           end
         end
 
         assert_equal '<xml>', result
-      end
-
-      it 'accepts format as symbol' do
-        result = @library.stub :compile_template_from_source, @template do
-          @context.stub :params, { format: :plist } do
-            RablRails::Renderers::PLIST.stub :render, '<plist>' do
-              @library.get_rendered_template '', @context
-            end
-          end
-        end
-
-        assert_equal '<plist>', result
       end
     end
 

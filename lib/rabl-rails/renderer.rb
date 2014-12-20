@@ -16,6 +16,10 @@ module RablRails
         @format = format.downcase
       end
 
+      def rendered_format
+        @format.to_sym
+      end
+
       #
       # Manually find given rabl template file with given format.
       # View path can be set via options, otherwise default Rails
@@ -42,7 +46,7 @@ module RablRails
 
       def initialize(path, options)
         @virtual_path = path
-        @format = options.delete(:format) || 'json'
+        @format = options.delete(:format) || :json
         @_assigns = {}
         @options = options
 
