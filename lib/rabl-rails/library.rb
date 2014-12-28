@@ -24,7 +24,7 @@ module RablRails
 
     def get_rendered_template(source, view, locals = nil)
       compiled_template = compile_template_from_source(source, view)
-      format = view.lookup_context.rendered_format
+      format = view.lookup_context.rendered_format || :json
       RENDERER_MAP[format].render(compiled_template, view, locals)
     end
 
