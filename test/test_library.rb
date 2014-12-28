@@ -30,6 +30,13 @@ class TestLibrary < MINITEST_TEST_CLASS
 
         assert_equal '<xml>', result
       end
+
+      it 'raises if format is not supported' do
+        context = Context.new(:unsupported)
+        @library.stub :compile_template_from_source, @template do
+          assert_raises(RablRails::Library::UnknownFormat) { @library.get_rendered_template '', context }
+        end
+      end
     end
 
     describe '#compile_template_from_source' do
