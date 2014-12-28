@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.4.1
+  * Make classes that should not be treated as collection configurable
+  * Internal change to determine rendering format
+
 ## 0.4.0
   * Internal cleanup and refactor
   * Remove the `allow_empty_format_in_template` option, since it has become
