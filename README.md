@@ -242,8 +242,11 @@ Often objects have a basic representation that is shared accross different views
 attributes :id, :name
 
 # app/views/users/private.json.rabl
-extends 'users/base'
 attributes :super_secret_attribute
+
+extends 'users/base'
+# or using partial instead of extends
+# merge { |u| partial('users/base', object: u) }
 ```
 
 You can also extends template in child nodes using `partial` option (this is the same as using `extends` in the child block)
@@ -261,6 +264,17 @@ node(:location) do |user|
 	{ city: user.city, address: partial('users/address', object: m.address) }
 end
 ```
+
+When used within `node`, partials can take locals variables that can be accessed in the included template.
+```ruby
+# base.json.rabl
+node(:credit_card, if: ->(u) { locals[:display_credit_card] }) do |user|
+  user.credit_card_info
+end
+
+# user.json.rabl
+merge { |u| partial('users/base', object: u, locals: { display_credit_card: true }) }
+
 
 ### Nesting
 

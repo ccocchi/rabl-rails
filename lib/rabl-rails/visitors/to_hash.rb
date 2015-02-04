@@ -8,6 +8,7 @@ module Visitors
       @_context  = view_context
       @_result   = {}
       @_resource = resource
+      @_locals   = {}
 
       copy_instance_variables_from_context
     end
@@ -83,6 +84,10 @@ module Visitors
       @_context.respond_to?(name) ? @_context.send(name, *args, &block) : super
     end
 
+    def locals
+      @_locals
+    end
+
     #
     # Allow to use partial inside of node blocks (they are evaluated at
     # rendering time).
@@ -90,6 +95,7 @@ module Visitors
     def partial(template_path, options = {})
       raise RablRails::Renderer::PartialError.new("No object was given to partial #{template_path}") unless options[:object]
       object = options[:object]
+      @_locals = options[:locals].freeze
 
       return [] if object.respond_to?(:empty?) && object.empty?
 
@@ -99,6 +105,8 @@ module Visitors
       else
         sub_visit object, template.nodes
       end
+    ensure
+      @_locals = {}
     end
 
     private

@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.4.2 (unrelased)
+  * Allow to pass locals to partials
+
 ## 0.4.1
   * Make classes that should not be treated as collection configurable
   * Internal change to determine rendering format
