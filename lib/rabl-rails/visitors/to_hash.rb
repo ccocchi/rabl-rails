@@ -23,7 +23,9 @@ module Visitors
     end
 
     def visit_Attribute n
-      n.each { |k, v| @_result[k] = _resource.send(v) }
+      if !n.condition || instance_exec(_resource, &(n.condition))
+        n.each { |k, v| @_result[k] = _resource.send(v) }
+      end
     end
 
     def visit_Child n

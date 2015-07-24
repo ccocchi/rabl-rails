@@ -2,6 +2,7 @@
 
 ## 0.4.2 (unrelased)
   * Allow to pass locals to partials
+  * Add condition to `attributes`
 
 ## 0.4.1
   * Make classes that should not be treated as collection configurable

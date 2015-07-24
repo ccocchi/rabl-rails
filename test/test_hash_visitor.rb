@@ -24,6 +24,13 @@ class TestHashVisitor < MINITEST_TEST_CLASS
       assert_equal({ id: 1 }, visitor_result)
     end
 
+    it 'renders attributes with a condition' do
+      n = RablRails::Nodes::Attribute.new(id: :id)
+      n.condition = lambda { |o| false }
+      @nodes << n
+      assert_equal({}, visitor_result)
+    end
+
     it 'renders array of nodes' do
       @nodes = [
         RablRails::Nodes::Attribute.new(id: :id),

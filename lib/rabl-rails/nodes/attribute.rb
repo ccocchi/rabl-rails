@@ -7,7 +7,8 @@ module RablRails
       extend Forwardable
 
       def_delegators :@hash, :[]=, :each
-      attr_reader :hash
+      attr_reader   :hash
+      attr_accessor :condition
 
       def initialize(hash = {})
         @hash = hash

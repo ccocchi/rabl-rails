@@ -51,6 +51,7 @@ module RablRails
           key = options[:as] || name
           node[key] = name
         }
+        node.condition = options[:if]
       end
 
       @template.add_node node

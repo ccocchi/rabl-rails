@@ -113,6 +113,12 @@ class TestCompiler < MINITEST_TEST_CLASS
       assert_equal([{ :bar => :foo, :uid => :id }], extract_attributes(t.nodes))
     end
 
+    it "compiles attribtues with a condition" do
+      t = @compiler.compile_source(%( attributes :id, if: ->(o) { false } ))
+      assert_equal([{ id: :id }], extract_attributes(t.nodes))
+      refute_nil t.nodes.first.condition
+    end
+
     it "compiles child with record association" do
       t = @compiler.compile_source(%{ child :address do attributes :foo end})
 

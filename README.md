@@ -168,6 +168,11 @@ attributes title: :foo, to_s: :bar
 # => { "foo" : <title value>, "bar" : <to_s value> }
 ```
 
+or show attributes only if a condition is true
+```ruby
+attributes :published_at, :anchor, if: ->(post) { post.published? }
+```
+
 ### Child nodes
 
 You can include informations from data associated with the parent model or arbitrary data. These informations can be grouped under a node or directly merged into current node.
