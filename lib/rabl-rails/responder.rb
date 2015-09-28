@@ -20,13 +20,13 @@ module RablRails
       elsif has_errors?
         display_errors
       else
-        api_behavior(nil)
+        api_behavior
       end
     end
 
     protected
 
-    def api_behavior(error)
+    def api_behavior
       if post?
         template = if controller.respond_to?(:responder_default_template, true)
           controller.send(:responder_default_template)
@@ -41,7 +41,7 @@ module RablRails
         head :no_content
       end
     rescue ActionView::MissingTemplate => e
-      super(e)
+      super
     end
   end
 end
