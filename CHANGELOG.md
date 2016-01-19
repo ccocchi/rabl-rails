@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.4.2 (unrelased)
+## 0.4.2
   * Allow to pass locals to partials
   * Add condition to `attributes`
 
