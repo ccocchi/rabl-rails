@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.5.0 (Unreleased)
+  * Add requirement ruby >= 2.1
+  * Drop support for Rails < 4.2
+  * Replace `thread_safe` with `concurrent_ruby`
+
 ## 0.4.3
   * Fix custom responder compatibility with responders 2.1 (itkin)
   * Fix bug when template was already loaded by ActionView and causing a nil

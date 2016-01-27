@@ -12,7 +12,7 @@ module RablRails
       T = Struct.new(:source)
 
       def initialize(view_path, format)
-        @view_path = view_path || 'app/views'
+        @view_path = view_path || 'app/views'.freeze
         @format = format.downcase
       end
 

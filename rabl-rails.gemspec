@@ -12,13 +12,16 @@ Gem::Specification.new do |s|
   s.description = "Fast Rails 3+ templating system with JSON, XML and PList support"
   s.license     = 'MIT'
 
+  s.required_ruby_version     = '>= 2.1.0'
+
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- test/*`.split("\n")
   s.require_paths = ["lib"]
 
-  s.add_dependency 'activesupport', '>= 3.1'
-  s.add_dependency 'railties', '>= 3.1'
-  s.add_dependency 'thread_safe', '~> 0.3.1'
+  s.add_dependency 'activesupport', '>= 4.2'
+  s.add_dependency 'railties', '>= 4.2'
+  s.add_dependency 'concurrent-ruby', '~> 1.0.0'
 
-  s.add_development_dependency 'actionpack', '>= 3.1'
+  s.add_development_dependency 'actionpack', '>= 4.2'
+  s.add_development_dependency 'actionview', '>= 4.2'
 end

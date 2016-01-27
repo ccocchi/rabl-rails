@@ -29,7 +29,7 @@ module Visitors
     end
 
     def visit_Child n
-      object = object_from_data(_resource, n.data, n.instance_variable_data?)
+      object = object_from_data(_resource, n)
 
       @_result[n.name] = if object
         collection?(object) ? object.map { |o| sub_visit(o, n.nodes) } : sub_visit(object, n.nodes)
@@ -56,7 +56,7 @@ module Visitors
     end
 
     def visit_Glue n
-      object = object_from_data(_resource, n.data, n.instance_variable_data?)
+      object = object_from_data(_resource, n)
       @_result.merge! sub_visit(object, n.template.nodes)
     end
 
@@ -65,13 +65,13 @@ module Visitors
       when 0
         @_result
       when 1
-        @_result.each { |k, v| @_result[k] = '' if v == nil }
+        @_result.each { |k, v| @_result[k] = ''.freeze if v == nil }
       when 2, 3
-        @_result.each { |k, v| @_result[k] = nil if v == '' }
+        @_result.each { |k, v| @_result[k] = nil if v == ''.freeze }
       when 4, 5
         @_result.delete_if { |_, v| v == nil }
       when 6
-        @_result.delete_if { |_, v| v == nil || v == '' }
+        @_result.delete_if { |_, v| v == nil || v == ''.freeze }
       end
     end
 
@@ -115,7 +115,7 @@ module Visitors
 
     def copy_instance_variables_from_context
       @_context.instance_variable_get(:@_assigns).each_pair { |k, v|
-        instance_variable_set("@#{k}", v) unless k.to_s.start_with?('_')
+        instance_variable_set("@#{k}", v) unless k.to_s.start_with?('_'.freeze)
       }
     end
 
@@ -128,10 +128,11 @@ module Visitors
       @_result, @_resource = old_result, old_resource
     end
 
-    def object_from_data(resource, symbol, is_variable)
-      return resource if symbol == nil
+    def object_from_data(resource, node)
+      return resource if node.data == nil
 
-      if is_variable
+      symbol = node.data
+      if node.instance_variable_data?
         instance_variable_get(symbol)
       else
         resource.respond_to?(symbol) ? resource.send(symbol) : @_context.send(symbol)

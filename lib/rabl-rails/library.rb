@@ -1,6 +1,5 @@
 require 'singleton'
-require 'monitor'
-require 'thread_safe'
+require 'concurrent/map'
 
 module RablRails
   class Library
@@ -16,12 +15,11 @@ module RablRails
     }.freeze
 
     def initialize
-      @cached_templates = ThreadSafe::Cache.new
-      @mutex = Monitor.new
+      @cached_templates = Concurrent::Map.new
     end
 
     def reset_cache!
-      @cached_templates = ThreadSafe::Cache.new
+      @cached_templates = Concurrent::Map.new
     end
 
     def get_rendered_template(source, view, locals = nil)
@@ -52,14 +50,9 @@ module RablRails
     private
 
     def synchronized_compile(path, source, view)
-      @cached_templates[path] || @mutex.synchronize do
-        # Any thread holding this lock will be compiling the template needed
-        # by the threads waiting. So re-check the template presence to avoid
-        # re-compilation
-        @cached_templates.fetch(path) do
-          source ||= fetch_source(path, view)
-          @cached_templates[path] = compile(source, view)
-        end
+      @cached_templates.compute_if_absent(path) do
+        source ||= fetch_source(path, view)
+        compile(source, view)
       end
     end
 

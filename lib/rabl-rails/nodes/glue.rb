@@ -7,6 +7,7 @@ module RablRails
 
       def initialize(template)
         @template = template
+        @is_var   = template.data.to_s.start_with?('@')
       end
 
       def data
@@ -18,7 +19,7 @@ module RablRails
       end
 
       def instance_variable_data?
-        @instance_variable_data ||= data.to_s.start_with?('@')
+        @is_var
       end
     end
   end

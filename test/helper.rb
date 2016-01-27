@@ -17,11 +17,7 @@ elsif RUBY_ENGINE == 'ruby'
   require 'libxml'
 end
 
-MINITEST_TEST_CLASS = if defined?(Minitest::Test)
-  Minitest::Test
-else
-  Minitest::Unit::TestCase
-end
+MINITEST_TEST_CLASS = Minitest::Test
 
 ActionView::Template.register_template_handler :rabl, RablRails::Handlers::Rabl
 

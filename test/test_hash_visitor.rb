@@ -59,6 +59,7 @@ class TestHashVisitor < MINITEST_TEST_CLASS
 
       it 'renders with arbitrary data source' do
         @template.data = :@address
+        @nodes = [RablRails::Nodes::Child.new(:address, @template)]
         @context.assigns['address'] = @address
         assert_equal({ address: { city: 'Paris' } }, visitor_result)
       end
