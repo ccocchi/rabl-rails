@@ -279,7 +279,7 @@ end
 
 # user.json.rabl
 merge { |u| partial('users/base', object: u, locals: { display_credit_card: true }) }
-
+```
 
 ### Nesting
 
