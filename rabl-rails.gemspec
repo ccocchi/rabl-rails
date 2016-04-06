@@ -19,6 +19,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'railties', '>= 3.1'
   s.add_dependency 'thread_safe', '~> 0.3.1'
 
-  s.add_development_dependency 'actionview', '>= 3.1'
   s.add_development_dependency 'actionpack', '>= 3.1'
 end

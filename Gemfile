@@ -20,6 +20,11 @@ gem 'railties', rails
 
 group :test do
   gem 'minitest', minitest_version
+  gem 'actionpack', rails
+
+  if rails_version > '4.0.0'
+    gem 'actionview', rails
+  end
 end
 
 gem 'plist'

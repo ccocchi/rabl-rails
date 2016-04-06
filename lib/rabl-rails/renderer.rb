@@ -27,7 +27,7 @@ module RablRails
       #
       def find_template(name, opt, partial = false)
         paths = Dir["#@view_path/#{name}{.#@format,}.rabl"]
-        file_path = paths.find { |path| File.exists?(path) }
+        file_path = paths.find { |path| File.exist?(path) }
 
         if file_path
           T.new(File.read(file_path))
