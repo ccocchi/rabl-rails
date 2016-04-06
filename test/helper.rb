@@ -7,6 +7,8 @@ require 'minitest/autorun'
 
 require 'rabl-rails'
 require 'plist'
+require 'action_dispatch/http/mime_type'
+require 'action_view'
 
 if RUBY_ENGINE == 'jruby'
   require 'nokogiri'
@@ -19,6 +21,8 @@ MINITEST_TEST_CLASS = if defined?(Minitest::Test)
 else
   Minitest::Unit::TestCase
 end
+
+ActionView::Template.register_template_handler :rabl, RablRails::Handlers::Rabl
 
 module Configurable
   def with_configuration(key, value)

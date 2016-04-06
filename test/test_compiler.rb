@@ -1,13 +1,17 @@
 require 'helper'
+require 'pathname'
+require 'tmpdir'
 
 class TestCompiler < MINITEST_TEST_CLASS
+  @@tmp_path = Pathname.new(Dir.mktmpdir)
+
   describe 'compiler' do
     def extract_attributes(nodes)
       nodes.map(&:hash)
     end
 
     before do
-      @view = Context.new
+      @view     = ActionView::Base.new(@@tmp_path, {})
       @compiler = RablRails::Compiler.new(@view)
     end
 
@@ -155,13 +159,13 @@ class TestCompiler < MINITEST_TEST_CLASS
     end
 
     it "compiles child with inline partial notation" do
-      mock_template = RablRails::CompiledTemplate.new
-      mock_template.add_node(RablRails::Nodes::Attribute.new(id: :id))
-
-      t = RablRails::Library.instance.stub :compile_template_from_path, mock_template do
-        @compiler.compile_source(%{child(:user, :partial => 'users/base') })
+      File.open(@@tmp_path + 'user.rabl', 'w') do |f|
+        f.puts %q{
+          attributes :id
+        }
       end
 
+      t = @compiler.compile_source(%{child(:user, :partial => 'user') })
       child_node = t.nodes.first
 
       assert_equal(:user, child_node.name)
@@ -202,30 +206,38 @@ class TestCompiler < MINITEST_TEST_CLASS
     end
 
     it "extends other template" do
-      template = RablRails::CompiledTemplate.new
-      template.add_node RablRails::Nodes::Attribute.new(id: :id)
-
-      library = MiniTest::Mock.new
-      library.expect :compile_template_from_path, template, ['users/base', @view]
-
-      t = RablRails::Library.stub :instance, library do
-        @compiler.compile_source(%{ extends 'users/base' })
+      File.open(@@tmp_path + 'user.rabl', 'w') do |f|
+        f.puts %q{
+          attributes :id
+        }
       end
+      t = @compiler.compile_source(%{ extends 'user' })
       assert_equal([{ :id => :id }], extract_attributes(t.nodes))
-      library.verify
     end
 
     it "compiles extend without overwriting nodes previously defined" do
-      template = RablRails::CompiledTemplate.new
-      template.add_node(RablRails::Nodes::Condition.new(->{ true }, ->{ 'foo' }))
-
-      t = RablRails::Library.instance.stub :compile_template_from_path, template do
-        @compiler.compile_source(%{
-          condition(-> { false }) { 'bar' }
-          extends('users/xtnd')
-        })
+      File.open(@@tmp_path + 'xtnd.rabl', 'w') do |f|
+        f.puts %q{
+          condition(-> { true }) { 'foo' }
+        }
       end
+      t = @compiler.compile_source(%{
+        condition(-> { false }) { 'bar' }
+        extends 'xtnd'
+      })
       assert_equal(2, t.nodes.size)
+    end
+
+    it "extends template that has been compiled previously by ActionView" do
+      File.open(@@tmp_path + 'user.rabl', 'w') do |f|
+        f.puts %q{
+          attributes :id
+        }
+      end
+      t = @view.lookup_context.find_template('user')
+      t.send(:compile!, @view)
+      t = @compiler.compile_source(%{ extends 'user' })
+      assert_equal([{ :id => :id }], extract_attributes(t.nodes))
     end
 
     it "compiles node" do

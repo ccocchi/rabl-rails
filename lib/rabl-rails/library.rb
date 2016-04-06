@@ -68,7 +68,9 @@ module RablRails
     end
 
     def fetch_source(path, view)
-      view.lookup_context.find_template(path, [], false).source
+      t = view.lookup_context.find_template(path, [], false)
+      t = t.refresh(view) unless t.source
+      t.source
     end
   end
 end
