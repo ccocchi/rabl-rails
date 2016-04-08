@@ -2,6 +2,8 @@
 
 ## 0.4.3
   * Fix custom responder compatibility with responders 2.1 (itkin)
+  * Fix bug when template was already loaded by ActionView and causing a nil
+    error
 
 ## 0.4.2
   * Allow to pass locals to partials
@@ -81,7 +83,6 @@
   * Warning message printed on logger when JSON engine fail to load
 
 ## 0.1.1
-
   * Add CHANGELOG
   * Remove unused test in loop
   * Speed up rendering by not double copying variable from context
