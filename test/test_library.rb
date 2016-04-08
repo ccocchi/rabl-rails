@@ -62,7 +62,7 @@ class TestLibrary < Minitest::Test
 
       it 'compiles source without caching it if options is not set' do
         @context.virtual_path = 'users/base'
-        template = with_configuration :cache_templates, false do
+        with_configuration :cache_templates, false do
           @library.compile_template_from_source("attribute :id", @context)
         end
 

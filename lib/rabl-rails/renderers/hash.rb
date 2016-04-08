@@ -13,14 +13,14 @@ module RablRails
       def render(template, context, locals = nil)
         visitor = Visitors::ToHash.new(context)
 
-        collection_or_resource = if template.data
+        collection_or_resource    = locals[:resource] if locals
+        collection_or_resource  ||= if template.data
           if context.respond_to?(template.data)
             context.send(template.data)
           else
             visitor.instance_variable_get(template.data)
           end
         end
-        collection_or_resource ||= locals[:resource] if locals
 
         render_with_cache(template.cache_key, collection_or_resource) do
           output_hash = if collection?(collection_or_resource)
