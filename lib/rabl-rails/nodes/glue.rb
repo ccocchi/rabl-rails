@@ -1,8 +1,6 @@
 module RablRails
   module Nodes
     class Glue
-      include Node
-
       attr_reader :template
 
       def initialize(template)

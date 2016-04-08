@@ -18,10 +18,6 @@ module Visitors
       @_result = {}
     end
 
-    def visit_Array n
-      n.each { |i| visit i }
-    end
-
     def visit_Attribute n
       if !n.condition || instance_exec(_resource, &(n.condition))
         n.each { |k, v| @_result[k] = _resource.send(v) }

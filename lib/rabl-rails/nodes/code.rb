@@ -1,8 +1,6 @@
 module RablRails
   module Nodes
     class Code
-      include Node
-
       attr_reader :name, :block, :condition
 
       def initialize(name, block, condition = nil)

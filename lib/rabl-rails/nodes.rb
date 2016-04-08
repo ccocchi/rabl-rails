@@ -1,4 +1,3 @@
-require 'rabl-rails/nodes/node'
 require 'rabl-rails/nodes/attribute'
 require 'rabl-rails/nodes/glue'
 require 'rabl-rails/nodes/child'

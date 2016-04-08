@@ -3,7 +3,6 @@ require 'forwardable'
 module RablRails
   module Nodes
     class Attribute
-      include Node
       extend Forwardable
 
       def_delegators :@hash, :[]=, :each

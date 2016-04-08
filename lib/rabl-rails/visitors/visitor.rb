@@ -1,7 +1,11 @@
 module Visitors
   class Visitor
     def visit(node)
-      dispatch node
+      dispatch(node)
+    end
+
+    def visit_Array a
+      a.each { |n| dispatch(n) }
     end
 
     private
