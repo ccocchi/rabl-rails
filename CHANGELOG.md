@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.4.3
+  * Fix custom responder compatibility with responders 2.1 (itkin)
+
 ## 0.4.2
   * Allow to pass locals to partials
   * Add condition to `attributes`
