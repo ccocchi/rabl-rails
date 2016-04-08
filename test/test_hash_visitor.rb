@@ -196,6 +196,17 @@ class TestHashVisitor < Minitest::Test
       library.verify
     end
 
+    it 'renders extend with locals' do
+      n = RablRails::Nodes::Attribute.new(id: :id)
+      n.condition = lambda { |_| locals[:display_id] }
+
+      @nodes << RablRails::Nodes::Extend.new(n, display_id: true)
+      assert_equal({ id: 1 }, visitor_result)
+
+      @nodes.first.locals[:display_id] = false
+      assert_equal({}, visitor_result)
+    end
+
     it 'renders partial with empty target' do
       proc = ->(u) { partial('users/base', object: []) }
       @nodes << RablRails::Nodes::Code.new(:users, proc)

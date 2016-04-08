@@ -113,9 +113,16 @@ module RablRails
     # Extends an existing rabl template
     # Example:
     #   extends 'users/base'
+    #   extends 'posts/base', locals: { hide_comments: true }
     #
-    def extends(path)
-      @template.extends Library.instance.compile_template_from_path(path, @view)
+    def extends(path, options = nil)
+      other = Library.instance.compile_template_from_path(path, @view)
+
+      if options && options.is_a?(Hash)
+        @template.add_node Nodes::Extend.new(other.nodes, options[:locals])
+      else
+        @template.extends(other)
+      end
     end
 
     #

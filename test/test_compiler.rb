@@ -242,6 +242,15 @@ class TestCompiler < Minitest::Test
       assert_equal([{ :id => :id }], extract_attributes(t.nodes))
     end
 
+    it "compiles extends with locals" do
+      t    = @compiler.compile_source(%{ extends 'user', locals: { display_credit_card: false } })
+      node = t.nodes.first
+
+      assert_instance_of RablRails::Nodes::Extend, node
+      assert_equal([{ :id => :id }], extract_attributes(node.nodes))
+      assert_equal({ display_credit_card: false }, node.locals)
+    end
+
     it "compiles node" do
       t = @compiler.compile_source(%{ node(:foo) { bar } })
 

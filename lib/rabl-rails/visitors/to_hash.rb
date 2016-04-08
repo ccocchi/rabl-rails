@@ -56,6 +56,13 @@ module Visitors
       @_result.merge!(sub_visit(_resource, n.nodes)) if instance_exec _resource, &(n.condition)
     end
 
+    def visit_Extend n
+      @_locals = n.locals
+      @_result.merge!(sub_visit(_resource, n.nodes))
+    ensure
+      @_locals = {}
+    end
+
     def result
       case RablRails.configuration.result_flags
       when 0
