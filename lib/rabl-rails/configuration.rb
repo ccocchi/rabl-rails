@@ -6,8 +6,6 @@ module RablRails
     attr_accessor :xml_options
     attr_accessor :plist_engine, :include_plist_root
     attr_accessor :cache_templates
-    attr_reader   :use_custom_responder
-    attr_accessor :responder_default_template
     attr_accessor :replace_nil_values_with_empty_strings
     attr_accessor :replace_empty_string_values_with_nil
     attr_accessor :exclude_nil_values
@@ -25,19 +23,11 @@ module RablRails
 
       @cache_templates    = ActionController::Base.perform_caching
 
-      @use_custom_responder       = false
-      @responder_default_template = 'show'
-
       @replace_nil_values_with_empty_strings  = false
       @replace_empty_string_values_with_nil   = false
       @exclude_nil_values                     = false
 
       @non_collection_classes = Set.new(['Struct'])
-    end
-
-    def use_custom_responder=(value)
-      @use_custom_responder = value
-      require 'rabl-rails/responder' if value
     end
 
     def result_flags

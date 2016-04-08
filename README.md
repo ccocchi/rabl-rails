@@ -93,8 +93,6 @@ RablRails.configure do |config|
   # config.include_json_root = true
   # config.json_engine = ::Oj
   # config.xml_options = { :dasherize => true, :skip_types => false }
-  # config.use_custom_responder = false
-  # config.default_responder_template = 'show'
   # config.enable_jsonp_callbacks = false
   # config.replace_nil_values_with_empty_strings = false
   # config.replace_empty_string_values_with_nil = false
@@ -309,7 +307,6 @@ You can find more informations about how to use this method in the [wiki](http:/
 ### Other features
 
 * [Caching](https://github.com/ccocchi/rabl-rails/wiki/Caching)
-* [Custom responder](https://github.com/ccocchi/rabl-rails/wiki/Using-custom-responder)
 
 And more in the [WIKI](https://github.com/ccocchi/rabl-rails/wiki)
 
