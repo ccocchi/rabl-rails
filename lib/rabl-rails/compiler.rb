@@ -136,6 +136,7 @@ module RablRails
       return unless block_given?
       @template.add_node Nodes::Condition.new(proc, sub_compile(nil, true) { yield })
     end
+    alias_method :_if, :condition
 
     def cache(&block)
       @template.cache_key = block_given? ? block : nil
