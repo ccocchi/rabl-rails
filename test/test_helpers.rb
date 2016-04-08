@@ -9,15 +9,15 @@ class TestHelpers < MINITEST_TEST_CLASS
     refute collection?(User.new(1))
   end
 
-  NotACollection = Class.new do
+  ACollection = Class.new(Array) do
     def each; end
   end
 
   def test_collection_with_configuration
-    assert collection?(NotACollection.new)
+    assert collection?(ACollection.new)
 
-    with_configuration(:non_collection_classes, Set.new(['Struct', 'TestHelpers::NotACollection'])) do
-      refute collection?(NotACollection.new), 'NotACollection triggers #collection?'
+    with_configuration(:non_collection_classes, Set.new(['Struct', 'TestHelpers::ACollection'])) do
+      refute collection?(ACollection.new), 'Collection triggers #collection?'
     end
   end
 end
