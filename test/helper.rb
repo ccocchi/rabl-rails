@@ -9,15 +9,12 @@ require 'rabl-rails'
 require 'plist'
 require 'action_dispatch/http/mime_type'
 require 'action_view'
-require 'active_support/core_ext/string/starts_ends_with'
 
 if RUBY_ENGINE == 'jruby'
   require 'nokogiri'
 elsif RUBY_ENGINE == 'ruby'
   require 'libxml'
 end
-
-MINITEST_TEST_CLASS = Minitest::Test
 
 ActionView::Template.register_template_handler :rabl, RablRails::Handlers::Rabl
 
@@ -31,7 +28,7 @@ module Configurable
     RablRails.configuration.send(accessor, old_value)
   end
 end
-MINITEST_TEST_CLASS.send(:include, Configurable)
+Minitest::Test.send(:include, Configurable)
 
 module Rails
   def self.cache

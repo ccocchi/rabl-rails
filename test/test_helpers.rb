@@ -1,7 +1,7 @@
 require 'helper'
 require 'set'
 
-class TestHelpers < MINITEST_TEST_CLASS
+class TestHelpers < Minitest::Test
   include RablRails::Helpers
 
   def test_collection_with_default

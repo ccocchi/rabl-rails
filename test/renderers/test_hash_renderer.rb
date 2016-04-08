@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestHashRenderer < MINITEST_TEST_CLASS
+class TestHashRenderer < Minitest::Test
   describe 'hash renderer' do
     def render(locals = nil)
       RablRails::Renderers::Hash.render(@template, @context, locals)

@@ -2,7 +2,7 @@ require 'helper'
 require 'pathname'
 require 'tmpdir'
 
-class TestCompiler < MINITEST_TEST_CLASS
+class TestCompiler < Minitest::Test
   @@tmp_path = Pathname.new(Dir.mktmpdir)
 
   describe 'compiler' do

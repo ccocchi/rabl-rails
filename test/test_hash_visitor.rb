@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestHashVisitor < MINITEST_TEST_CLASS
+class TestHashVisitor < Minitest::Test
   describe 'hash visitor' do
     def visitor_result
       visitor = Visitors::ToHash.new(@context)
