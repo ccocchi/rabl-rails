@@ -2,6 +2,7 @@ language: ruby
 cache: bundler
 env:
   - "RAILS_VERSION=4.2.6"
+  - "RAILS_VERSION=master"
 rvm:
   - 2.1.8
   - 2.2.4
@@ -12,3 +13,5 @@ before_install:
   - gem update bundler
 matrix:
   fast_finish: true
+  allow_failures:
+    - env: RAILS_VERSION=master
