@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/ccocchi/rabl-rails"
   s.summary     = "Fast Rails 3+ templating system with JSON, XML and PList support"
   s.description = "Fast Rails 3+ templating system with JSON, XML and PList support"
+  s.license     = 'MIT'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- test/*`.split("\n")
