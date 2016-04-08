@@ -113,9 +113,9 @@ module RablRails
     # Example:
     #   merge { |item| partial("specific/#{item.to_s}", object: item) }
     #
-    def merge
+    def merge(opts = {})
       return unless block_given?
-      node(nil) { yield }
+      node(nil, opts) { yield }
     end
 
     #

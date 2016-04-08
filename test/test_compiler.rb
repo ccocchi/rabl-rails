@@ -262,11 +262,17 @@ class TestCompiler < Minitest::Test
       assert_nil node.name
     end
 
-    it "compiles merge like a node but with a reserved keyword as name" do
+    it "compiles merge like a node" do
       t = @compiler.compile_source(%{ merge do |m| m.foo end })
       node = t.nodes.first
       assert_instance_of RablRails::Nodes::Code, node
       assert_nil node.name
+    end
+
+    it "compiles merge with options" do
+      t = @compiler.compile_source(%{ merge(->(m) { true }) do |m| m.foo end })
+      node = t.nodes.first
+      refute_nil node.condition
     end
 
     it "compiles condition" do
