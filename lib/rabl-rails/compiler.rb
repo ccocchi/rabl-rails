@@ -68,16 +68,9 @@ module RablRails
     #   child(:posts, :partial => 'posts/base')
     #
     def child(name_or_data, options = {})
-      data, name = extract_data_and_name(name_or_data)
-      name = options[:root] if options.has_key? :root
-
-      if options.key?(:partial)
-        template = Library.instance.compile_template_from_path(options[:partial], @view)
-        template.data = data
-      elsif block_given?
-        template = sub_compile(data) { yield }
-      end
-
+      data, name  = extract_data_and_name(name_or_data)
+      name        = options[:root] if options.has_key? :root
+      template    = partial_or_block(data, options) { yield }
       @template.add_node Nodes::Child.new(name, template)
     end
 
@@ -86,10 +79,8 @@ module RablRails
     # Example:
     #   glue(:@user) { attribute :name }
     #
-    def glue(data)
-      return unless block_given?
-
-      template = sub_compile(data) { yield }
+    def glue(data, options = {})
+      template = partial_or_block(data, options) { yield }
       @template.add_node Nodes::Glue.new(template)
     end
 
@@ -144,6 +135,16 @@ module RablRails
     end
 
     protected
+
+    def partial_or_block(data, options)
+      if options.key?(:partial)
+        template = Library.instance.compile_template_from_path(options[:partial], @view)
+        template.data = data
+        template
+      elsif block_given?
+        sub_compile(data) { yield }
+      end
+    end
 
     #
     # Extract data root_name and root name

@@ -45,12 +45,12 @@ class TestHashVisitor < Minitest::Test
       before do
         @template = RablRails::CompiledTemplate.new
         @template.add_node(RablRails::Nodes::Attribute.new(city: :city))
-        @nodes << RablRails::Nodes::Child.new(:address, @template)
         @address = Address.new('Paris')
       end
 
       it 'renders with resource association as data source' do
         @template.data = :address
+        @nodes << RablRails::Nodes::Child.new(:address, @template)
         def @resource.address; end
         @resource.stub :address, @address do
           assert_equal({ address: { city: 'Paris' } }, visitor_result)
@@ -66,6 +66,7 @@ class TestHashVisitor < Minitest::Test
 
       it 'renders with local method as data source' do
         @template.data = :address
+        @nodes << RablRails::Nodes::Child.new(:address, @template)
         def @context.address; end
         @context.stub :address, @address do
           assert_equal({ address: { city: 'Paris' } }, visitor_result)
@@ -74,6 +75,7 @@ class TestHashVisitor < Minitest::Test
 
       it 'renders with a collection as data source' do
         @template.data = :address
+        @nodes << RablRails::Nodes::Child.new(:address, @template)
         def @context.address; end
         @context.stub :address, [@address, @address] do
           assert_equal({ address: [
@@ -85,6 +87,7 @@ class TestHashVisitor < Minitest::Test
 
       it 'renders if the source is nil' do
         @template.data = :address
+        @nodes << RablRails::Nodes::Child.new(:address, @template)
         def @resource.address; end
         @resource.stub :address, nil do
           assert_equal({ address: nil }, visitor_result)

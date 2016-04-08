@@ -34,6 +34,11 @@ module Visitors
       end
     end
 
+    def visit_Glue n
+      object = object_from_data(_resource, n)
+      @_result.merge!(sub_visit(object, n.nodes)) if object
+    end
+
     def visit_Code n
       if !n.condition || instance_exec(_resource, &(n.condition))
         result = instance_exec _resource, &(n.block)
@@ -49,11 +54,6 @@ module Visitors
 
     def visit_Condition n
       @_result.merge!(sub_visit(_resource, n.nodes)) if instance_exec _resource, &(n.condition)
-    end
-
-    def visit_Glue n
-      object = object_from_data(_resource, n)
-      @_result.merge! sub_visit(object, n.template.nodes)
     end
 
     def result

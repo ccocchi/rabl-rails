@@ -3,8 +3,9 @@ module RablRails
     attr_accessor :nodes, :data, :root_name, :cache_key
 
     def initialize
-      @nodes = []
-      @cache_key = false
+      @nodes      = []
+      @data       = nil
+      @cache_key  = false
     end
 
     def initialize_dup(other)

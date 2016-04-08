@@ -5,6 +5,12 @@ require 'tmpdir'
 class TestCompiler < Minitest::Test
   @@tmp_path = Pathname.new(Dir.mktmpdir)
 
+  File.open(@@tmp_path + 'user.rabl', 'w') do |f|
+    f.puts %q{
+      attributes :id
+    }
+  end
+
   describe 'compiler' do
     def extract_attributes(nodes)
       nodes.map(&:hash)
@@ -159,11 +165,7 @@ class TestCompiler < Minitest::Test
     end
 
     it "compiles child with inline partial notation" do
-      File.open(@@tmp_path + 'user.rabl', 'w') do |f|
-        f.puts %q{
-          attributes :id
-        }
-      end
+
 
       t = @compiler.compile_source(%{child(:user, :partial => 'user') })
       child_node = t.nodes.first
@@ -205,12 +207,17 @@ class TestCompiler < Minitest::Test
       assert_equal(:foo, code_node.name)
     end
 
+    it "compiles glue with a partial" do
+      t = @compiler.compile_source(%{
+        glue(:@user, partial: 'user')
+      })
+
+      glue_node = t.nodes.first
+      assert_equal(1, glue_node.nodes.size)
+      assert_equal([{ :id => :id }], extract_attributes(glue_node.nodes))
+    end
+
     it "extends other template" do
-      File.open(@@tmp_path + 'user.rabl', 'w') do |f|
-        f.puts %q{
-          attributes :id
-        }
-      end
       t = @compiler.compile_source(%{ extends 'user' })
       assert_equal([{ :id => :id }], extract_attributes(t.nodes))
     end
@@ -229,11 +236,6 @@ class TestCompiler < Minitest::Test
     end
 
     it "extends template that has been compiled previously by ActionView" do
-      File.open(@@tmp_path + 'user.rabl', 'w') do |f|
-        f.puts %q{
-          attributes :id
-        }
-      end
       t = @view.lookup_context.find_template('user')
       t.send(:compile!, @view)
       t = @compiler.compile_source(%{ extends 'user' })
