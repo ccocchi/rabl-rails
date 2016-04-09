@@ -5,6 +5,7 @@
   * Drop support for Rails < 4.2
   * Replace `thread_safe` with `concurrent_ruby`
   * Remove custom responder
+  * Remove rendering outside of Rails
 
 ## 0.4.3
   * Fix custom responder compatibility with responders 2.1 (itkin)

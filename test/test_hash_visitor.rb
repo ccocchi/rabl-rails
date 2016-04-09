@@ -161,7 +161,7 @@ class TestHashVisitor < Minitest::Test
     it 'raises an exception when trying to merge a non hash object' do
       proc = ->(c) { c.name }
       @nodes << RablRails::Nodes::Code.new(nil, proc)
-      assert_raises(RablRails::Renderer::PartialError) { visitor_result }
+      assert_raises(RablRails::PartialError) { visitor_result }
     end
 
     it 'renders partial defined in node' do
@@ -216,7 +216,7 @@ class TestHashVisitor < Minitest::Test
     it 'raises an exception when calling a partial without a target' do
       proc = ->(u) { partial('users/base') }
       @nodes << RablRails::Nodes::Code.new(:user, proc)
-      assert_raises(RablRails::Renderer::PartialError) { visitor_result }
+      assert_raises(RablRails::PartialError) { visitor_result }
     end
 
     describe 'when hash options are set' do

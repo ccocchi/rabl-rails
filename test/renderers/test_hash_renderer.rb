@@ -2,8 +2,8 @@ require 'helper'
 
 class TestHashRenderer < Minitest::Test
   describe 'hash renderer' do
-    def render(locals = nil)
-      RablRails::Renderers::Hash.render(@template, @context, locals)
+    def render
+      RablRails::Renderers::Hash.render(@template, @context, {})
     end
 
     def with_cache
@@ -69,12 +69,6 @@ class TestHashRenderer < Minitest::Test
 
     it 'uses assigns from context if context has no data method' do
       assert_equal({ name: 'Marty' }, render)
-    end
-
-    it "uses resource passed in locals if template don't have data" do
-      @template.data = nil
-      resource = User.new(2, 'Biff')
-      assert_equal({ name: 'Biff' }, render(resource: resource))
     end
 
     it 'uses template root_name option' do

@@ -13,8 +13,7 @@ module RablRails
       def render(template, context, locals = nil)
         visitor = Visitors::ToHash.new(context)
 
-        collection_or_resource    = locals[:resource] if locals
-        collection_or_resource  ||= if template.data
+        collection_or_resource = if template.data
           if context.respond_to?(template.data)
             context.send(template.data)
           else

@@ -44,7 +44,7 @@ module Visitors
         result = instance_exec _resource, &(n.block)
 
         if n.merge?
-          raise RablRails::Renderer::PartialError, '`merge` block should return a hash' unless result.is_a?(Hash)
+          raise RablRails::PartialError, '`merge` block should return a hash' unless result.is_a?(Hash)
           @_result.merge!(result)
         else
           @_result[n.name] = result
@@ -98,7 +98,7 @@ module Visitors
     # rendering time).
     #
     def partial(template_path, options = {})
-      raise RablRails::Renderer::PartialError.new("No object was given to partial #{template_path}") unless options[:object]
+      raise RablRails::PartialError.new("No object was given to partial #{template_path}") unless options[:object]
       object = options[:object]
       @_locals = options[:locals].freeze
 
