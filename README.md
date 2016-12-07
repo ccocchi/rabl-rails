@@ -42,7 +42,7 @@ You can create the following RABL-rails template to express the API output of `@
 
 ```ruby
 # app/views/post/index.rabl
-collection :@posts
+collection @posts
 attributes :id, :title, :subject
 child(:user) { attributes :full_name }
 node(:read) { |post| post.read_by?(@user) }
