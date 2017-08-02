@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Christopher Cocchi-Perrier"]
   s.email       = ["cocchi.c@gmail.com"]
   s.homepage    = "https://github.com/ccocchi/rabl-rails"
-  s.summary     = "Fast Rails 3+ templating system with JSON, XML and PList support"
-  s.description = "Fast Rails 3+ templating system with JSON, XML and PList support"
+  s.summary     = "Fast Rails 4+ templating system with JSON, XML and PList support"
+  s.description = "Fast Rails 4+ templating system with JSON, XML and PList support"
   s.license     = 'MIT'
 
   s.required_ruby_version     = '>= 2.1.0'

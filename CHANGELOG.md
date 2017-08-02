@@ -1,11 +1,12 @@
 # CHANGELOG
 
-## 0.5.0 (Unreleased)
+## 0.5.0
   * Add requirement ruby >= 2.1
   * Drop support for Rails < 4.2
   * Replace `thread_safe` with `concurrent_ruby`
   * Remove custom responder
   * Remove rendering outside of Rails
+  * Improve Rails 5 compatibility
 
 ## 0.4.3
   * Fix custom responder compatibility with responders 2.1 (itkin)
