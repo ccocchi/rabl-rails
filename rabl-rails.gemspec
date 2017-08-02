@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.description = "Fast Rails 4+ templating system with JSON, XML and PList support"
   s.license     = 'MIT'
 
-  s.required_ruby_version     = '>= 2.1.0'
+  s.required_ruby_version     = '>= 2.2.0'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- test/*`.split("\n")

@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## 0.5.0
-  * Add requirement ruby >= 2.1
+  * Add requirement ruby >= 2.2
   * Drop support for Rails < 4.2
   * Replace `thread_safe` with `concurrent_ruby`
   * Remove custom responder

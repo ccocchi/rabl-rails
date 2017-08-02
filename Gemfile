@@ -24,12 +24,9 @@ end
 
 gem 'plist'
 
-platforms :ruby do
-  gem 'oj'
-end
-
 platforms :mri do
   gem 'libxml-ruby'
+  gem 'oj'
 end
 
 platforms :jruby do
