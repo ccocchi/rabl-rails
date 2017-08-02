@@ -4,7 +4,7 @@ RABL (Ruby API Builder Language) is a ruby templating system for rendering resou
 
 rabl-rails is **faster** and uses **less memory** than the standard rabl gem while letting you access the same features. There are some slight changes to do on your templates to get this gem to work but it should't take you more than 5 minutes.
 
-rabl-rails only targets **Rails 3.2+ application** and is compatible with mri 1.9.3+, jRuby and rubinius.
+rabl-rails only targets **Rails 4.2+ application** and is compatible with mri 2.1+, jRuby and rubinius.
 
 ## Installation
 
@@ -294,16 +294,6 @@ child :posts do
 end
 ```
 
-### Render object directly
-
-There are cases when you want to render object outside Rails view context. For instance to render objects in the console or to create message queue payloads. For these situations, you can use `RablRails.render` as show below:
-
-```ruby
-RablRails.render(object, template, :view_path => 'app/views', :format => :json) #=> "{...}"
-```
-
-You can find more informations about how to use this method in the [wiki](http://github.com/ccocchi/rabl-rails/wiki/Render-object-directly)
-
 ### Other features
 
 * [Caching](https://github.com/ccocchi/rabl-rails/wiki/Caching)
@@ -312,9 +302,9 @@ And more in the [WIKI](https://github.com/ccocchi/rabl-rails/wiki)
 
 ## Performance
 
-Benchmarks have been made using this [application](http://github.com/ccocchi/rabl-benchmark), with rabl 0.7.6 and rabl-rails 0.3.0
+Benchmarks have been made using this [application](http://github.com/ccocchi/rabl-benchmark), with rabl 0.13.1 and rabl-rails 0.5.0
 
-Overall, Rabl-rails is **20% faster and use 10% less memory**, even **twice faster** when using extends.
+Overall, rabl-rails is **10% faster and use 10% less memory**, but these numbers skyrockets to **50%** when using `extends` with collection of objects.
 
 You can see full tests on test application repository.
 
@@ -327,9 +317,8 @@ Want to make another change ? Just fork and contribute, any help is very much ap
 
 ## Original idea
 
-* [RABL](http://github.com/nesquena/rabl) Standart RABL gem. I used it a lot but I needed to improve my API response time, and
-  since most of the time was spent in view rendering, I decided to implement a faster rabl gem.
+* [RABL](http://github.com/nesquena/rabl) Standart RABL gem. I used it a lot but I needed to improve my API response time, and since most of the time was spent in view rendering, I decided to implement a faster rabl gem.
 
 ## Copyright
 
-Copyright © 2011-2012 Christopher Cocchi-Perrier. See [MIT-LICENSE](http://github.com/ccocchi/rabl-rails/blob/master/MIT-LICENSE) for details.
+Copyright © 2012-2017 Christopher Cocchi-Perrier. See [MIT-LICENSE](http://github.com/ccocchi/rabl-rails/blob/master/MIT-LICENSE) for details.
