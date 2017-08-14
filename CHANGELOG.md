@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.5.1
+  * Fix bug when trying to compile partials with caching enabled 
+
 ## 0.5.0
   * Add requirement ruby >= 2.2
   * Drop support for Rails < 4.2
