@@ -68,6 +68,17 @@ class TestLibrary < Minitest::Test
 
         assert_empty @library.cached_templates
       end
+
+      it 'caches multiple templates in one compilation' do
+        @context.virtual_path = 'users/show'
+        with_configuration :cache_templates, true do
+          @library.stub :fetch_source, 'attributes :id' do
+            @library.compile_template_from_source("child(:account, partial: 'users/_account')", @context)
+          end
+        end
+
+        assert_equal 2, @library.cached_templates.size
+      end
     end
   end
 end
