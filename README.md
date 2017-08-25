@@ -204,12 +204,19 @@ end
 
 ### Custom nodes
 
-You can create custom node in your response, based on the result of the given block.
+You can create custom node in your response, based on the result of a given block
 
 ```ruby
 object :@user
 node(:full_name) { |u| u.first_name + " " + u.last_name }
 # => { "user" : { "full_name" : "John Doe" } }
+```
+
+or with an assigned constant
+
+```ruby
+const(:api_version, API::VERSION)
+const(:locale, 'fr_FR')
 ```
 
 You can add condition on your custom nodes (if the condition is evaluated to false, the node will not be included).
