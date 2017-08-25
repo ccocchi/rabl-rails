@@ -52,6 +52,10 @@ module Visitors
       end
     end
 
+    def visit_Const n
+      @_result[n.name] = n.value
+    end
+
     def visit_Condition n
       @_result.merge!(sub_visit(_resource, n.nodes)) if instance_exec _resource, &(n.condition)
     end

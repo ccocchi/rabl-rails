@@ -99,6 +99,15 @@ module RablRails
     alias_method :code, :node
 
     #
+    # Creates a constant node in the json output.
+    # Example:
+    #   const(:locale, 'fr_FR')
+    #
+    def const(name, value)
+      @template.add_node Nodes::Const.new(name, value)
+    end
+
+    #
     # Merge arbitrary data into json output. Given block should
     # return a hash.
     # Example:

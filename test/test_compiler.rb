@@ -217,6 +217,16 @@ class TestCompiler < Minitest::Test
       assert_equal([{ :id => :id }], extract_attributes(glue_node.nodes))
     end
 
+    it "compiles constant node" do
+      t = @compiler.compile_source(%{
+        const(:locale, 'fr_FR')
+      })
+
+      const_node = t.nodes.first
+      assert_equal :locale, const_node.name
+      assert_equal 'fr_FR', const_node.value
+    end
+
     it "extends other template" do
       t = @compiler.compile_source(%{ extends 'user' })
       assert_equal([{ :id => :id }], extract_attributes(t.nodes))

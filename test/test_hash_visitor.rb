@@ -136,6 +136,11 @@ class TestHashVisitor < Minitest::Test
       end
     end
 
+    it 'renders a const node' do
+      @nodes << RablRails::Nodes::Const.new(:locale, 'fr_FR')
+      assert_equal({ locale: 'fr_FR' }, visitor_result)
+    end
+
     describe 'with a condition node' do
       before do
         @ns = [RablRails::Nodes::Attribute.new(name: :name)]
