@@ -67,6 +67,12 @@ module Visitors
       @_locals = {}
     end
 
+    def visit_Polymorphic n
+      template_path = n.template_lambda.call(_resource)
+      template = RablRails::Library.instance.compile_template_from_path(template_path, @_context)
+      @_result.merge!(sub_visit(_resource, template.nodes))
+    end
+
     def result
       case RablRails.configuration.result_flags
       when 0

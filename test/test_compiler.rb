@@ -232,6 +232,13 @@ class TestCompiler < Minitest::Test
       assert_equal([{ :id => :id }], extract_attributes(t.nodes))
     end
 
+    it "extends with a lambda" do
+      t = @compiler.compile_source(%{ extends -> { 'user' } })
+      node = t.nodes.first
+      assert_instance_of(RablRails::Nodes::Polymorphic, node)
+      assert_equal('user', node.template_lambda.call)
+    end
+
     it "compiles extend without overwriting nodes previously defined" do
       File.open(@@tmp_path + 'xtnd.rabl', 'w') do |f|
         f.puts %q{

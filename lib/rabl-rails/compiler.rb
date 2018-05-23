@@ -62,7 +62,7 @@ module RablRails
     # Creates a child node to be included in the output.
     # name_or data can be an object or collection or a method to call on the data. It
     # accepts :root and :partial options.
-    # Notes that partial and blocks are not compatible
+    # Note that partial and blocks are not compatible
     # Example:
     #   child(:@posts, :root => :posts) { attribute :id }
     #   child(:posts, :partial => 'posts/base')
@@ -122,10 +122,16 @@ module RablRails
     # Extends an existing rabl template
     # Example:
     #   extends 'users/base'
+    #   extends ->(item) { "v1/#{item.class}/_core" }
     #   extends 'posts/base', locals: { hide_comments: true }
     #
-    def extends(path, options = nil)
-      other = Library.instance.compile_template_from_path(path, @view)
+    def extends(path_or_lambda, options = nil)
+      if path_or_lambda.is_a?(Proc)
+        @template.add_node Nodes::Polymorphic.new(path_or_lambda)
+        return
+      end
+
+      other = Library.instance.compile_template_from_path(path_or_lambda, @view)
 
       if options && options.is_a?(Hash)
         @template.add_node Nodes::Extend.new(other.nodes, options[:locals])

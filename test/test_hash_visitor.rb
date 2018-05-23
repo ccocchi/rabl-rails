@@ -185,6 +185,20 @@ class TestHashVisitor < Minitest::Test
       library.verify
     end
 
+    it 'renders partial defined in node' do
+      template = RablRails::CompiledTemplate.new
+      template.add_node(RablRails::Nodes::Attribute.new(name: :name))
+      library = MiniTest::Mock.new
+      library.expect :compile_template_from_path, template, ['users/base', @context]
+
+      @nodes << RablRails::Nodes::Polymorphic.new(->(_) { 'users/base' })
+      RablRails::Library.stub :instance, library do
+        assert_equal({ name: 'Marty' }, visitor_result)
+      end
+
+      library.verify
+    end
+
     it 'allows uses of locals variables with partials' do
       template = RablRails::CompiledTemplate.new
       template.add_node(RablRails::Nodes::Code.new(:hide_comments, ->(u) { locals[:hide_comments] }, ->(u) { locals.key?(:hide_comments) }))
