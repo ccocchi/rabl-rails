@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.5.3
+  * Allow `extends` to accept lambdas
+
 ## 0.5.2
   * Add `const` node
 
