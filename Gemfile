@@ -22,6 +22,8 @@ group :test do
   gem 'actionview', rails
 end
 
+gem 'byebug'
+gem 'benchmark-ips'
 gem 'plist'
 
 platforms :mri do

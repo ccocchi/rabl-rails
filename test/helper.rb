@@ -58,7 +58,9 @@ class Context
   attr_reader :lookup_context
 
   def initialize(format = :json)
-    @_assigns = {}
+    @_assigns = {
+      profile: PublicProfile.first
+    }
     @virtual_path = nil
     @lookup_context = LookupContext.new(format)
   end
