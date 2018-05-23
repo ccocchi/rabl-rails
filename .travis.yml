@@ -3,19 +3,14 @@ cache: bundler
 dist: trusty
 env:
   - "RAILS_VERSION=4.2.6"
-  - "RAILS_VERSION=master"
+  - "RAILS_VERSION=5.2.0"
 rvm:
   - 2.2.7
-  - 2.3.4
   - 2.4.1
-  - jruby-9.1.12.0
-  - rbx-3.71
+  - jruby
 before_install:
   - gem update bundler
 matrix:
   fast_finish: true
   allow_failures:
     - env: RAILS_VERSION=master
-  exclude:
-    - rvm: 2.1.8
-      env: "RAILS_VERSION=master"
