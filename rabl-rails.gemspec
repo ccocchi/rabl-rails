@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'activesupport', '>= 4.2'
   s.add_dependency 'railties', '>= 4.2'
-  s.add_dependency 'concurrent-ruby', '~> 1.0.0'
+  s.add_dependency 'concurrent-ruby', '~> 1.0', ">= 1.0.2"
 
   s.add_development_dependency 'actionpack', '>= 4.2'
   s.add_development_dependency 'actionview', '>= 4.2'

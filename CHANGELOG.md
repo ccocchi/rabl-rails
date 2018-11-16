@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.5.4
+  * Relax concurrent-ruby version dependency
+
 ## 0.5.3
   * Allow `extends` to accept lambdas
 
