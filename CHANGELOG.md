@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.5.5
+  * Add `lookup` node
+
 ## 0.5.4
   * Relax concurrent-ruby version dependency (javierjulio)
 
