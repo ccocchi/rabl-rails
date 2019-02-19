@@ -227,6 +227,18 @@ class TestCompiler < Minitest::Test
       assert_equal 'fr_FR', const_node.value
     end
 
+    it "compiles lookup node" do
+      t = @compiler.compile_source(%{
+        lookup(:favorite, :@user_favorites, cast: true)
+      })
+
+      lookup_node = t.nodes.first
+      assert_equal :favorite, lookup_node.name
+      assert_equal :@user_favorites, lookup_node.data
+      assert_equal :id, lookup_node.field
+      assert lookup_node.cast_to_boolean?
+    end
+
     it "extends other template" do
       t = @compiler.compile_source(%{ extends 'user' })
       assert_equal([{ :id => :id }], extract_attributes(t.nodes))

@@ -141,6 +141,20 @@ class TestHashVisitor < Minitest::Test
       assert_equal({ locale: 'fr_FR' }, visitor_result)
     end
 
+    it 'renders a positive lookup node' do
+      @nodes << RablRails::Nodes::Lookup.new(:favorite, :@user_favorites, :id, true)
+      @context.assigns['user_favorites'] = { 1 => true }
+
+      assert_equal({ favorite: true }, visitor_result)
+    end
+
+    it 'renders a negative lookup node' do
+      @nodes << RablRails::Nodes::Lookup.new(:favorite, :@user_favorites, :id, false)
+      @context.assigns['user_favorites'] = { 2 => true }
+
+      assert_equal({ favorite: nil }, visitor_result)
+    end
+
     describe 'with a condition node' do
       before do
         @ns = [RablRails::Nodes::Attribute.new(name: :name)]

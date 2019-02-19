@@ -108,6 +108,16 @@ module RablRails
     end
 
     #
+    # Create a node `name` by looking the current resource being rendered in the
+    # `object` hash using, by default, the resource's id.
+    # Example:
+    #   lookup(:favorite, :@user_favorites, cast: true)
+    #
+    def lookup(name, object, field: :id, cast: false)
+      @template.add_node Nodes::Lookup.new(name, object, field, cast)
+    end
+
+    #
     # Merge arbitrary data into json output. Given block should
     # return a hash.
     # Example:

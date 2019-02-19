@@ -56,6 +56,15 @@ module Visitors
       @_result[n.name] = n.value
     end
 
+    def visit_Lookup n
+      object  = object_from_data(nil, n)
+      key     = _resource.public_send(n.field)
+      value   = object[key]
+      value   = !!value if n.cast_to_boolean?
+
+      @_result[n.name] = value
+    end
+
     def visit_Condition n
       @_result.merge!(sub_visit(_resource, n.nodes)) if instance_exec _resource, &(n.condition)
     end
