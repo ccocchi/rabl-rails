@@ -155,6 +155,13 @@ class TestHashVisitor < Minitest::Test
       assert_equal({ favorite: nil }, visitor_result)
     end
 
+    it 'renders an inline node' do
+      @nodes << RablRails::Nodes::Inline.new('posts', :@post_ids)
+      @context.assigns['post_ids'] = [1, 3, 7]
+
+      assert_equal({ 'posts' => [1, 3, 7] }, visitor_result)
+    end
+
     describe 'with a condition node' do
       before do
         @ns = [RablRails::Nodes::Attribute.new(name: :name)]

@@ -239,6 +239,14 @@ class TestCompiler < Minitest::Test
       assert lookup_node.cast_to_boolean?
     end
 
+    it "compiles inline node" do
+      t = @compiler.compile_source(%{inline(:@labels)})
+
+      inline_node = t.nodes.first
+      assert_equal 'labels', inline_node.name
+      assert_equal :@labels, inline_node.inline_var
+    end
+
     it "extends other template" do
       t = @compiler.compile_source(%{ extends 'user' })
       assert_equal([{ :id => :id }], extract_attributes(t.nodes))

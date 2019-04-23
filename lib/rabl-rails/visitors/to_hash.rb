@@ -65,6 +65,10 @@ module Visitors
       @_result[n.name] = value
     end
 
+    def visit_Inline n
+      @_result[n.name] = instance_variable_get(n.inline_var)
+    end
+
     def visit_Condition n
       @_result.merge!(sub_visit(_resource, n.nodes)) if instance_exec _resource, &(n.condition)
     end

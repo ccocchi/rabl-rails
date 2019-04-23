@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RablRails
   #
   # Class that will compile RABL source code into a hash
@@ -108,13 +110,24 @@ module RablRails
     end
 
     #
-    # Create a node `name` by looking the current resource being rendered in the
+    # Creates a node `name` by looking the current resource being rendered in the
     # `object` hash using, by default, the resource's id.
     # Example:
     #   lookup(:favorite, :@user_favorites, cast: true)
     #
     def lookup(name, object, field: :id, cast: false)
       @template.add_node Nodes::Lookup.new(name, object, field, cast)
+    end
+
+    #
+    # Creates a node using the given instance variable.
+    # Example:
+    #   inline(:@comments)
+    #   inline(:@user, as: :author)
+    #
+    def inline(var, as: nil)
+      _, as = extract_data_and_name(var) unless as
+      @template.add_node Nodes::Inline.new(as, var)
     end
 
     #
@@ -182,7 +195,7 @@ module RablRails
     #
     # Extract data root_name and root name
     # Example:
-    #   :@users -> [:@users, nil]
+    #   :@users -> [:@users, :@users]
     #   :@users => :authors -> [:@users, :authors]
     #
     def extract_data_and_name(name_or_data)
