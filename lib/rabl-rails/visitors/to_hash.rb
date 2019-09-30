@@ -57,7 +57,7 @@ module Visitors
     end
 
     def visit_Lookup n
-      object  = object_from_data(nil, n)
+      object  = object_from_data(_resource, n)
       key     = _resource.public_send(n.field)
       value   = object[key]
       value   = !!value if n.cast_to_boolean?
