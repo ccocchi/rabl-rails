@@ -32,6 +32,21 @@ module RablRails
         end
       end
 
+      # XXX: experimental
+      def inline_render(template, collection_or_resource, context)
+        visitor = Visitors::ToHash.new(context)
+
+        render_with_cache(template.cache_key, collection_or_resource) do
+          output_hash = if collection?(collection_or_resource)
+            render_collection(collection_or_resource, template.nodes, visitor)
+          else
+            render_resource(collection_or_resource, template.nodes, visitor)
+          end
+
+          format_output(output_hash, root_name: template.root_name)
+        end
+      end
+
       protected
 
       #

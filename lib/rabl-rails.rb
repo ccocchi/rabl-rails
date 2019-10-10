@@ -15,6 +15,7 @@ require 'rabl-rails/renderers/plist'
 require 'rabl-rails/library'
 
 require 'rabl-rails/handler'
+require 'rabl-rails/inline'
 
 if defined?(Rails)
   require 'rails/railtie'
@@ -42,6 +43,11 @@ module RablRails
 
     def reset_configuration
       @_configuration = nil
+    end
+
+    # XXX: experimental
+    def render(object_or_collection, path, lookup_context: nil)
+      RablRails::Inline.render(object_or_collection, path, lookup_context: lookup_context)
     end
   end
 end
