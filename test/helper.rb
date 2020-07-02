@@ -44,23 +44,23 @@ module ActionController
 end
 
 class Context
-  class LookupContext
+  class Request
     def initialize(format)
       @format = format
     end
 
-    def rendered_format
-      @format.to_sym
+    def format
+      OpenStruct.new(symbol: @format.to_sym)
     end
   end
 
   attr_writer :virtual_path
-  attr_reader :lookup_context
+  attr_reader :request
 
   def initialize(format = :json)
     @_assigns = {}
     @virtual_path = nil
-    @lookup_context = LookupContext.new(format)
+    @request = Request.new(format)
   end
 
   def assigns

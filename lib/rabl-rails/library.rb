@@ -25,7 +25,7 @@ module RablRails
 
     def get_rendered_template(source, view, locals = nil)
       compiled_template = compile_template_from_source(source, view)
-      format = view.lookup_context.rendered_format || :json
+      format = view.request.format.symbol || :json
       raise UnknownFormat, "#{format} is not supported in rabl-rails" unless RENDERER_MAP.key?(format)
       RENDERER_MAP[format].render(compiled_template, view, locals)
     end
