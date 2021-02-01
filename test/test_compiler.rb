@@ -156,6 +156,14 @@ class TestCompiler < Minitest::Test
       assert_equal(:user, child_node.data)
     end
 
+    it "compiles child with root name defined with `as` option" do
+      t = @compiler.compile_source(%{ child(:user, as: :author) do attributes :foo end })
+      child_node = t.nodes.first
+
+      assert_equal(:author, child_node.name)
+      assert_equal(:user, child_node.data)
+    end
+
     it "compiles child with arbitrary source" do
       t = @compiler.compile_source(%{ child :@user => :author do attribute :name end })
       child_node = t.nodes.first
