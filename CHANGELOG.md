@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.6.0
+  * Remove Rails 6+ warnings
+
 ## 0.5.5
   * Add `lookup` node
 

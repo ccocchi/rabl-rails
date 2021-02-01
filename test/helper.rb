@@ -49,8 +49,8 @@ class Context
       @format = format
     end
 
-    def rendered_format
-      @format.to_sym
+    def formats
+      [@format]
     end
   end
 
