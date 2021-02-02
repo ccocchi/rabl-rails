@@ -1,10 +1,10 @@
 # RABL for Rails [![Build Status](https://travis-ci.org/ccocchi/rabl-rails.png?branch=master)](https://travis-ci.org/ccocchi/rabl-rails)
 
-RABL (Ruby API Builder Language) is a ruby templating system for rendering resources in different format (JSON, XML, BSON, ...). You can find documentation [here](http://github.com/nesquena/rabl).
+`rabl-rails` is a ruby templating system for rendering your objects in different format (JSON, XML, PLIST).
 
-rabl-rails is **faster** and uses **less memory** than the standard rabl gem while letting you access the same features. There are some slight changes to do on your templates to get this gem to work but it should't take you more than 5 minutes.
+This gem aims for speed and little memory footprint while letting you build complex response with a very intuitive DSL.
 
-rabl-rails only targets **Rails 4.2+ application** and is compatible with mri 2.2+, jRuby and rubinius.
+`rabl-rails` targets **Rails 4.2/5/6 application** and have been testing with MRI and jRuby.
 
 ## Installation
 
@@ -17,23 +17,18 @@ gem install rabl-rails
 or add directly to your `Gemfile`
 
 ```
-gem 'rabl-rails'
+gem 'rabl-rails', '~> 0.6.0'
 ```
-
-And that's it !
 
 ## Overview
 
-Once you have installed rabl-rails, you can directly used RABL-rails templates to render your resources without changing anything to you controller. As example,
-assuming you have a `Post` model filled with blog posts, and a `PostController` that look like this :
+The gem enables you to build responses using views like you would using HTML/erb/haml.
+As example, assuming you have a `Post` model filled with blog posts, and a `PostController` that look like this:
 
 ```ruby
 class PostController < ApplicationController
-  respond_to :html, :json, :xml
-
   def index
 	 @posts = Post.order('created_at DESC')
-	  respond_with(@posts)
   end
 end
 ```
@@ -43,6 +38,7 @@ You can create the following RABL-rails template to express the API output of `@
 ```ruby
 # app/views/post/index.rabl
 collection :@posts
+
 attributes :id, :title, :subject
 child(:user) { attributes :full_name }
 node(:read) { |post| post.read_by?(@user) }
@@ -58,15 +54,13 @@ This would output the following JSON when visiting `http://localhost:3000/posts.
 }]
 ```
 
-That's a basic overview but there is a lot more to see such as partials, inheritance or fragment caching.
-
 ## How it works
 
-As opposed to standard RABL gem, this gem separate compiling (a.k.a transforming a RABL-rails template into a Ruby hash) and the actual rendering of the object or collection. This allow to only compile the template once and only Ruby hashes.
+This gem separates compiling, ie. transforming a RABL-rails template into a Ruby hash, and the actual rendering of the object or collection. This allows to only compile the template once (when template caching is enabled) which is the slow part, and only use hashes during rendering.
 
-The fact of compiling the template outside of any rendering context prevent us to use any instances variables (with the exception of node) in the template because they are rendering objects. So instead, you'll have to use symbols of these variables.For example, to render the collection `@posts` inside your `PostController`, you need to use `:@posts` inside of the template.
+The drawback of compiling the template outside of any rendering context is that we can't access instance variables like usual. Instead, you'll mostly use symbols representing your variables and the gem will retrieve them when needed.
 
-The only places where you can actually used instance variables  are into Proc (or lambda) or into custom node (because they are treated as Proc).
+There are places where the gem allows for "dynamic code" -- code that is evaluated at each rendering, such as within `node` or `condition` blocks.
 
 ```ruby
 # We reference the @posts varibles that will be used at rendering time
@@ -79,7 +73,7 @@ node(:read) { |post| post.read_by?(@user) }
 
 The same rule applies for view helpers such as `current_user`
 
-After the template is compiled into a hash, Rabl-rails will use a renderer to do the actual output. Actually, only JSON and XML formats are supported.
+After the template is compiled into a hash, `rabl-rails` will use a renderer to create the actual output. Currently, JSON, XML and PList formats are supported.
 
 ## Configuration
 
@@ -87,6 +81,7 @@ RablRails works out of the box, with default options and fastest engine availabl
 
 ```ruby
 # config/initializers/rabl_rails.rb
+
 RablRails.configure do |config|
   # These are the default
   # config.cache_templates = true
@@ -125,7 +120,7 @@ collection :@posts => :articles
 # => { "articles" : [{...}, {...}] }
 ```
 
-There are rares cases when the template doesn't map directly to any object. In these cases, you can set data to false or skip data declaration altogether.
+There are rares cases when the template doesn't map directly to any object. In these cases, you can set data to false.
 
 ```ruby
 object false
@@ -133,27 +128,15 @@ node(:some_count) { |_| @user.posts.count }
 child(:@user) { attribute :name }
 ```
 
-If you use gem like *decent_exposure* or *focused_controller*, you can use your variable directly without the leading `@`
+If you use gems like *decent_exposure* or *focused_controller*, you can use your variable directly without the leading `@`
 
 ```ruby
 object :object_exposed
 ```
 
-You can even skip data declaration at all. If you used `respond_with`, rabl-rails will render the data you passed to it.
-As there is no name, you can set a root via the `root` macro. This allow you to use your template without caring about variables passed to it.
-
-```ruby
-# in controller
-respond_with(@post)
-
-# in rabl-rails template
-root :article
-attribute :title
-```
-
 ### Attributes / Methods
 
-Basic usage is to declared attributes to include in the response. These can be database attributes or any instance method.
+Adds a new field to the response object, calling the method on the object being rendered. Methods called this way should return natives types from the format you're using (such as `String`, `integer`, etc for JSON). For more complex objects, see `child` nodes.
 
 ```ruby
 attributes :id, :title, :to_s
@@ -162,49 +145,83 @@ attributes :id, :title, :to_s
 You can aliases these attributes in your response
 
 ```ruby
-attributes title: :foo, to_s: :bar
-# => { "foo" : <title value>, "bar" : <to_s value> }
+attributes :my_custom_method, as: :title
+# => { "title" : <result of my_custom_method> }
 ```
 
-or show attributes only if a condition is true
+or show attributes based on a condition. The currently rendered object is given to the `proc` condition.
+
 ```ruby
 attributes :published_at, :anchor, if: ->(post) { post.published? }
 ```
 
 ### Child nodes
 
-You can include informations from data associated with the parent model or arbitrary data. These informations can be grouped under a node or directly merged into current node.
+Changes the object being rendered for the duration of the block. Depending on if you use `node` or `glue`, the result will be added as a new field or merged respectively.
 
-For example if you have a `Post` model that belongs to a `User`
+Data passed can be a method or a reference to an instance variable.
+
+For example if you have a `Post` model that belongs to a `User` and want to add the user's name to your response.
 
 ```ruby
 object :@post
-child(user: :author) do
+
+child(:user, as: :author) do
 	attributes :name
 end
-# => { "post" : { "author" : { "name" : "John D." } } }
+# => { "post": { "author" : { "name" : "John D." } } }
 ```
 
-You can also use arbitrary data source with child nodes
+If instead of having an `author` node in your response you wanted the name at the root level, you can use `glue`:
+
 ```ruby
-child(:@users) do
+object :@post
+
+glue(:user) do
+  attributes :name, as: :author_name
+end
+# => { "post": { "author_name" : "John D." } }
+```
+
+Arbitrary data source can also be passed:
+
+```ruby
+# in your controller
+# @custom_data = [...]
+
+# in the view
+child(:@custom_data) do
 	attributes :id, :name
 end
+# => { "custom_data": [...] }
 ```
 
-If you want to merge directly into current node, you can use the `glue` keywork
+### Constants
+
+Adds a new field to the response using an immutable value.
 
 ```ruby
-attribute :title
-glue(:user) do
-  attributes :name => :author_name
-end
-# => { "post" : { "title" : "Foo", "author_name" : "John D." } }
+const(:api_version, API::VERSION)
+const(:locale, 'fr_FR')
 ```
+
+### Lookups
+
+Adds a new field to the response, using rendered resource's id by default or any method to fetch a value from the given hash variable.
+
+```ruby
+collection :@posts
+
+lookup(:comments_count, :@comments_count, field: :uuid, cast: false)
+# => [{ "comments_count": 3 }, { "comments_count": 6 }]
+```
+
+In the example above, for each post it will fetch the value from `@comments_count` using the post's `uuid` as key. When the `cast` value is set to `true` (it is `false` by default), the value will be casted to a boolean using `!!`.
+
 
 ### Custom nodes
 
-You can create custom node in your response, based on the result of a given block
+Adds a new field to the response with block's result as value.
 
 ```ruby
 object :@user
@@ -212,14 +229,7 @@ node(:full_name) { |u| u.first_name + " " + u.last_name }
 # => { "user" : { "full_name" : "John Doe" } }
 ```
 
-or with an assigned constant
-
-```ruby
-const(:api_version, API::VERSION)
-const(:locale, 'fr_FR')
-```
-
-You can add condition on your custom nodes (if the condition is evaluated to false, the node will not be included).
+You can add condition on your custom nodes. If the condition evaluates to a falsey value, the node will not added to the response at all.
 
 ```ruby
 node(:email, if: ->(u) { u.valid_email? }) do |u|
@@ -227,13 +237,13 @@ node(:email, if: ->(u) { u.valid_email? }) do |u|
 end
 ```
 
-Nodes are evaluated at the rendering time, so you can use any instance variables or view helpers inside them
+Nodes are evaluated at rendering time, so you can use any instance variables or view helpers within them
 
 ```ruby
 node(:url) { |post| post_url(post) }
 ```
 
-If you want to include directly the result into the current node, use the `merge` keyword (result returned from the block should be a hash)
+If the result of the block is a Hash, it can be directly merge into the response using `merge` instead of `node`
 
 ```ruby
 object :@user
@@ -241,33 +251,42 @@ merge { |u| { name: u.first_name + " " + u.last_name } }
 # => { "user" : { "name" : "John Doe" } }
 ```
 
-Custom nodes are really usefull to create flexible representations of your resources.
-
 ### Extends & Partials
 
 Often objects have a basic representation that is shared accross different views and enriched according to it. To avoid code redundancy you can extend your template from any other RABL template.
 
 ```ruby
-# app/views/users/base.json.rabl
+# app/views/shared/_user.rabl
 attributes :id, :name
 
-# app/views/users/private.json.rabl
+# app/views/users/show.rabl
+object :@user
+
+extends('shared/_user')
 attributes :super_secret_attribute
 
-extends 'users/base'
-# or using partial instead of extends
-# merge { |u| partial('users/base', object: u) }
+#=> { "id": 1, "name": "John", "super_secret_attribute": "Doe" }
 ```
 
-You can also extends template in child nodes using `partial` option (this is the same as using `extends` in the child block)
+When used with child node, if they are the only thing added you can instead use the `partial` option directly.
 
 ```ruby
-collection @posts
-attribute :title
-child(:user, partial: 'users/base')
+child(:user, partial: 'shared/_user')
+
+# is equivalent to
+
+child(:user) do
+  extends('shared/_user')
+end
 ```
 
-Partials can also be used inside custom nodes. When using partial this way, you MUST declare the object associated to the partial
+Extends can be used dynamically using rendered object and lambdas.
+
+```ruby
+extends ->(user) { "shared/_#{user.client_type}_infos" }
+```
+
+Partials can also be used inside custom nodes. When using partial this way, you MUST declare the `object` associated to the partial
 
 ```ruby
 node(:location) do |user|
@@ -275,28 +294,33 @@ node(:location) do |user|
 end
 ```
 
-When used within `node`, partials can take locals variables that can be accessed in the included template.
+When used this way, partials can take locals variables that can be accessed in the included template.
+
 ```ruby
-# base.json.rabl
+# _credit_card.rabl
 node(:credit_card, if: ->(u) { locals[:display_credit_card] }) do |user|
   user.credit_card_info
 end
 
 # user.json.rabl
-merge { |u| partial('users/base', object: u, locals: { display_credit_card: true }) }
+merge { |u| partial('_credit_card', object: u, locals: { display_credit_card: true }) }
 ```
 
-### Nesting
+### Putting it all together
 
-Rabl allow you to define easily your templates, even with hierarchy of 2 or 3 levels. Let's suppose your have a `thread` model that has many `posts` and that each post has many `comments`. We can display a full thread in a few lines
+`rabl-rails` allows you to format your responses easily, from simple objects to hierarchy of 2 or 3 levels.
 
 ```ruby
 object :@thread
-attribute :caption
-child :posts do
-  attribute :title
-	child :comments do
-		extends 'comments/base'
+
+attribute :caption, as: :title
+
+child(:@sorted_posts, as: :posts) do
+  attributes :title, :slug
+
+  child :comments do
+		extends 'shared/_comment'
+    lookup(:upvotes, :@upvotes_per_comment)
 	end
 end
 ```
@@ -328,4 +352,4 @@ Want to make another change ? Just fork and contribute, any help is very much ap
 
 ## Copyright
 
-Copyright © 2012-2017 Christopher Cocchi-Perrier. See [MIT-LICENSE](http://github.com/ccocchi/rabl-rails/blob/master/MIT-LICENSE) for details.
+Copyright © 2012-2020 Christopher Cocchi-Perrier. See [MIT-LICENSE](http://github.com/ccocchi/rabl-rails/blob/master/MIT-LICENSE) for details.
