@@ -2,6 +2,8 @@
 
 ## 0.6.0
   * Remove Rails 6+ warnings
+  * Uniformize node options
+  * Refresh README.md
 
 ## 0.5.5
   * Add `lookup` node

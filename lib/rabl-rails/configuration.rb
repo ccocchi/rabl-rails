@@ -33,9 +33,9 @@ module RablRails
     def result_flags
       @result_flags ||= begin
         result = 0
-        result |= 0b01  if @replace_nil_values_with_empty_strings
-        result |= 0b10  if @replace_empty_string_values_with_nil
-        result |= 0b100 if @exclude_nil_values
+        result |= 0b001   if @replace_nil_values_with_empty_strings
+        result |= 0b010   if @replace_empty_string_values_with_nil
+        result |= 0b100   if @exclude_nil_values
         result
       end
     end

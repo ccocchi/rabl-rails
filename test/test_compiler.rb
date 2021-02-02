@@ -17,7 +17,7 @@ class TestCompiler < Minitest::Test
     end
 
     before do
-      @view     = ActionView::Base.new(@@tmp_path, {})
+      @view     = ActionView::Base.new(@@tmp_path, {}, nil)
       @compiler = RablRails::Compiler.new(@view)
     end
 
