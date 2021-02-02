@@ -11,13 +11,20 @@ class TestCompiler < Minitest::Test
     }
   end
 
+  @@view_class = if ActionView::Base.respond_to?(:with_empty_template_cache)
+    # From Rails 6.1
+    ActionView::Base.with_empty_template_cache
+  else
+    ActionView::Base
+  end
+
   describe 'compiler' do
     def extract_attributes(nodes)
       nodes.map(&:hash)
     end
 
     before do
-      @view     = ActionView::Base.new(@@tmp_path, {}, nil)
+      @view     = @@view_class.new(ActionView::LookupContext.new(@@tmp_path), {}, nil)
       @compiler = RablRails::Compiler.new(@view)
     end
 
