@@ -21,7 +21,7 @@ module RablRails
       @plist_engine       = defined?(::Plist) ? ::Plist::Emit : nil
       @include_plist_root = false
 
-      @cache_templates    = ActionController::Base.perform_caching
+      @cache_templates    = false # ActionController::Base.perform_caching
 
       @replace_nil_values_with_empty_strings  = false
       @replace_empty_string_values_with_nil   = false

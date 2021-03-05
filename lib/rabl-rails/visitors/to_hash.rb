@@ -82,6 +82,11 @@ module Visitors
       @_result.merge!(sub_visit(_resource, template.nodes))
     end
 
+    def visit_IVar n
+      value = instance_variable_get(n.vname)
+      @_result[n.name] = value
+    end
+
     def result
       case RablRails.configuration.result_flags
       when 0

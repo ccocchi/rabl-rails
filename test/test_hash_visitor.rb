@@ -141,6 +141,13 @@ class TestHashVisitor < Minitest::Test
       assert_equal({ locale: 'fr_FR' }, visitor_result)
     end
 
+    it 'renders an ivar node' do
+      @context.assigns['calculated_value'] = 137
+      @nodes << RablRails::Nodes::IVar.new(:calc, :@calculated_value)
+
+      assert_equal({ calc: 137 }, visitor_result)
+    end
+
     it 'renders a positive lookup node' do
       @nodes << RablRails::Nodes::Lookup.new(:favorite, :@user_favorites, :id, true)
       @context.assigns['user_favorites'] = { 1 => true }

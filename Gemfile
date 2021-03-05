@@ -16,6 +16,11 @@ end
 gem 'activesupport', rails
 gem 'railties', rails
 
+group :development do
+  gem 'benchmark-ips'
+  gem 'ruby-prof'
+end
+
 group :test do
   gem 'minitest', '~> 5.8'
   gem 'actionpack', rails
