@@ -1,6 +1,9 @@
 # CHANGELOG
 
-## 0.6.0
+## 0.6.1
+  * Fix bug when template contains double quotes
+
+## 0.6.0 (yanked)
   * Remove Rails 6+ warnings
   * Uniformize node options
   * Refresh README.md
