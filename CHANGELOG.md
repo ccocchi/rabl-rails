@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.6.2
+  * Add `fetch` node
+
 ## 0.6.1
   * Fix bug when template contains double quotes
 
