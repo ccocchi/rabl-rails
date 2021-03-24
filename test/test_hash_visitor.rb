@@ -105,6 +105,17 @@ class TestHashVisitor < Minitest::Test
       assert_equal({ name: 'Marty'}, visitor_result)
     end
 
+    it 'renders fetch node' do
+      template = RablRails::CompiledTemplate.new
+      template.add_node(RablRails::Nodes::Attribute.new(name: :name))
+      template.data = :@users_hash
+
+      @nodes << RablRails::Nodes::Fetch.new(:user, template, :id)
+      @context.assigns['users_hash'] = { @resource.id => @resource }
+
+      assert_equal({ user: { name: 'Marty' } }, visitor_result)
+    end
+
     describe 'with a code node' do
       before do
         @proc = ->(object) { object.name }

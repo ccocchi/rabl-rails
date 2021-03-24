@@ -196,6 +196,23 @@ end
 # => { "custom_data": [...] }
 ```
 
+You can use a Hash-like data source, as long as keys match a method or attribute of your main resource, using the `fetch` keyword:
+
+```ruby
+# assuming you have something similar in your controller
+# @users_hash = { 1 => User.new(pseudo: 'Batman') }
+
+# in the view
+object :@post
+
+fetch(:@users_hash, as: :user, field: :user_id) do
+  attributes :pseudo
+end
+# => { user: { pseudo: 'Batman' } }
+```
+
+This comes very handy when adding attributes from external queries not really bound to a relation, like statistics.
+
 ### Constants
 
 Adds a new field to the response using an immutable value.

@@ -39,6 +39,18 @@ module Visitors
       @_result.merge!(sub_visit(object, n.nodes)) if object
     end
 
+    def visit_Fetch n
+      hash   = object_from_data(_resource, n)
+      key    = _resource.public_send(n.field)
+      object = hash[key]
+
+      @_result[n.name] = if object
+        collection?(object) ? object.map { |o| sub_visit(o, n.nodes) } : sub_visit(object, n.nodes)
+      else
+        nil
+      end
+    end
+
     def visit_Code n
       if !n.condition || instance_exec(_resource, &(n.condition))
         result = instance_exec _resource, &(n.block)

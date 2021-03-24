@@ -86,6 +86,21 @@ module RablRails
     end
 
     #
+    # Creates a node to be added to the output by fetching an object using
+    # current resource's field as key to the data, and appliying given
+    # template to said object
+    # Example:
+    #   fetch(:@stats, field: :id) { attributes :total }
+    #
+    def fetch(name_or_data, options = {})
+      data, name  = extract_data_and_name(name_or_data)
+      name        = options[:as] if options.key?(:as)
+      field       = options.fetch(:field, :id)
+      template    = partial_or_block(data, options) { yield }
+      @template.add_node Nodes::Fetch.new(name, template, field)
+    end
+
+    #
     # Creates an arbitrary node in the json output.
     # It accepts :if option to create conditionnal nodes. The current data will
     # be passed to the block so it is advised to use it instead of ivars.
@@ -171,7 +186,7 @@ module RablRails
     protected
 
     def partial_or_block(data, options)
-      if options.key?(:partial)
+      if options&.key?(:partial)
         template = Library.instance.compile_template_from_path(options[:partial], @view)
         template.data = data
         template

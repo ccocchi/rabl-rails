@@ -180,8 +180,6 @@ class TestCompiler < Minitest::Test
     end
 
     it "compiles child with inline partial notation" do
-
-
       t = @compiler.compile_source(%{child(:user, :partial => 'user') })
       child_node = t.nodes.first
 
@@ -230,6 +228,29 @@ class TestCompiler < Minitest::Test
       glue_node = t.nodes.first
       assert_equal(1, glue_node.nodes.size)
       assert_equal([{ :id => :id }], extract_attributes(glue_node.nodes))
+    end
+
+    it "compiles fetch with record association" do
+      t = @compiler.compile_source(%{ fetch :address do attributes :foo end})
+
+      assert_equal(1, t.nodes.size)
+      fetch_node = t.nodes.first
+
+      assert_equal(:address, fetch_node.name)
+      assert_equal(:address, fetch_node.data)
+      assert_equal(:id, fetch_node.field)
+      assert_equal([{ foo: :foo }], extract_attributes(fetch_node.nodes))
+    end
+
+    it "compiles fetch with options" do
+      t = @compiler.compile_source(%{
+        fetch(:user, as: :author, field: :uid) do attributes :foo end
+      })
+
+      fetch_node = t.nodes.first
+      assert_equal(:author, fetch_node.name)
+      assert_equal(:user, fetch_node.data)
+      assert_equal(:uid, fetch_node.field)
     end
 
     it "compiles constant node" do
