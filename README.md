@@ -254,6 +254,14 @@ node(:email, if: ->(u) { u.valid_email? }) do |u|
 end
 ```
 
+You can also use a condition block. These can be used with `node`, `extends`, etc.
+
+```ruby
+condition(->(u) { u.admin? }) do
+  attributes :secret
+end
+```
+
 Nodes are evaluated at rendering time, so you can use any instance variables or view helpers within them
 
 ```ruby
