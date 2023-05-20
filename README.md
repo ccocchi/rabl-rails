@@ -1,4 +1,4 @@
-# RABL for Rails [![Build Status](https://travis-ci.org/ccocchi/rabl-rails.svg?branch=master)](https://travis-ci.org/ccocchi/rabl-rails)
+# RABL for Rails
 
 `rabl-rails` is a ruby templating system for rendering your objects in different format (JSON, XML, PLIST).
 
