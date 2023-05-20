@@ -10,7 +10,7 @@ when 'main'
 when "default"
   '~> 7.0.x'
 else
-  "~> #{rails_version}"
+  "~> #{rails_version}.x"
 end
 
 gem 'activesupport', rails
